@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { getPostById, updatePost } from "@/lib/postService"; // adjust path as needed
 import Image from "next/image";
 
 export default function EditBlog() {
@@ -16,18 +15,25 @@ export default function EditBlog() {
 
   useEffect(() => {
     if (!id) return;
+
     const fetchBlog = async () => {
-      const data = await getPostById(id);
-      if (!data?.error) {
+      try {
+        const res = await fetch(`/api/posts/${id}`);
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error || "Failed to load blog");
+
         setTitle(data.title || "");
         setContent(data.body || "");
         if (data.image) setImage(data.image);
-      } else {
-        alert(data.error);
+      } catch (err) {
+        alert(err.message);
         router.push("/home");
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
+
     fetchBlog();
   }, [id, router]);
 
@@ -42,9 +48,20 @@ export default function EditBlog() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await updatePost(id, { title, body: content, image });
-    if (!result?.error) router.push("/home");
-    else alert(result.error);
+    try {
+      const res = await fetch(`/api/posts/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, body: content, image }),
+      });
+
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || "Update failed");
+
+      router.push("/home");
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   if (loading)
@@ -75,7 +92,6 @@ export default function EditBlog() {
 
         {!image ? (
           <input
-            id="file-upload"
             type="file"
             accept="image/*"
             onChange={handleImageUpload}

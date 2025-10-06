@@ -1,8 +1,7 @@
-   "use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { getPostById } from "@/lib/postService"; // adjust import path as needed
 import Image from "next/image";
 
 export default function BlogDetails() {
@@ -12,11 +11,20 @@ export default function BlogDetails() {
 
   useEffect(() => {
     if (!id) return;
+
     const loadPost = async () => {
-      const data = await getPostById(id);
-      if (!data?.error) setBlog(data);
-      setLoading(false);
+      try {
+        const res = await fetch(`/api/posts/${id}`, { cache: "no-store" });
+        if (!res.ok) throw new Error("Failed to fetch post");
+        const data = await res.json();
+        setBlog(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
     };
+
     loadPost();
   }, [id]);
 

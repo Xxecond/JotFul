@@ -1,7 +1,7 @@
  "use client";
 
 import Image from "next/image";
-import profile from "@/public/PIC.jpg"; // image should be in /public folder
+import profile from "/assets/PIC.jpg"; // image should be in /public folder
 
 export default function About() {
   const features = [
