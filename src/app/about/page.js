@@ -1,7 +1,6 @@
  "use client";
 
 import Image from "next/image";
-import profile from "/assets/PIC.jpg"; // image should be in /public folder
 
 export default function About() {
   const features = [
@@ -22,7 +21,7 @@ export default function About() {
 
       <div className="flex flex-col items-center">
         <Image
-          src={profile}
+          src="/assets/PIC.jpg"
           alt="Profile picture"
           width={160}
           height={160}
