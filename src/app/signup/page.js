@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signupUser } from "@/lib/db"; // adjust this path
-
+import Image from "next/image";
 export default function SignupPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -50,7 +50,7 @@ export default function SignupPage() {
           <p className="text-sm text-blue-100 text-center leading-relaxed">
             Create your account, share your stories, and inspire your readers — all in one place.
           </p>
-          <img
+          <Image
             src="/images/signup-illustration.png"
             alt="Signup Illustration"
             className="mt-8 w-64 h-64 object-cover rounded-xl shadow-lg"

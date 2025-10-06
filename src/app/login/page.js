@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { loginUser } from "@/lib/db"; // your backend call
-
+import Image from "next/image";
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -45,7 +45,7 @@ export default function LoginPage() {
             Sign in to manage your posts, connect with your readers, and keep your thoughts flowing.
           </p>
           <div className="mt-8 bg-white rounded-xl p-4">
-            <img
+            <Image
               src="/images/qr-placeholder.png"
               alt="QR code placeholder"
               className="w-40 h-40 object-cover"

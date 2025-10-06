@@ -1,72 +1,74 @@
- "use client";
+"use client";
+
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import Image from "next/image";
 
 export default function BlogCard({ blog, onDelete }) {
-  if (!blog || !blog.content) return null;
-
   const [isExpanded, setIsExpanded] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const contentRef = useRef(null);
   const router = useRouter();
 
+  // ✅ Prevent hooks from being conditional
   useEffect(() => {
     if (contentRef.current) {
-      const el = contentRef.current;
-      setIsOverflowing(el.scrollHeight > el.clientHeight);
+      setIsOverflowing(contentRef.current.scrollHeight > 120);
     }
-  }, [blog.content]);
+  }, [blog?.body]);
 
-  const handleToggle = () => {
-    if (isOverflowing) setIsExpanded((prev) => !prev);
-  };
+  // ✅ Return after hooks
+  if (!blog || !blog.body) return null;
 
-  const handleDelete = () => {
-    if (window.confirm("Delete this blog?")) {
-      const blogs = JSON.parse(localStorage.getItem("blogs")) || [];
-      const updatedBlogs = blogs.filter((b) => b.id !== blog.id);
-      localStorage.setItem("blogs", JSON.stringify(updatedBlogs));
-      onDelete(blog.id);
-    }
-  };
+  const handleReadMore = () => setIsExpanded(!isExpanded);
+  const handleView = () => router.push(`/blog/${blog._id}`);
+  const handleDelete = () => onDelete(blog._id);
 
   return (
-    <div className="bg-white shadow-md rounded-xl p-5 mb-6 transition hover:shadow-lg">
-      <h2 className="text-xl font-bold text-gray-800 mb-3">{blog.title}</h2>
-
+    <div className="bg-white shadow-md rounded-xl p-5 mb-6 border border-gray-100">
+      {/* Blog Image */}
       {blog.image && (
-        <div className="mb-3">
-          <img
+        <div className="relative w-full h-60 mb-4">
+          <Image
             src={blog.image}
-            alt={blog.title}
-            className="rounded-lg w-full h-64 object-cover"
+            alt={blog.title || "Blog image"}
+            fill
+            className="object-cover rounded-lg"
           />
         </div>
       )}
 
-      <div
-        ref={contentRef}
-        onClick={handleToggle}
-        className={`text-gray-700 leading-relaxed overflow-hidden ${
-          isExpanded ? "max-h-none" : "max-h-24"
-        } cursor-${isOverflowing ? "pointer" : "default"} transition-all`}
-      >
-        <p>{blog.content}</p>
-        {isOverflowing && (
-          <span className="text-blue-600 text-sm block mt-2">
-            {isExpanded ? "View less" : "... View more"}
-          </span>
-        )}
-      </div>
+      {/* Title */}
+      <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+        {blog.title}
+      </h2>
 
-      <div className="flex justify-between items-center mt-4 text-sm">
-        <Link
-          href={`/edit/${blog.id}`}
-          className="text-blue-600 hover:underline"
+      {/* Content */}
+      <p
+        ref={contentRef}
+        className="text-gray-700 leading-relaxed mb-3"
+      >
+        {isExpanded
+          ? blog.body
+          : blog.body.slice(0, 150) + (blog.body.length > 150 ? "..." : "")}
+      </p>
+
+      {/* Buttons */}
+      <div className="flex gap-3 mt-2">
+        {isOverflowing && (
+          <button
+            onClick={handleReadMore}
+            className="text-blue-600 hover:underline"
+          >
+            {isExpanded ? "Show Less" : "Read More"}
+          </button>
+        )}
+        <button
+          onClick={handleView}
+          className="text-green-600 hover:underline"
         >
-          Edit
-        </Link>
+          View
+        </button>
         <button
           onClick={handleDelete}
           className="text-red-600 hover:underline"
