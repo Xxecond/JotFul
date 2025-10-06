@@ -46,16 +46,12 @@ export default function BlogDetails() {
     <div className="max-w-3xl mx-auto p-6 mt-10 bg-white shadow-md rounded-xl">
       <h2 className="text-3xl font-semibold mb-4 text-gray-800">{blog.title}</h2>
 
-      {blog.image && (
-        <div className="relative w-full h-64 mb-6">
-          <Image
-            src={blog.image}
-            alt={blog.title}
-            fill
-            className="object-cover rounded-lg"
-          />
-        </div>
-      )}
+   <Image
+  src={blog.image?.startsWith("/") ? blog.image : `/assets/${blog.image}`}
+  alt={blog.title}
+  width={600}
+  height={400}
+/>
 
       <p className="text-gray-700 leading-relaxed">
         {blog.body || blog.content}
