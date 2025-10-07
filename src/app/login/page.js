@@ -1,9 +1,10 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { loginUser } from "@/lib/api";
 import Image from "next/image";
+
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -12,6 +13,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState("");
 
+  // Autofill email if "Remember Me"
   useEffect(() => {
     const savedEmail = localStorage.getItem("userEmail");
     if (savedEmail) {
@@ -22,14 +24,31 @@ export default function LoginPage() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
     try {
-      const data = await loginUser(email, password);
-      if (!data.error) {
-        if (rememberMe) localStorage.setItem("userEmail", email);
-        else localStorage.removeItem("userEmail");
-        router.push("/home");
-      } else setMessage(`❌ ${data.error}`);
-    } catch {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setMessage(`❌ ${data.error}`);
+        return;
+      }
+
+      // ✅ Store JWT token for authentication
+      localStorage.setItem("token", data.token);
+
+      // ✅ Remember email if checkbox checked
+      if (rememberMe) localStorage.setItem("userEmail", email);
+      else localStorage.removeItem("userEmail");
+
+      router.push("/home");
+    } catch (err) {
+      console.error("Login error:", err);
       setMessage("❌ Something went wrong. Try again.");
     }
   };
@@ -37,8 +56,7 @@ export default function LoginPage() {
   return (
     <main className="flex min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 items-center justify-center px-4">
       <div className="flex flex-col md:flex-row bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-4xl">
-        
-        {/* Left section – QR / Illustration */}
+        {/* Left section – Illustration */}
         <div className="hidden md:flex flex-col justify-center items-center bg-blue-600 text-white p-10 w-1/2">
           <h2 className="text-4xl font-bold mb-4">Blogger Web</h2>
           <p className="text-sm text-blue-100 text-center leading-relaxed">
@@ -58,6 +76,7 @@ export default function LoginPage() {
           <h1 className="text-3xl font-semibold text-center text-gray-800 mb-6">
             Welcome Back 👋
           </h1>
+
           <form onSubmit={handleLogin} className="space-y-5">
             <div>
               <label className="block text-gray-600 text-sm mb-2">Email</label>
@@ -87,6 +106,7 @@ export default function LoginPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
                 >
+                  {showPassword ? "Hide" : "Show"}
                 </button>
               </div>
             </div>
@@ -128,9 +148,10 @@ export default function LoginPage() {
                 {message}
               </p>
             )}
+
             <p className="text-center text-sm text-gray-600 mt-4">
-  ← <Link href="/" className="text-blue-600 hover:underline">Back to Home</Link>
-</p>
+              ← <Link href="/" className="text-blue-600 hover:underline">Back to Home</Link>
+            </p>
           </form>
         </div>
       </div>
