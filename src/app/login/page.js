@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { loginUser } from "@/lib/db"; // your backend call
+import { loginUser } from "@/lib/api";
 import Image from "next/image";
 export default function LoginPage() {
   const router = useRouter();
