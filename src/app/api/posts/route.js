@@ -1,12 +1,19 @@
-import { connectDB } from "@/lib/db";
+ import { connectDB } from "@/lib/db";
 import Post from "@/models/Post";
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 
-export async function GET() {
+export async function GET(req) {
   try {
     await connectDB();
-    const posts = await Post.find().sort({ createdAt: -1 });
+
+    // Optional: support ?userId= filtering
+    const url = new URL(req.url);
+    const userId = url.searchParams.get("userId");
+
+    const query = userId ? { userId } : {};
+    const posts = await Post.find(query).sort({ createdAt: -1 });
+
     return NextResponse.json(posts, { status: 200 });
   } catch (error) {
     console.error("GET /api/posts error:", error);
@@ -21,7 +28,7 @@ export async function POST(req) {
   try {
     await connectDB();
 
-    // ✅ Check auth header
+    // ✅ Check for token
     const authHeader = req.headers.get("authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return NextResponse.json(
@@ -35,20 +42,20 @@ export async function POST(req) {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // ✅ Parse request body
-    const { title, body, image } = await req.json();
-    if (!title || !body) {
+    const { title, content, image } = await req.json();
+    if (!title || !content) {
       return NextResponse.json(
-        { error: "Title and body are required" },
+        { error: "Title and content are required" },
         { status: 400 }
       );
     }
 
-    // ✅ Create post
+    // ✅ Create post linked to user
     const post = await Post.create({
       title,
-      body,
+      content,
       image,
-      userId: decoded.id, // token payload key should be `id`
+      userId: decoded.id, // or decoded.userId — match your login token payload
     });
 
     return NextResponse.json(post, { status: 201 });
