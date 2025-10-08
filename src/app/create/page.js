@@ -29,18 +29,26 @@ export default function CreateBlog() {
     }
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ title, body: content, image }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/posts`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ title, content, image }), // ✅ fixed here
+        }
+      );
 
       const data = await response.json();
-      if (!response.ok) alert(data.message || "Failed to create post");
-      else router.push("/home");
+
+      if (!response.ok) {
+        alert(data.error || "Failed to create post");
+      } else {
+        alert("Post created successfully!");
+        router.push("/home");
+      }
     } catch (err) {
       console.error("Create error:", err);
       alert("Network or server error");
