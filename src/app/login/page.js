@@ -64,8 +64,10 @@ export default function LoginPage() {
           </p>
           <div className="mt-8 bg-white rounded-xl p-4">
             <Image
-              src="/images/qr-placeholder.png"
+              src="/assets/green.jpg"
               alt="QR code placeholder"
+              width={40}
+              height={40}
               className="w-40 h-40 object-cover"
             />
           </div>
