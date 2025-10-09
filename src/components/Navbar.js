@@ -24,7 +24,7 @@ export default function Navbar() {
   if (pathname === "/login" || pathname === "/signup") return null;
 
   return (
-    <nav className="w-full bg-white shadow-md px-6 md:px-16 py-4 flex justify-between items-center">
+    <nav className="w-full bg-black shadow-md px-6 md:px-16 py-4 flex justify-between items-center">
       {/* Logo */}
       <Link href="/" className="text-2xl font-bold text-indigo-600">
         MyBlog

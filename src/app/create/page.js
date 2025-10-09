@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Header from "@/components/Header";
 
 export default function CreateBlog() {
   const [title, setTitle] = useState("");
@@ -55,8 +56,9 @@ export default function CreateBlog() {
     }
   };
 
-  return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 p-4">
+  return (<>
+  <Header />
+    <section className="flex items-center justify-center min-h-screen bg-gray-50 p-4">
       <form
         onSubmit={handleSubmit}
         className="bg-white shadow-md rounded-lg p-8 w-full max-w-2xl"
@@ -120,6 +122,6 @@ export default function CreateBlog() {
           Add Blog
         </button>
       </form>
-    </div>
-  );
+    </section>
+</>  );
 }

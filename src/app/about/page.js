@@ -1,7 +1,7 @@
  "use client";
 
 import Image from "next/image";
-
+import Header from "@/components/Header";
 export default function About() {
   const features = [
     { title: "Daily Football News", desc: "Stay updated with the latest happenings in the football world." },
@@ -11,9 +11,11 @@ export default function About() {
     { title: "Fan Community & Discussions", desc: "Join the conversation and share your views." },
   ];
 
-  return (
-    <div className="max-w-4xl mx-auto p-6 mt-10 bg-white shadow-md rounded-xl text-center">
-      <div className="space-y-3 mb-6 text-left">
+  return (<>
+    <Header />
+
+    <section className="max-w-4xl mx-auto p-6 mt-10 bg-white shadow-md rounded-xl text-center">
+         <div className="space-y-3 mb-6 text-left">
         {features.map(({ title, desc }, i) => (
           <p key={i}>✅ <strong>{title}</strong> – {desc}</p>
         ))}
@@ -41,6 +43,7 @@ export default function About() {
       <p className="text-gray-700 mt-2">
         Subscribe now and follow us for daily football news and insights. Stay ahead of the game!
       </p>
-    </div>
+    </section>
+    </>
   );
 }

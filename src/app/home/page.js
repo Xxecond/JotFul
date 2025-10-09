@@ -4,6 +4,9 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import SearchBar from "@/components/SearchBar";
 import BlogCard from "@/components/BlogCard";
+import Header from "@/components/Header";
+import Navbar from "@/components/Navbar";
+import LoginMock from "@/components/LoginMock";
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -26,9 +29,11 @@ export default function Home() {
   );
 
   return (
-    <div className="home">
-      <SearchBar setSearchTerm={setSearchTerm} />
-
+    <>
+    <Header /> 
+     <SearchBar  setSearchTerm={setSearchTerm} />
+    <Navbar />
+    <section className="home">
       {filtered.length > 0 ? (
         filtered.map(
           (blog) =>
@@ -37,7 +42,7 @@ export default function Home() {
             )
         )
       ) : (
-        <div className="blogdirect text-center mt-10">
+        <div className="blogdirect text-center mt-30">
           <Link
             href="/create"
             className="px-5 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all"
@@ -46,6 +51,8 @@ export default function Home() {
           </Link>
         </div>
       )}
-    </div>
+   <LoginMock />
+    </section>
+  </>
   );
 }

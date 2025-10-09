@@ -1,8 +1,6 @@
  "use client";
 import React from "react";
 import { usePathname } from "next/navigation";
-import Navbar from "./Navbar";
-
 export default function Header() {
   const pathname = usePathname();
 
@@ -16,10 +14,9 @@ export default function Header() {
   const pageName = headings[pathname] || "Page";
 
   return (
-    <header className="bg-gray-900 text-white">
-      <Navbar />
-      <div className="pt-20 text-center pb-6">
-        <h1 className="text-3xl md:text-4xl font-bold tracking-wide">
+    <header className="bg-cyan-500 py-3 text-white">
+      <div className=" text-center ">
+        <h1 className="text-xl md:text-3xl font-bold tracking-wide">
           {pageName}
         </h1>
       </div>
