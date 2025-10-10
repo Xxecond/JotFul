@@ -2,9 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import SearchBar from "@/components/SearchBar";
-import BlogCard from "@/components/BlogCard";
-import Header from "@/components/Header";
+import { Header, BlogCard, SearchBar } from "@/components";
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
