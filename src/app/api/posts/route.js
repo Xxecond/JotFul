@@ -1,6 +1,7 @@
 import { connectDB } from "@/lib/db";
 import Post from "@/models/Post";
 import { NextResponse } from "next/server";
+import jwt from "jsonwebtoken";
 
 export async function GET(req) {
   try {
