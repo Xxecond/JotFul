@@ -6,30 +6,25 @@ import SearchBar from "@/components/SearchBar";
 import BlogCard from "@/components/BlogCard";
 import Header from "@/components/Header";
 import Navbar from "@/components/Navbar";
-import LoginMock from "@/components/LoginMock";
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Fetch blogs from MongoDB backend
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        // ✅ Fetch without Authorization header
+        const res = await fetch("/api/posts");
 
         if (!res.ok) throw new Error("Failed to fetch blogs");
 
         const data = await res.json();
-        setBlogs(data);
+        setBlogs(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Error loading blogs:", err);
+        setBlogs([]);
       } finally {
         setLoading(false);
       }
@@ -38,21 +33,18 @@ export default function Home() {
     fetchBlogs();
   }, []);
 
-  // ✅ Delete blog from backend
   const handleDelete = async (id) => {
     if (!confirm("Are you sure you want to delete this blog?")) return;
 
     try {
+      // DELETE should still use token if you want only owners to delete
       const token = localStorage.getItem("token");
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/posts/${id}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await fetch(`/api/posts/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (!res.ok) throw new Error("Delete failed");
       setBlogs((prev) => prev.filter((b) => b._id !== id));
@@ -61,7 +53,6 @@ export default function Home() {
     }
   };
 
-  // ✅ Filter blogs by title
   const filtered = blogs.filter((blog) =>
     blog?.title?.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -84,9 +75,7 @@ export default function Home() {
         {filtered.length > 0 ? (
           filtered.map(
             (blog) =>
-              blog && (
-                <BlogCard key={blog._id} blog={blog} onDelete={handleDelete} />
-              )
+              blog && <BlogCard key={blog._id} blog={blog} onDelete={handleDelete} />
           )
         ) : (
           <div className="text-center mt-20">

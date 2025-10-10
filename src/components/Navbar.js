@@ -1,74 +1,82 @@
 "use client";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
-export default function Navbar() {
-  const pathname = usePathname();
-  const router = useRouter();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+import { useState } from "react";
+import  Link  from "next/link";
 
-  // Simulated auth check (replace with real token logic)
-  useEffect(() => {
-    const user = localStorage.getItem("user");
-    setIsLoggedIn(!!user);
-  }, [pathname]);
-
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    setIsLoggedIn(false);
-    router.push("/login");
-  };
-
-  // Hide navbar on login/signup pages
-  if (pathname === "/login" || pathname === "/signup") return null;
-
-  return (
-    <nav className="w-full bg-black shadow-md px-6 md:px-16 py-4 flex justify-between items-center">
-      {/* Logo */}
-      <Link href="/" className="text-2xl font-bold text-indigo-600">
-        MyBlog
-      </Link>
-
-      {/* Links */}
-      <div className="flex items-center gap-6 text-gray-700 font-medium">
-        {isLoggedIn ? (
-          <>
-            <Link href="/home" className={linkStyle(pathname, "/home")}>
-              Home
-            </Link>
-            <Link href="/create" className={linkStyle(pathname, "/create")}>
-              Create Blog
-            </Link>
-            <Link href="/about" className={linkStyle(pathname, "/about")}>
-              About
-            </Link>
-            <button
-              onClick={handleLogout}
-              className="text-red-500 hover:text-red-600 transition"
-            >
-              Logout
-            </button>
-          </>
-        ) : (
-          <>
-            <Link href="/login" className={linkStyle(pathname, "/login")}>
-              Login
-            </Link>
-            <Link href="/signup" className={linkStyle(pathname, "/signup")}>
-              Sign Up
-            </Link>
-          </>
-        )}
-      </div>
-    </nav>
-  );
+function Spin({open, setOpen, className}){
+  return(
+    <button onClick={()=> setOpen(!open)}
+    className={`md:hidden w-8.5 h-8 flex flex-col justify-center items-center gap-1.5 
+          ml-3 mt-3 transform transition-transform duration-900 
+  ${open ? "border-5  border-cyan-500":""}  ${className}`}>
+        <span
+        className={`block w-5 h-0.5 bg-cyan-100 transition-transform duration-300 ${
+          open ? "rotate-45 translate-y-2" : ""
+        }`}
+      />
+      <span
+        className={`block w-5 h-0.5 bg-cyan-100 transition-opacity duration-300 ${
+          open ? "opacity-0" : ""
+        }`}
+      />
+      <span
+        className={`block w-5 h-0.5  bg-cyan-100 transition-transform duration-300 ${
+          open ? "-rotate-45 -translate-y-2" : ""
+        }`}
+      />
+    </button>
+  )
 }
+export default function Navbar() {
+  const [open, setOpen] = useState(false);
+  
+    const navMenu = [
+    { id: 1, href: "/", text: "Home" },
+    { id: 2, href: "/create", text: "Create Blog" },
+    { id: 3, href: "/about",  text: "About" },
+    { id: 4, href: "/logout", text: "Logout" },
+  ];
 
-// Helper function to highlight active page
-function linkStyle(pathname, href) {
-  const isActive = pathname === href;
-  return isActive
-    ? "text-indigo-600 font-semibold border-b-2 border-indigo-600 pb-1"
-    : "hover:text-indigo-600 transition";
+return(
+        <nav>
+  <Spin setOpen={setOpen}  open={open}
+   className={`z-50 relative transition-all duration-1000`} />
+    <div
+        className={`fixed  inset-0 bg-gradient-to-b from-black/70 to-black/70 
+          z-40 transition-opacity duration-300 md:hidden ${
+            open ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
+        onClick={() => setOpen(false)}
+      >
+        <div
+          className={`fixed left-0 top-0 h-full w-64 bg-white shadow-xl transform 
+            transition-transform duration-300 ${
+              open ? "-translate-x-0" : "-translate-x-full"
+            }`}
+          onClick={(e) => e.stopPropagation()}
+        >
+        
+            <nav className="space-y-5">
+              <ul
+          className="slidein mt-20 flex flex-col px-7 space-y-4 justify-center">
+              {navMenu.map((item) => 
+                <li
+                  key={item.id}
+                   className=" bg-black/30 rounded-md p-2 
+                  transition-all durbation-300 hover:bg-black/50 hover:pl-5  ">
+                <Link 
+                href={item.href}
+                  onClick={()=> setOpen((false))}
+                 className="text-white text-2xl hover:text-cyan-500 block ">
+                  {item.text}
+                  </Link>
+                  </li>
+              )}
+              </ul>
+            </nav>
+          </div>
+        </div>
+      
+ </nav>
+);
 }
