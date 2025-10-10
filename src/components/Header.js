@@ -1,7 +1,7 @@
  "use client";
 import React from "react";
 import { usePathname } from "next/navigation";
-import Navbar from "./Navbar";
+import {Navbar} from "@/components";;
 
 export default function Header() {
   const pathname = usePathname();

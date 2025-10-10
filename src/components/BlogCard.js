@@ -10,15 +10,13 @@ export default function BlogCard({ blog, onDelete }) {
   const contentRef = useRef(null);
   const router = useRouter();
 
-  // ✅ Prevent hooks from being conditional
   useEffect(() => {
     if (contentRef.current) {
       setIsOverflowing(contentRef.current.scrollHeight > 120);
     }
-  }, [blog?.body]);
+  }, [blog?.content]);
 
-  // ✅ Return after hooks
-  if (!blog || !blog.body) return null;
+  if (!blog || !blog.content) return null;
 
   const handleReadMore = () => setIsExpanded(!isExpanded);
   const handleView = () => router.push(`/blog/${blog._id}`);
@@ -44,13 +42,11 @@ export default function BlogCard({ blog, onDelete }) {
       </h2>
 
       {/* Content */}
-      <p
-        ref={contentRef}
-        className="text-gray-700 leading-relaxed mb-3"
-      >
+      <p ref={contentRef} className="text-gray-700 leading-relaxed mb-3">
         {isExpanded
-          ? blog.body
-          : blog.body.slice(0, 150) + (blog.body.length > 150 ? "..." : "")}
+          ? blog.content
+          : blog.content.slice(0, 150) +
+            (blog.content.length > 150 ? "..." : "")}
       </p>
 
       {/* Buttons */}

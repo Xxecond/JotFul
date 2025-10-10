@@ -7,8 +7,11 @@ export async function GET(req) {
   try {
     await connectDB();
 
-    // ✅ All posts public; no token required
-    const posts = await Post.find({}).sort({ createdAt: -1 });
+    const { searchParams } = new URL(req.url);
+    const userId = searchParams.get("userId");
+
+    const filter = userId ? { userId } : {}; // if userId exists, fetch only their posts
+    const posts = await Post.find(filter).sort({ createdAt: -1 });
 
     return NextResponse.json(posts, { status: 200 });
   } catch (error) {
@@ -19,6 +22,7 @@ export async function GET(req) {
     );
   }
 }
+
 
 export async function POST(req) {
   try {
