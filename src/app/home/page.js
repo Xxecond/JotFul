@@ -5,7 +5,6 @@ import Link from "next/link";
 import SearchBar from "@/components/SearchBar";
 import BlogCard from "@/components/BlogCard";
 import Header from "@/components/Header";
-import Navbar from "@/components/Navbar";
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -69,7 +68,6 @@ export default function Home() {
     <>
       <Header />
       <SearchBar setSearchTerm={setSearchTerm} />
-      <Navbar />
 
       <section className="home px-4 py-6">
         {filtered.length > 0 ? (
@@ -88,8 +86,6 @@ export default function Home() {
             </Link>
           </div>
         )}
-
-        <LoginMock />
       </section>
     </>
   );
