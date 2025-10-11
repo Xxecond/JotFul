@@ -1,8 +1,9 @@
-"use client";
+ "use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Header, BlogCard, SearchBar } from "@/components";
+import { getUserPosts, deletePost } from "@/lib/api";
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -12,12 +13,7 @@ export default function Home() {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        // ✅ Fetch without Authorization header
-        const res = await fetch("/api/posts");
-
-        if (!res.ok) throw new Error("Failed to fetch blogs");
-
-        const data = await res.json();
+        const data = await getUserPosts(); // ✅ auto-token handled in api.js
         setBlogs(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Error loading blogs:", err);
@@ -32,21 +28,12 @@ export default function Home() {
 
   const handleDelete = async (id) => {
     if (!confirm("Are you sure you want to delete this blog?")) return;
-
     try {
-      // DELETE should still use token if you want only owners to delete
-      const token = localStorage.getItem("token");
-      const res = await fetch(`/api/posts/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) throw new Error("Delete failed");
+      await deletePost(id); // ✅ token handled automatically
       setBlogs((prev) => prev.filter((b) => b._id !== id));
     } catch (err) {
       console.error("Delete failed:", err);
+      alert("Failed to delete post");
     }
   };
 
@@ -66,12 +53,17 @@ export default function Home() {
     <>
       <Header />
       <SearchBar setSearchTerm={setSearchTerm} />
-
       <section className="home px-4 py-6">
         {filtered.length > 0 ? (
           filtered.map(
             (blog) =>
-              blog && <BlogCard key={blog._id} blog={blog} onDelete={handleDelete} />
+              blog && (
+                <BlogCard
+                  key={blog._id}
+                  blog={blog}
+                  onDelete={handleDelete}
+                />
+              )
           )
         ) : (
           <div className="text-center mt-20">
