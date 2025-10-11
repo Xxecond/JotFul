@@ -1,82 +1,76 @@
- "use client";
+ // src/lib/api.js
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { Header, BlogCard, SearchBar } from "@/components";
-import { getUserPosts, deletePost } from "@/lib/api";
+export const baseURL =
+  process.env.NODE_ENV === "production"
+    ? "https://blogger-seven-virid.vercel.app"
+    : "http://localhost:3000";
 
-export default function Home() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [blogs, setBlogs] = useState([]);
-  const [loading, setLoading] = useState(true);
+export async function apiFetch(endpoint, options = {}) {
+  const res = await fetch(`${baseURL}/api/${endpoint}`, {
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+    ...options,
+  });
 
-  useEffect(() => {
-    const fetchBlogs = async () => {
-      try {
-        const data = await getUserPosts(); // ✅ auto-token handled in api.js
-        setBlogs(Array.isArray(data) ? data : []);
-      } catch (err) {
-        console.error("Error loading blogs:", err);
-        setBlogs([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBlogs();
-  }, []);
-
-  const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this blog?")) return;
-    try {
-      await deletePost(id); // ✅ token handled automatically
-      setBlogs((prev) => prev.filter((b) => b._id !== id));
-    } catch (err) {
-      console.error("Delete failed:", err);
-      alert("Failed to delete post");
-    }
-  };
-
-  const filtered = blogs.filter((blog) =>
-    blog?.title?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen text-gray-600">
-        Loading blogs...
-      </div>
-    );
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(error || "Request failed");
   }
 
-  return (
-    <>
-      <Header />
-      <SearchBar setSearchTerm={setSearchTerm} />
-      <section className="home px-4 py-6">
-        {filtered.length > 0 ? (
-          filtered.map(
-            (blog) =>
-              blog && (
-                <BlogCard
-                  key={blog._id}
-                  blog={blog}
-                  onDelete={handleDelete}
-                />
-              )
-          )
-        ) : (
-          <div className="text-center mt-20">
-            <p className="mb-4 text-gray-600">No blogs found.</p>
-            <Link
-              href="/create"
-              className="px-5 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all"
-            >
-              CREATE NEW BLOG
-            </Link>
-          </div>
-        )}
-      </section>
-    </>
-  );
+  return res.json();
+}
+
+// ✅ AUTH FUNCTIONS
+export async function loginUser(email, password) {
+  return apiFetch("auth/login", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+  });
+}
+
+export async function signupUser(email, password) {
+  return apiFetch("auth/signup", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+  });
+}
+
+// ✅ BLOG POST FUNCTIONS
+export async function getUserPosts() {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Unauthorized");
+
+  return apiFetch("posts", {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+export async function createPost({ title, content, image }) {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Unauthorized");
+
+  return apiFetch("posts", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ title, content, image }),
+  });
+}
+
+export async function deletePost(id) {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Unauthorized");
+
+  return apiFetch(`posts/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 }
