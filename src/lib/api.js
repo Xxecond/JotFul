@@ -45,7 +45,7 @@ export async function signupUser(email, password) {
 // ✅ POSTS HELPERS
 // =======================
 export async function getUserPosts() {
-  return apiFetch("posts/user"); // your backend route for user’s posts
+  return apiFetch("posts"); 
 }
 
 export async function createPost(postData) {

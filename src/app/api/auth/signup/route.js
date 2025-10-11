@@ -1,92 +1,76 @@
-import { NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
-import crypto from "crypto";
-import nodemailer from "nodemailer";
-import { connectDB } from "@/lib/db";
-import User from "@/models/User";
+ // src/lib/api.js
 
-export async function POST(req) {
-  try {
-    await connectDB();
+export const baseURL =
+  process.env.NODE_ENV === "production"
+    ? "https://blogger-seven-virid.vercel.app"
+    : "http://localhost:3000";
 
-    const { email, password } = await req.json();
+export async function apiFetch(endpoint, options = {}) {
+  const res = await fetch(`${baseURL}/api/${endpoint}`, {
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+    ...options,
+  });
 
-    // ✅ Validate input
-    if (!email || !password)
-      return NextResponse.json(
-        { success: false, message: "Email and password are required" },
-        { status: 400 }
-      );
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-      return NextResponse.json(
-        { success: false, message: "Invalid email format" },
-        { status: 400 }
-      );
-
-    // ✅ Check if user already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser)
-      return NextResponse.json(
-        { success: false, message: "Email already registered" },
-        { status: 400 }
-      );
-
-    // ✅ Hash password & generate verification token
-    const hashedPassword = await bcrypt.hash(password, 12);
-    const token = crypto.randomBytes(32).toString("hex");
-    const tokenExpiry = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
-
-    // ✅ Create user
-    const newUser = new User({
-      email,
-      password: hashedPassword,
-      verificationToken: token,
-      verificationTokenExpiry: tokenExpiry,
-    });
-
-    await newUser.save();
-
-    // ✅ Construct verification link
-    const verifyLink = `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/verify-email?token=${token}`;
-
-    // ✅ Configure email sender
-    const transporter = nodemailer.createTransport({
-      service: "Gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
-
-    // ✅ Send verification email
-    await transporter.sendMail({
-      from: `"Blogger App" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: "Verify Your Email",
-      html: `
-        <div style="font-family:Arial,sans-serif;line-height:1.6">
-          <h2>Welcome to Blogger App!</h2>
-          <p>Click below to verify your email:</p>
-          <a href="${verifyLink}"
-             style="display:inline-block;background:#2563eb;color:#fff;
-                    padding:10px 20px;border-radius:6px;text-decoration:none">
-             Verify Email
-          </a>
-          <p>This link expires in 24 hours.</p>
-        </div>
-      `,
-    });
-
-    return NextResponse.json({
-      success: true,
-      message: "Signup successful! Please check your email to verify your account.",
-    });
-  } catch (error) {
-    console.error("Signup error:", error);
-    return NextResponse.json(
-      { success: false, message: "Server error. Please try again later." },
-      { status: 500 }
-    );
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(error || "Request failed");
   }
+
+  return res.json();
+}
+
+// ✅ AUTH FUNCTIONS
+export async function loginUser(email, password) {
+  return apiFetch("auth/login", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+  });
+}
+
+export async function signupUser(email, password) {
+  return apiFetch("auth/signup", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+  });
+}
+
+// ✅ BLOG POST FUNCTIONS
+export async function getUserPosts() {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Unauthorized");
+
+  return apiFetch("posts", {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+export async function createPost({ title, content, image }) {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Unauthorized");
+
+  return apiFetch("posts", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ title, content, image }),
+  });
+}
+
+export async function deletePost(id) {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Unauthorized");
+
+  return apiFetch(`posts/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 }
