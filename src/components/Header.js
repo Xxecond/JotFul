@@ -16,7 +16,7 @@ export default function Header() {
   const pageName = headings[pathname] || "Page";
 
   return (<>
-<header className="bg-cyan-500 text-cyan-100 py-5">
+<header className="bg-gray-950 text-white py-5">
      <div className=" absolute top-2 z-55">
       <Navbar />
      </div>

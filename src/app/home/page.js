@@ -43,7 +43,7 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen text-gray-600">
+      <div className="flex justify-center items-center h-screen text-gray-700">
         Loading blogs...
       </div>
     );
@@ -66,11 +66,10 @@ export default function Home() {
               )
           )
         ) : (
-          <div className="text-center mt-20">
-            <p className="mb-4 text-gray-600">No blogs found.</p>
+          <div className="text-center mt-40">
             <Link
               href="/create"
-              className="px-5 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all"
+              className="px-5 py-3 bg-blue-900 text-white rounded-lg hover:bg-blue-700 transition-all"
             >
               CREATE NEW BLOG
             </Link>

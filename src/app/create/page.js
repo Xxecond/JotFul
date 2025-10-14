@@ -1,36 +1,48 @@
  "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Header from "@/components/Header";
-import { createPost } from "@/lib/api";
 
 export default function CreateBlog() {
   const [title, setTitle] = useState("");
-  const [image, setImage] = useState(null);
   const [content, setContent] = useState("");
+  const [imagePreview, setImagePreview] = useState(null);
+  const fileInputRef = useRef(null);
   const router = useRouter();
 
-  const handleImageUpload = (e) => {
+  const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
-    const reader = new FileReader();
-    reader.onloadend = () => setImage(reader.result);
-    reader.readAsDataURL(file);
+    setImagePreview(URL.createObjectURL(file)); // preview only
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      await createPost({ title, content, image }); // ✅ cleaner & auto-tokened
-      alert("Post created successfully!");
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("content", content);
+      if (fileInputRef.current?.files[0]) {
+        formData.append("image", fileInputRef.current.files[0]);
+      }
+
+      const res = await fetch("/api/posts", {
+        method: "POST",
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`, // replace with your auth logic
+        },
+      });
+
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || "Failed to create post");
+
       router.push("/home");
     } catch (err) {
-      console.error("Create error:", err);
-      alert(err.message || "Failed to create post");
+      alert(err.message);
     }
   };
 
@@ -55,21 +67,22 @@ export default function CreateBlog() {
             className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
           />
 
-          {!image && (
+          {!imagePreview && (
             <input
               type="file"
               accept="image/*"
-              onChange={handleImageUpload}
+              onChange={handleImageChange}
+              ref={fileInputRef}
               required
               className="block w-full mb-4 text-sm text-gray-600 border border-gray-300 rounded-lg cursor-pointer focus:ring-2 focus:ring-blue-500"
             />
           )}
 
-          {image && (
+          {imagePreview && (
             <div className="mb-4 text-center">
               <div className="relative w-full h-64 mb-3">
                 <Image
-                  src={image}
+                  src={imagePreview}
                   alt="Preview"
                   fill
                   className="object-cover rounded-lg"
@@ -77,7 +90,10 @@ export default function CreateBlog() {
               </div>
               <button
                 type="button"
-                onClick={() => setImage(null)}
+                onClick={() => {
+                  setImagePreview(null);
+                  fileInputRef.current.value = null;
+                }}
                 className="px-3 py-1 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all"
               >
                 Remove Image

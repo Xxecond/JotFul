@@ -1,6 +1,6 @@
-"use client";
+ "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Header from "@/components/Header";
@@ -8,10 +8,11 @@ import Header from "@/components/Header";
 export default function EditBlog() {
   const { id } = useParams();
   const router = useRouter();
-
   const [title, setTitle] = useState("");
-  const [image, setImage] = useState(null);
   const [content, setContent] = useState("");
+  const [imagePreview, setImagePreview] = useState(null);
+  const [existingImage, setExistingImage] = useState(null); // store original image URL
+  const fileInputRef = useRef(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,12 +22,14 @@ export default function EditBlog() {
       try {
         const res = await fetch(`/api/posts/${id}`);
         const data = await res.json();
-
         if (!res.ok) throw new Error(data.error || "Failed to load blog");
 
         setTitle(data.title || "");
-        setContent(data.body || "");
-        if (data.image) setImage(data.image);
+        setContent(data.content || "");
+        if (data.image) {
+          setImagePreview(data.image);
+          setExistingImage(data.image);
+        }
       } catch (err) {
         alert(err.message);
         router.push("/home");
@@ -38,26 +41,43 @@ export default function EditBlog() {
     fetchBlog();
   }, [id, router]);
 
-  const handleImageUpload = (e) => {
+  const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    setImagePreview(URL.createObjectURL(file));
+  };
 
-    const reader = new FileReader();
-    reader.onloadend = () => setImage(reader.result);
-    reader.readAsDataURL(file);
+  const handleRemoveImage = () => {
+    setImagePreview(null);
+    fileInputRef.current.value = null;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("content", content);
+
+      // Only append new file if selected
+      if (fileInputRef.current?.files[0]) {
+        formData.append("image", fileInputRef.current.files[0]);
+      } else if (imagePreview === null) {
+        // User removed the existing image
+        formData.append("removeImage", "true");
+      }
+
       const res = await fetch(`/api/posts/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, body: content, image }),
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
 
       const result = await res.json();
-      if (!res.ok) throw new Error(result.error || "Update failed");
+      if (!res.ok) throw new Error(result.error || "Failed to update post");
 
       router.push("/home");
     } catch (err) {
@@ -91,18 +111,21 @@ export default function EditBlog() {
           className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
         />
 
-        {!image ? (
+        {!imagePreview && (
           <input
             type="file"
             accept="image/*"
-            onChange={handleImageUpload}
+            onChange={handleImageChange}
+            ref={fileInputRef}
             className="block w-full mb-4 text-sm text-gray-600 border border-gray-300 rounded-lg cursor-pointer focus:ring-2 focus:ring-blue-500"
           />
-        ) : (
+        )}
+
+        {imagePreview && (
           <div className="mb-4 text-center">
             <div className="relative w-full h-64 mb-3">
               <Image
-                src={image}
+                src={imagePreview}
                 alt="Preview"
                 fill
                 className="object-cover rounded-lg"
@@ -110,7 +133,7 @@ export default function EditBlog() {
             </div>
             <button
               type="button"
-              onClick={() => setImage(null)}
+              onClick={handleRemoveImage}
               className="px-3 py-1 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all"
             >
               Remove Image

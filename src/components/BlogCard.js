@@ -1,8 +1,8 @@
-"use client";
+ "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function BlogCard({ blog, onDelete }) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -12,62 +12,74 @@ export default function BlogCard({ blog, onDelete }) {
 
   useEffect(() => {
     if (contentRef.current) {
-      setIsOverflowing(contentRef.current.scrollHeight > 120);
+      const el = contentRef.current;
+      setIsOverflowing(el.scrollHeight > el.clientHeight);
     }
   }, [blog?.content]);
 
   if (!blog || !blog.content) return null;
 
-  const handleReadMore = () => setIsExpanded(!isExpanded);
-  const handleView = () => router.push(`/blog/${blog._id}`);
-  const handleDelete = () => onDelete(blog._id);
+  const handleToggle = () => {
+    if (isOverflowing) setIsExpanded((prev) => !prev);
+  };
+
+  const handleDelete = () => {
+    if (confirm("Delete this blog?")) {
+      onDelete(blog._id);
+    }
+  };
+
+  const handleEdit = () => {
+    router.push(`/blog/edit/${blog._id}`);
+  };
 
   return (
-    <div className="bg-white shadow-md rounded-xl p-5 mb-6 border border-gray-100">
-      {/* Blog Image */}
+    <div className="w-full max-w-[500px] bg-[#333] rounded-lg overflow-hidden my-12 mx-auto break-words whitespace-normal">
+      {/* Title */}
+      <h2 className="text-[2.1rem] text-center m-0 pb-1 text-white font-light bg-gray-500 font-impact">
+        {blog.title}
+      </h2>
+
+      {/* Image */}
       {blog.image && (
-        <div className="relative w-full h-60 mb-4">
+        <div className="w-full h-[60vh] relative">
           <Image
             src={blog.image}
             alt={blog.title || "Blog image"}
             fill
-            className="object-cover rounded-lg"
+            className="object-cover"
           />
         </div>
       )}
 
-      {/* Title */}
-      <h2 className="text-2xl font-semibold text-gray-800 mb-2">
-        {blog.title}
-      </h2>
-
       {/* Content */}
-      <p ref={contentRef} className="text-gray-700 leading-relaxed mb-3">
-        {isExpanded
-          ? blog.content
-          : blog.content.slice(0, 150) +
-            (blog.content.length > 150 ? "..." : "")}
-      </p>
-
-      {/* Buttons */}
-      <div className="flex gap-3 mt-2">
-        {isOverflowing && (
-          <button
-            onClick={handleReadMore}
-            className="text-blue-600 hover:underline"
-          >
-            {isExpanded ? "Show Less" : "Read More"}
-          </button>
+      <div
+        ref={contentRef}
+        onClick={handleToggle}
+        className={`text-white p-2 text-[1.5rem] font-light max-w-[350px] cursor-${
+          isOverflowing ? "pointer" : "default"
+        } ${isExpanded ? "" : "line-clamp-2"} mx-auto`}
+      >
+        <p className="font-[Segoe UI]">{blog.content}</p>
+        {isOverflowing && !isExpanded && (
+          <span className="text-[#4fc3f7] font-bold text-[1rem]">... View more</span>
         )}
+        {isOverflowing && isExpanded && (
+          <span className="text-[#4fc3f7] font-bold text-[1rem]">View less</span>
+        )}
+      </div>
+
+      {/* Actions */}
+      <div className="flex flex-row justify-center items-center my-1 gap-2">
         <button
-          onClick={handleView}
-          className="text-green-600 hover:underline"
+          onClick={handleEdit}
+          className="text-[2.2rem] bg-green-600 text-white px-3 pt-1 rounded hover:font-bold"
         >
-          View
+          Edit
         </button>
         <button
           onClick={handleDelete}
-          className="text-red-600 hover:underline"
+          className="text-[2.2rem] bg-red-600 text-white px-3 pt-1 rounded hover:font-bold"
         >
           Delete
         </button>
