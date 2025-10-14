@@ -1,23 +1,88 @@
-import { NextResponse } from "next/server";
-import { connectDB } from "@/lib/db";
+ import { connectDB } from "@/lib/db";
 import Post from "@/models/Post";
+import { NextResponse } from "next/server";
+import jwt from "jsonwebtoken";
+import formidable from "formidable";
+import { v2 as cloudinary } from "cloudinary";
 
-export async function GET(request, { params }) {
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+export const config = { api: { bodyParser: false } };
+
+const parseForm = (req) =>
+  new Promise((resolve, reject) => {
+    const form = new formidable.IncomingForm();
+    form.parse(req, (err, fields, files) => {
+      if (err) reject(err);
+      else resolve({ fields, files });
+    });
+  });
+
+// GET one post
+export async function GET(req, { params }) {
   try {
     await connectDB();
-
     const post = await Post.findById(params.id);
-
-    if (!post) {
-      return NextResponse.json({ error: "Post not found" }, { status: 404 });
-    }
-
+    if (!post) return NextResponse.json({ error: "Post not found" }, { status: 404 });
     return NextResponse.json(post, { status: 200 });
   } catch (error) {
-    console.error("Error fetching post:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch post" },
-      { status: 500 }
+    return NextResponse.json({ error: "Failed to load post" }, { status: 500 });
+  }
+}
+
+// UPDATE post
+export async function PUT(req, { params }) {
+  try {
+    await connectDB();
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader?.startsWith("Bearer "))
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const token = authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const { fields, files } = await parseForm(req);
+    const { title, content } = fields;
+    let imageUrl = "";
+
+    if (files.image) {
+      const uploadResult = await cloudinary.uploader.upload(files.image.filepath, { folder: "blog_images" });
+      imageUrl = uploadResult.secure_url;
+    }
+
+    const updated = await Post.findOneAndUpdate(
+      { _id: params.id, userId: decoded.id },
+      { title, content, ...(imageUrl && { image: imageUrl }) },
+      { new: true }
     );
+
+    if (!updated) return NextResponse.json({ error: "Not found or unauthorized" }, { status: 404 });
+    return NextResponse.json(updated, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to update post" }, { status: 500 });
+  }
+}
+
+// DELETE post
+export async function DELETE(req, { params }) {
+  try {
+    await connectDB();
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader?.startsWith("Bearer "))
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const token = authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const deleted = await Post.findOneAndDelete({ _id: params.id, userId: decoded.id });
+    if (!deleted) return NextResponse.json({ error: "Not found or unauthorized" }, { status: 404 });
+
+    return NextResponse.json({ message: "Post deleted" }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to delete post" }, { status: 500 });
   }
 }
