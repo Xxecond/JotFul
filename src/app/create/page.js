@@ -33,13 +33,14 @@ export default function CreateBlog() {
         method: "POST",
         body: formData,
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`, // replace with your auth logic
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
 
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || "Failed to create post");
 
+      alert("Post created successfully!");
       router.push("/home");
     } catch (err) {
       alert(err.message);
