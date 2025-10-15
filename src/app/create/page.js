@@ -29,7 +29,7 @@ export default function CreateBlog() {
         formData.append("image", fileInputRef.current.files[0]);
       }
 
-      const res = await fetch("/api/posts", {
+     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts`, {
         method: "POST",
         body: formData,
         headers: {
