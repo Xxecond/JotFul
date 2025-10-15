@@ -2,8 +2,6 @@
 import Post from "@/models/Post";
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
-import formidable from "formidable";
-import fs from "fs";
 import { v2 as cloudinary } from "cloudinary";
 
 // Cloudinary config
@@ -12,18 +10,6 @@ cloudinary.config({
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
-
-export const config = { api: { bodyParser: false } };
-
-// Parse incoming form data
-const parseForm = (req) =>
-  new Promise((resolve, reject) => {
-    const form = new formidable.IncomingForm();
-    form.parse(req, (err, fields, files) => {
-      if (err) reject(err);
-      else resolve({ fields, files });
-    });
-  });
 
 // ✅ GET one post
 export async function GET(req, { params }) {
@@ -35,6 +21,7 @@ export async function GET(req, { params }) {
 
     return NextResponse.json(post, { status: 200 });
   } catch (error) {
+    console.error("GET /api/posts/[id] error:", error);
     return NextResponse.json({ error: "Failed to load post" }, { status: 500 });
   }
 }
@@ -44,17 +31,22 @@ export async function PUT(req, { params }) {
   try {
     await connectDB();
 
+    // Verify token
     const authHeader = req.headers.get("authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
     const token = authHeader.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    const { fields, files } = await parseForm(req);
-    const { title, content, removeImage } = fields;
+    // Parse formData (Next.js built-in)
+    const formData = await req.formData();
+    const title = formData.get("title");
+    const content = formData.get("content");
+    const removeImage = formData.get("removeImage");
+    const image = formData.get("image");
 
+    // Check required fields
     if (!title || !content) {
       return NextResponse.json(
         { error: "Title and content are required" },
@@ -62,27 +54,36 @@ export async function PUT(req, { params }) {
       );
     }
 
-    let post = await Post.findOne({ _id: params.id, userId: decoded.id });
+    // Find post by user and id
+    const post = await Post.findOne({ _id: params.id, userId: decoded.id });
     if (!post)
       return NextResponse.json(
         { error: "Not found or unauthorized" },
         { status: 404 }
       );
 
-    let imageUrl = post.image; // keep existing image by default
+    // Keep existing image unless changed
+    let imageUrl = post.image;
 
-    // If new image is uploaded
-    if (files.image) {
-      const uploadResult = await cloudinary.uploader.upload(
-        files.image.filepath,
-        { folder: "blog_images" }
-      );
+    // If a new image is uploaded
+    if (image && typeof image === "object") {
+      const bytes = await image.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+
+      const uploadResult = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "blog_images" },
+          (err, result) => (err ? reject(err) : resolve(result))
+        );
+        stream.end(buffer);
+      });
+
       imageUrl = uploadResult.secure_url;
+    } else if (removeImage === "true") {
+      imageUrl = "";
     }
 
-    // If removeImage is true, clear it
-    if (removeImage === "true") imageUrl = "";
-
+    // Update fields
     post.title = title;
     post.content = content;
     post.image = imageUrl;
@@ -123,6 +124,10 @@ export async function DELETE(req, { params }) {
 
     return NextResponse.json({ message: "Post deleted" }, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ error: "Failed to delete post" }, { status: 500 });
+    console.error("DELETE /api/posts/[id] error:", error);
+    return NextResponse.json(
+      { error: "Failed to delete post" },
+      { status: 500 }
+    );
   }
 }
