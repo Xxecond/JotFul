@@ -2,14 +2,6 @@
 import Post from "@/models/Post";
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
-import { v2 as cloudinary } from "cloudinary";
-
-// Cloudinary configuration
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
 
 // ✅ GET all posts for a user
 export async function GET(req) {
@@ -32,12 +24,12 @@ export async function GET(req) {
   }
 }
 
-// ✅ CREATE post
+// ✅ CREATE post (frontend already uploads to Cloudinary)
 export async function POST(req) {
   try {
     await connectDB();
 
-    // Verify user token
+    // Verify token
     const authHeader = req.headers.get("authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -46,11 +38,8 @@ export async function POST(req) {
     const token = authHeader.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // ✅ Use formData() instead of formidable
-    const formData = await req.formData();
-    const title = formData.get("title");
-    const content = formData.get("content");
-    const image = formData.get("image");
+    // ✅ Parse JSON body (frontend sends JSON, not formData)
+    const { title, content, image } = await req.json();
 
     if (!title || !content) {
       return NextResponse.json(
@@ -59,30 +48,11 @@ export async function POST(req) {
       );
     }
 
-    let imageUrl = "";
-
-    // If user uploaded an image
-    if (image && typeof image === "object") {
-      const bytes = await image.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-
-      // Upload to Cloudinary
-      const uploadResult = await new Promise((resolve, reject) => {
-        const stream = cloudinary.uploader.upload_stream(
-          { folder: "blog_images" },
-          (err, result) => (err ? reject(err) : resolve(result))
-        );
-        stream.end(buffer);
-      });
-
-      imageUrl = uploadResult.secure_url;
-    }
-
-    // Save post in MongoDB
+    // ✅ Save post with Cloudinary image URL (already uploaded)
     const post = await Post.create({
       title,
       content,
-      image: imageUrl,
+      image, // Cloudinary secure_url sent from frontend
       userId: decoded.id,
     });
 
