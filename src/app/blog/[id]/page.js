@@ -1,4 +1,4 @@
-"use client";
+ "use client";
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
@@ -46,12 +46,21 @@ export default function BlogDetails() {
     <div className="max-w-3xl mx-auto p-6 mt-10 bg-white shadow-md rounded-xl">
       <h2 className="text-3xl font-semibold mb-4 text-gray-800">{blog.title}</h2>
 
-   <Image
-  src={blog.image?.startsWith("/") ? blog.image : `/assets/${blog.image}`}
-  alt={blog.title}
-  width={600}
-  height={400}
-/>
+      {blog.image && (
+        <div className="mb-6">
+          <Image
+            src={
+              blog.image.startsWith("http") || blog.image.startsWith("/")
+                ? blog.image
+                : `/assets/${blog.image}`
+            }
+            alt={blog.title}
+            width={600}
+            height={400}
+            className="rounded-lg object-cover w-full h-80"
+          />
+        </div>
+      )}
 
       <p className="text-gray-700 leading-relaxed">
         {blog.body || blog.content}

@@ -9,41 +9,66 @@ export default function CreateBlog() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
+  const [loading, setLoading] = useState(false);
   const fileInputRef = useRef(null);
   const router = useRouter();
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    setImagePreview(URL.createObjectURL(file)); // preview only
+    setImagePreview(URL.createObjectURL(file)); // For preview only
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const formData = new FormData();
-      formData.append("title", title);
-      formData.append("content", content);
+      setLoading(true);
+
+      let imageUrl = "";
+
+      // ✅ Upload image to Cloudinary first
       if (fileInputRef.current?.files[0]) {
-        formData.append("image", fileInputRef.current.files[0]);
+        const data = new FormData();
+        data.append("file", fileInputRef.current.files[0]);
+        data.append("upload_preset", "blog_upload"); // 👈 from Cloudinary settings
+
+        const uploadRes = await fetch(
+          "https://api.cloudinary.com/v1_1/dgylk90yt/image/upload", // 👈 replace with your Cloud name
+          {
+            method: "POST",
+            body: data,
+          }
+        );
+
+        const uploadData = await uploadRes.json();
+        if (!uploadRes.ok) throw new Error("Image upload failed");
+        imageUrl = uploadData.secure_url; // ✅ Cloudinary image URL
       }
 
-     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts`, {
+      // ✅ Send post data (with Cloudinary URL) to backend
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts`, {
         method: "POST",
-        body: formData,
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
+        body: JSON.stringify({
+          title,
+          content,
+          image: imageUrl,
+        }),
       });
 
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || "Failed to create post");
 
-      alert("Post created successfully!");
+      alert("✅ Post created successfully!");
       router.push("/home");
     } catch (err) {
-      alert(err.message);
+      alert(`Error: ${err.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -113,9 +138,14 @@ export default function CreateBlog() {
 
           <button
             type="submit"
-            className="w-full py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-all"
+            disabled={loading}
+            className={`w-full py-3 text-white font-medium rounded-lg transition-all ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700"
+            }`}
           >
-            Add Blog
+            {loading ? "Uploading..." : "Add Blog"}
           </button>
         </form>
       </section>

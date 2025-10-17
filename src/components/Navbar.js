@@ -25,14 +25,15 @@ function Spin({open, setOpen, className}){
         }`}
       />
     </button>
+
   )
 }
-export default function Navbar() {
+export default function Navbar({first, second} ) {
   const [open, setOpen] = useState(false);
 const [textColor, setTextColor] =useState(false);
 
     const navMenu = [
-    { id: 1, href: "/", text: "Home" },
+    { id: 1, href: "/home", text: "Home" },
     { id: 2, href: "/create", text: "Create Blog" },
     { id: 3, href: "/about",  text: "About" },
     { id: 4, href: "/logout", text: "Logout" },
@@ -47,8 +48,10 @@ useEffect(()=>{
   return () => clearTimeout(timer);
 }
 }, [open]);
-return(
-        <nav>
+        
+          if(first ==="icon"){
+        return(
+           <>
   <Spin setOpen={setOpen}  open={open}
    className={`z-50 relative transition-all duration-1000`} />
     <div
@@ -84,9 +87,20 @@ return(
               )}
               </ul>
             </nav>
+
           </div>
         </div>
-      
- </nav>
-);
-}
+        </>)}
+
+         if(second==="plain"){
+        return(<>
+    <nav>
+      <ul className="flex space-x-4 px-5">
+      {navMenu.map((item)=> 
+      <li key={item.id} className="text-lg tracking-tight text-white">
+        <Link href={item.href}>{item.text}
+        </Link>
+        </li>)}
+    </ul>
+    </nav>
+      </>)}}
