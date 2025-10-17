@@ -33,7 +33,7 @@ export default function CreateBlog() {
         data.append("upload_preset", "blog_upload");
 
         const uploadRes = await fetch(
-          "https://api.cloudinary.com/v1_1/<your_cloud_name>/image/upload",
+          "https://api.cloudinary.com/v1_1/dgylk90yt/image/upload",
           {
             method: "POST",
             body: data,
