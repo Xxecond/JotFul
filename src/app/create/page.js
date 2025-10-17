@@ -16,7 +16,7 @@ export default function CreateBlog() {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    setImagePreview(URL.createObjectURL(file)); // For preview only
+    setImagePreview(URL.createObjectURL(file));
   };
 
   const handleSubmit = async (e) => {
@@ -25,39 +25,20 @@ export default function CreateBlog() {
     try {
       setLoading(true);
 
-      let imageUrl = "";
-
-      // ✅ Upload image to Cloudinary first
+      // ✅ Build FormData to match backend expectation
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("content", content);
       if (fileInputRef.current?.files[0]) {
-        const data = new FormData();
-        data.append("file", fileInputRef.current.files[0]);
-        data.append("upload_preset", "blog_upload"); // 👈 from Cloudinary settings
-
-        const uploadRes = await fetch(
-          "https://api.cloudinary.com/v1_1/dgylk90yt/image/upload", // 👈 replace with your Cloud name
-          {
-            method: "POST",
-            body: data,
-          }
-        );
-
-        const uploadData = await uploadRes.json();
-        if (!uploadRes.ok) throw new Error("Image upload failed");
-        imageUrl = uploadData.secure_url; // ✅ Cloudinary image URL
+        formData.append("image", fileInputRef.current.files[0]);
       }
 
-      // ✅ Send post data (with Cloudinary URL) to backend
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({
-          title,
-          content,
-          image: imageUrl,
-        }),
+        body: formData, // 👈 Send as multipart/form-data (NO Content-Type header)
       });
 
       const result = await res.json();
