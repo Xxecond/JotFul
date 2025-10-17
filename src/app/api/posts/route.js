@@ -24,21 +24,28 @@ export async function GET(req) {
   }
 }
 
-// ✅ CREATE new post (receives JSON from frontend)
+// ✅ CREATE new post
 export async function POST(req) {
   try {
     await connectDB();
 
-    const authHeader = req.headers.get("authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // 🔎 Debug: see exactly what body is sent
+    const rawBody = await req.text();
+    console.log("Raw body:", rawBody);
+
+    // ✅ Parse JSON body
+    let parsedBody;
+    try {
+      parsedBody = JSON.parse(rawBody);
+    } catch (err) {
+      return NextResponse.json(
+        { error: "Invalid JSON body" },
+        { status: 400 }
+      );
     }
 
-    const token = authHeader.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    // ✅ Parse JSON body (frontend sends JSON, not FormData)
-    const { title, content, image } = await req.json();
+    const { title, content, image } = parsedBody;
+    console.log("Parsed body:", { title, content, image });
 
     if (!title || !content || !image) {
       return NextResponse.json(
@@ -47,11 +54,20 @@ export async function POST(req) {
       );
     }
 
+    // ✅ Verify Authorization
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const token = authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
     // ✅ Save post to MongoDB
     const post = await Post.create({
       title,
       content,
-      image,
+      image, // Cloudinary URL
       userId: decoded.id,
     });
 
