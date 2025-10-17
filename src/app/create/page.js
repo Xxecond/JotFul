@@ -1,6 +1,6 @@
  "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Header from "@/components/Header";
@@ -9,13 +9,14 @@ export default function CreateBlog() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null); // ✅ store file
   const [loading, setLoading] = useState(false);
-  const fileInputRef = useRef(null);
   const router = useRouter();
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    setSelectedFile(file); // ✅ store selected file
     setImagePreview(URL.createObjectURL(file));
   };
 
@@ -26,44 +27,33 @@ export default function CreateBlog() {
     try {
       let imageUrl = "";
 
-      // ✅ Upload image to Cloudinary first
-      if (fileInputRef.current?.files[0]) {
+      if (selectedFile) {
         const data = new FormData();
-        data.append("file", fileInputRef.current.files[0]);
+        data.append("file", selectedFile);
         data.append("upload_preset", "blog_upload");
 
         const uploadRes = await fetch(
           "https://api.cloudinary.com/v1_1/dgylk90yt/image/upload",
-          {
-            method: "POST",
-            body: data,
-          }
+          { method: "POST", body: data }
         );
 
         const uploadData = await uploadRes.json();
         console.log("Cloudinary upload result:", uploadData);
 
-        if (!uploadData.secure_url) {
-          throw new Error("Cloudinary upload failed. Check preset and cloud name.");
-        }
+        if (!uploadData.secure_url) throw new Error("Cloudinary upload failed");
 
         imageUrl = uploadData.secure_url;
       } else {
         throw new Error("No image selected");
       }
 
-      // ✅ Send JSON to backend
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({
-          title,
-          content,
-          image: imageUrl,
-        }),
+        body: JSON.stringify({ title, content, image: imageUrl }),
       });
 
       const result = await res.json();
@@ -100,16 +90,13 @@ export default function CreateBlog() {
             className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
           />
 
-          {!imagePreview && (
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              ref={fileInputRef}
-              required
-              className="block w-full mb-4 text-sm text-gray-600 border border-gray-300 rounded-lg cursor-pointer focus:ring-2 focus:ring-blue-500"
-            />
-          )}
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            required
+            className="block w-full mb-4 text-sm text-gray-600 border border-gray-300 rounded-lg cursor-pointer focus:ring-2 focus:ring-blue-500"
+          />
 
           {imagePreview && (
             <div className="mb-4 text-center">
@@ -125,7 +112,7 @@ export default function CreateBlog() {
                 type="button"
                 onClick={() => {
                   setImagePreview(null);
-                  fileInputRef.current.value = null;
+                  setSelectedFile(null); // ✅ reset selected file
                 }}
                 className="px-3 py-1 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all"
               >
