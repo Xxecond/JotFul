@@ -47,7 +47,7 @@ export default function CreateBlog() {
         throw new Error("No image selected");
       }
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts`, {
+      const res = await fetch("/api/posts", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
