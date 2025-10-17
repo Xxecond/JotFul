@@ -26,7 +26,7 @@ export default function CreateBlog() {
     try {
       let imageUrl = "";
 
-      // ✅ Upload to Cloudinary first
+      // ✅ Upload image to Cloudinary first
       if (fileInputRef.current?.files[0]) {
         const data = new FormData();
         data.append("file", fileInputRef.current.files[0]);
@@ -41,10 +41,18 @@ export default function CreateBlog() {
         );
 
         const uploadData = await uploadRes.json();
-        imageUrl = uploadData.secure_url; // ✅ Cloudinary URL
+        console.log("Cloudinary upload result:", uploadData);
+
+        if (!uploadData.secure_url) {
+          throw new Error("Cloudinary upload failed. Check preset and cloud name.");
+        }
+
+        imageUrl = uploadData.secure_url;
+      } else {
+        throw new Error("No image selected");
       }
 
-      // ✅ Send JSON (not FormData) to backend
+      // ✅ Send JSON to backend
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts`, {
         method: "POST",
         headers: {
@@ -65,6 +73,7 @@ export default function CreateBlog() {
       router.push("/home");
     } catch (err) {
       alert(`Error: ${err.message}`);
+      console.error(err);
     } finally {
       setLoading(false);
     }
