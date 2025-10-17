@@ -4,11 +4,12 @@ const postSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     content: { type: String, required: true },
+    image: { type: String, required: true },
 
     // 🔗 Link each post to a user
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // Must match the model name in user.js
+      ref: "User",
       required: true,
     },
   },
