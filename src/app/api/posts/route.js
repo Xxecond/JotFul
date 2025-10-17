@@ -24,12 +24,11 @@ export async function GET(req) {
   }
 }
 
-// ✅ CREATE post (frontend already uploads to Cloudinary)
+// ✅ CREATE new post (receives JSON from frontend)
 export async function POST(req) {
   try {
     await connectDB();
 
-    // Verify token
     const authHeader = req.headers.get("authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -38,21 +37,21 @@ export async function POST(req) {
     const token = authHeader.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // ✅ Parse JSON body (frontend sends JSON, not formData)
+    // ✅ Parse JSON body (frontend sends JSON, not FormData)
     const { title, content, image } = await req.json();
 
-    if (!title || !content) {
+    if (!title || !content || !image) {
       return NextResponse.json(
-        { error: "Title and content are required" },
+        { error: "Title, content, and image are required" },
         { status: 400 }
       );
     }
 
-    // ✅ Save post with Cloudinary image URL (already uploaded)
+    // ✅ Save post to MongoDB
     const post = await Post.create({
       title,
       content,
-      image, // Cloudinary secure_url sent from frontend
+      image,
       userId: decoded.id,
     });
 

@@ -21,24 +21,41 @@ export default function CreateBlog() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
-      setLoading(true);
+      let imageUrl = "";
 
-      // ✅ Build FormData to match backend expectation
-      const formData = new FormData();
-      formData.append("title", title);
-      formData.append("content", content);
+      // ✅ Upload to Cloudinary first
       if (fileInputRef.current?.files[0]) {
-        formData.append("image", fileInputRef.current.files[0]);
+        const data = new FormData();
+        data.append("file", fileInputRef.current.files[0]);
+        data.append("upload_preset", "blog_upload");
+
+        const uploadRes = await fetch(
+          "https://api.cloudinary.com/v1_1/<your_cloud_name>/image/upload",
+          {
+            method: "POST",
+            body: data,
+          }
+        );
+
+        const uploadData = await uploadRes.json();
+        imageUrl = uploadData.secure_url; // ✅ Cloudinary URL
       }
 
+      // ✅ Send JSON (not FormData) to backend
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts`, {
         method: "POST",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: formData, // 👈 Send as multipart/form-data (NO Content-Type header)
+        body: JSON.stringify({
+          title,
+          content,
+          image: imageUrl,
+        }),
       });
 
       const result = await res.json();
