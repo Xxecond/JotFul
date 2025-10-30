@@ -7,17 +7,17 @@ export default function Header() {
   const pathname = usePathname();
 
   const headings = {
-    "/home": "FOOTBALL INSIDER",
-    "/create": "New Blog",
-    "/edit": "Edit Blog",
-    "/about": "About",
+    "/home": "JOTFUL",
+    "/create": "New Jot",
+    "/edit": "Edit Jot",
+    "/info": "Info",
   };
 
   const pageName = headings[pathname] || "Page";
 
   return (<>
-<header className="sticky bg-gray-950 text-white py-5">
-     <div className="md:hidden absolute top-2 z-55">
+<header className="sticky bg-cyan-600 text-white py-5">
+     <div className="md:hidden absolute top-0 -left-4 z-55">
       <Navbar first="icon" />
      </div>
       <div className="hidden md:block absolute top-5 right-0 z-55">

@@ -54,15 +54,15 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="flex min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 items-center justify-center px-4">
-      <div className="flex flex-col md:flex-row bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-4xl">
+    <main className="flex min-h-screen bg-gradient-to-br from-cyan-50 to-gray-100 items-center justify-center px-4">
+      <div className="flex flex-col md:flex-row bg-gray-200 rounded-2xl shadow-2xl overflow-hidden w-full max-w-4xl">
         {/* Left section – Illustration */}
-        <div className="hidden md:flex flex-col justify-center items-center bg-blue-600 text-white p-10 w-1/2">
-          <h2 className="text-4xl font-bold mb-4">Blogger Web</h2>
-          <p className="text-sm text-blue-100 text-center leading-relaxed">
+        <div className="hidden md:flex flex-col justify-center items-center bg-cyan-600 text-white p-10 w-1/2">
+          <h2 className="text-4xl font-bold mb-4">JotFul✍️</h2>
+          <p className="text-sm text-cyan-100 text-center leading-relaxed">
             Sign in to manage your posts, connect with your readers, and keep your thoughts flowing.
           </p>
-          <div className="mt-8 bg-white rounded-xl p-4">
+          <div className="mt-8 bg-white rounded-xl">
             <Image
               src="/assets/green.jpg"
               alt="QR code placeholder"
@@ -74,7 +74,7 @@ export default function LoginPage() {
         </div>
 
         {/* Right section – Form */}
-        <div className="flex-1 p-8 md:p-12">
+        <div className="mx-5 flex-1 p-12">
           <h1 className="text-3xl font-semibold text-center text-gray-800 mb-6">
             Welcome Back 👋
           </h1>
@@ -88,7 +88,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="example@email.com"
                 required
-                className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500"
               />
             </div>
 
@@ -101,7 +101,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
-                  className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500"
                 />
                 <button
                   type="button"
@@ -122,21 +122,21 @@ export default function LoginPage() {
                 />
                 Remember me
               </label>
-              <Link href="/forgot-password" className="text-blue-600 hover:underline">
+              <Link href="/forgot-password" className="text-cyan-600 hover:underline">
                 Forgot password?
               </Link>
             </div>
 
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+              className="w-full bg-cyan-600 text-white py-2 rounded-lg hover:bg-cyan-700 transition"
             >
               Sign In
             </button>
 
             <p className="text-center text-sm text-gray-600 mt-4">
               New here?{" "}
-              <Link href="/signup" className="text-blue-600 hover:underline">
+              <Link href="/signup" className="text-cyan-600 hover:underline">
                 Create account
               </Link>
             </p>
@@ -152,7 +152,7 @@ export default function LoginPage() {
             )}
 
             <p className="text-center text-sm text-gray-600 mt-4">
-              ← <Link href="/" className="text-blue-600 hover:underline">Back to Home</Link>
+              ← <Link href="/" className="text-cyan-600 hover:underline">Back to Home</Link>
             </p>
           </form>
         </div>

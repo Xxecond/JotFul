@@ -1,4 +1,4 @@
- "use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -51,7 +51,7 @@ export default function Home() {
 
   return (
     <>
-      <Header />
+      <Header className="z-90" />
       <SearchBar setSearchTerm={setSearchTerm} />
       <section className="home px-4 py-6">
         {filtered.length > 0 ? (
@@ -69,7 +69,7 @@ export default function Home() {
           <div className="text-center mt-40">
             <Link
               href="/create"
-              className="px-5 py-3 bg-blue-900 text-white rounded-lg hover:bg-blue-700 transition-all"
+              className="px-5 py-3 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 transition-all"
             >
               CREATE NEW BLOG
             </Link>

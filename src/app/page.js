@@ -3,16 +3,15 @@
 import Button from "@/components/Button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
+
 export default function LandingPage() {
 const pathname = usePathname();
 
   return (
-    
-    <div className="flex flex-col min-h-screen">
-  <nav className="w-full bg-white shadow-md px-6 md:px-16 py-4 flex justify-end items-center">
+    <div>
+    <nav className="bg-white shadow-xl px-6 md:px-16 py-4 flex justify-end ">
     <div className="flex items-center gap-6 text-gray-700 font-medium">
-          
-    
               <Link href="/login" className={(pathname, "/login")}>
               Login
             </Link>
@@ -21,22 +20,43 @@ const pathname = usePathname();
             </Link>
       </div>
     </nav>
-
-      <main className="flex flex-col justify-center items-center flex-grow text-center px-6 bg-gradient-to-b from-indigo-100 to-white">
-        <h1 className="text-5xl font-bold mb-4">Welcome to My Blog</h1>
-        <p className="text-lg text-gray-700 mb-8 max-w-xl">
-          Share your stories, inspire others, and explore amazing ideas — all in one place.
-        </p>
-
-        <div className="flex gap-4">
+      <section className=" flex h-185 justify-center text-center bg-white">
+        <div className="md:w-1/2 py-30 ">
+        <h1 className="text-5xl font-light leading-loose  ">Capture ideas✨,<br />Stay Organised 📁,<br /> Be JotFul✍️</h1>
+        <div className="flex pt-15 gap-4 justify-center">
           <Link href="/signup">
-            <Button>Get Started</Button>
+            <Button>Enter Jot</Button>
           </Link>
           <Link href="/login">
             <Button variant="outline">Log In</Button>
           </Link>
         </div>
-      </main>
+        </div>
+          <div className="w-1/2 relative md:block hidden">
+            <Image
+            alt="land-pic"
+            src="/assets/b.jpg"
+            fill className="object-cover" />
+          </div>
+ </section>       
+ <footer className=" h-50  bg-cyan-600 text-gray-100">
+  <section className="flex p-9 gap-9">
+    <div className="relative h-10 md:h-20 w-30">
+    <Image src="/assets/b.jpg"
+    alt="logo"
+    fill
+     />
+    </div>
+  <p className="">Jotful helps you note, plan and manage your thoughts all in one simple beautiful space. <br className="hidden md:block" />Write freely, sync instantly, and stay productive wherever you go</p>
+</section>
+<div className="border-t border-t-white">
+  <p className="text-center py-4 
+text-sm text-right font-light pr-5">
+        © {new Date().getFullYear()} Jotful. All rights reserved.
+      </p>
+
+</div>
+ </footer>
     </div>
   );
 }

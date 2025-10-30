@@ -1,4 +1,4 @@
- "use client";
+"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -9,14 +9,14 @@ export default function CreateBlog() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null); // ✅ store file
+  const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    setSelectedFile(file); // ✅ store selected file
+    setSelectedFile(file);
     setImagePreview(URL.createObjectURL(file));
   };
 
@@ -30,12 +30,12 @@ export default function CreateBlog() {
       if (selectedFile) {
         const data = new FormData();
         data.append("file", selectedFile);
-        data.append("upload_preset", "blog_upload");
+        data.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_PRESET);
 
-        const uploadRes = await fetch(
-          "https://api.cloudinary.com/v1_1/dgylk90yt/image/upload",
-          { method: "POST", body: data }
-        );
+        const uploadRes = await fetch(process.env.NEXT_PUBLIC_CLOUDINARY_URL, {
+          method: "POST",
+          body: data,
+        });
 
         const uploadData = await uploadRes.json();
         console.log("Cloudinary upload result:", uploadData);
@@ -112,7 +112,7 @@ export default function CreateBlog() {
                 type="button"
                 onClick={() => {
                   setImagePreview(null);
-                  setSelectedFile(null); // ✅ reset selected file
+                  setSelectedFile(null);
                 }}
                 className="px-3 py-1 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all"
               >

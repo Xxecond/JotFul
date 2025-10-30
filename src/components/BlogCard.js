@@ -12,7 +12,7 @@ export default function BlogCard({ blog, onDelete }) {
 
   useEffect(() => {
     if (contentRef.current) {
-      const el = contentRef.current;
+       el = contentRef.current;
       setIsOverflowing(el.scrollHeight > el.clientHeight);
     }
   }, [blog?.content]);
@@ -42,12 +42,12 @@ export default function BlogCard({ blog, onDelete }) {
 
       {/* Image */}
       {blog.image && (
-        <div className="w-full h-[60vh] relative">
+        <div className="w-full h-[60vh] relative ">
           <Image
             src={blog.image}
             alt={blog.title || "Blog image"}
             fill
-            className="object-cover"
+            className="object-cover z-1  absolute"
           />
         </div>
       )}

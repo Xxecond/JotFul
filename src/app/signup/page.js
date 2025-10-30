@@ -45,12 +45,12 @@ export default function SignupPage() {
   };
 
   return (
-    <main className="flex min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 items-center justify-center px-4">
-      <div className="flex flex-col md:flex-row bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-4xl">
+    <main className="flex min-h-screen bg-gradient-to-br from-cyan-50 to-gray-300 items-center justify-center px-4">
+      <div className="flex flex-col md:flex-row bg-gray-200 rounded-2xl shadow-2xl overflow-hidden w-full max-w-4xl">
         {/* Left section – Illustration */}
-        <div className="hidden md:flex flex-col justify-center items-center bg-blue-600 text-white p-10 w-1/2">
+        <div className="hidden md:flex flex-col justify-center items-center bg-cyan-600 text-white p-10 w-1/2">
           <h2 className="text-4xl font-bold mb-4">Join Blogger Web</h2>
-          <p className="text-sm text-blue-100 text-center leading-relaxed">
+          <p className="text-sm text-cyan-100 text-center leading-relaxed">
             Create your account, share your stories, and inspire your readers — all in one place.
           </p>
           <Image
@@ -63,7 +63,7 @@ export default function SignupPage() {
         </div>
 
         {/* Right section – Form */}
-        <div className="flex-1 p-8 md:p-12">
+        <div className="mx-5 rounded-xl md:mx-0 flex-1 p-12 ">
           <h1 className="text-3xl font-semibold text-center text-gray-800 mb-6">
             Create an Account ✨
           </h1>
@@ -78,7 +78,7 @@ export default function SignupPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="example@email.com"
                 required
-                className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500"
               />
             </div>
 
@@ -92,14 +92,14 @@ export default function SignupPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
-                  className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
                 >
-                  {showPassword ? "🙈" : "👁️"}
+                  {showPassword ? "hide" : "show"}
                 </button>
               </div>
             </div>
@@ -119,7 +119,7 @@ export default function SignupPage() {
             {/* Submit */}
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+              className="w-full bg-cyan-600 text-white py-2 rounded-lg hover:bg-cyan-700 transition"
             >
               Sign Up
             </button>
@@ -127,7 +127,7 @@ export default function SignupPage() {
             {/* Footer */}
             <p className="text-center text-sm text-gray-600 mt-4">
               Already have an account?{" "}
-              <Link href="/login" className="text-blue-600 hover:underline">
+              <Link href="/login" className="text-cyan-600 hover:underline">
                 Log In
               </Link>
             </p>
@@ -145,7 +145,7 @@ export default function SignupPage() {
 
             <p className="text-center text-sm text-gray-600 mt-4">
               ←{" "}
-              <Link href="/" className="text-blue-600 hover:underline">
+              <Link href="/" className="text-cyan-600 hover:underline">
                 Back to Home
               </Link>
             </p>
