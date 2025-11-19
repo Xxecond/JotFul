@@ -12,7 +12,7 @@ export default function BlogCard({ blog, onDelete }) {
 
   useEffect(() => {
     if (contentRef.current) {
-       el = contentRef.current;
+    const   el = contentRef.current;
       setIsOverflowing(el.scrollHeight > el.clientHeight);
     }
   }, [blog?.content]);

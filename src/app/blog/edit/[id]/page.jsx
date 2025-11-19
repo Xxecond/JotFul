@@ -1,11 +1,19 @@
- "use client";
+"use client";
 
 import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Header from "@/components/Header";
+import { getPostById, updatePost } from "@/lib/postService";
+import {useAuth} from "@/hooks"
 
 export default function EditBlog() {
+ {/*useEffect(()=>{
+if(!user) router.push("/login");
+}, [user]) 
+
+if (!user) return null*/}
+
   const { id } = useParams();
   const router = useRouter();
   const [title, setTitle] = useState("");
@@ -21,10 +29,7 @@ export default function EditBlog() {
 
     const fetchBlog = async () => {
       try {
-        const res = await fetch(`/api/posts/${id}`);
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Failed to load blog");
-
+        const data = await getPostById(id);
         setTitle(data.title || "");
         setContent(data.content || "");
         if (data.image) {
@@ -32,7 +37,7 @@ export default function EditBlog() {
           setExistingImage(data.image);
         }
       } catch (err) {
-        alert(err.message);
+        alert(err.message || "Failed to load blog");
         router.push("/home");
       } finally {
         setLoading(false);
@@ -45,64 +50,47 @@ export default function EditBlog() {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    setImagePreview(URL.createObjectURL(file)); // For preview
+    setImagePreview(URL.createObjectURL(file));
   };
 
   const handleRemoveImage = () => {
     setImagePreview(null);
-    fileInputRef.current.value = null;
+    if (fileInputRef.current) fileInputRef.current.value = null;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setUploading(true);
 
     try {
-      setUploading(true);
-      let imageUrl = existingImage; // default to old image
+      let imageUrl = existingImage;
 
-      // ✅ Upload new image to Cloudinary if changed
+      // Upload new image via API route if changed
       if (fileInputRef.current?.files[0]) {
-        const data = new FormData();
-        data.append("file", fileInputRef.current.files[0]);
-        data.append("upload_preset", "blog_upload"); // 👈 from Cloudinary settings
+        const formData = new FormData();
+        formData.append("file", fileInputRef.current.files[0]);
 
-        const uploadRes = await fetch(
-          "https://api.cloudinary.com/v1_1/dgylk90yt/image/upload", // 👈 replace with your Cloud name
-          {
-            method: "POST",
-            body: data,
-          }
-        );
+        const uploadRes = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
 
         const uploadData = await uploadRes.json();
-        if (!uploadRes.ok) throw new Error("Image upload failed");
-        imageUrl = uploadData.secure_url; // ✅ Cloudinary URL
+        if (!uploadData.url) throw new Error("Cloudinary upload failed");
+
+        imageUrl = uploadData.url;
       } else if (imagePreview === null) {
-        // If user removed image
+        // Image was removed
         imageUrl = "";
       }
 
-      // ✅ Send update request with Cloudinary image URL
-      const res = await fetch(`/api/posts/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
-          title,
-          content,
-          image: imageUrl,
-        }),
-      });
-
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.error || "Failed to update post");
+      await updatePost(id, { title, content, image: imageUrl });
 
       alert("✅ Blog updated successfully!");
       router.push("/home");
     } catch (err) {
       alert(`Error: ${err.message}`);
+      console.error(err);
     } finally {
       setUploading(false);
     }
@@ -136,15 +124,15 @@ export default function EditBlog() {
             className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
           />
 
-          {!imagePreview && (
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              ref={fileInputRef}
-              className="block w-full mb-4 text-sm text-gray-600 border border-gray-300 rounded-lg cursor-pointer focus:ring-2 focus:ring-blue-500"
-            />
-          )}
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            ref={fileInputRef}
+            className={`block w-full mb-4 text-sm text-gray-600 border border-gray-300 rounded-lg cursor-pointer focus:ring-2 focus:ring-blue-500 ${
+              imagePreview ? "hidden" : ""
+            }`}
+          />
 
           {imagePreview && (
             <div className="mb-4 text-center">

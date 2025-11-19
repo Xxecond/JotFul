@@ -1,8 +1,20 @@
  "use client";
 
 import Image from "next/image";
+import {useEffect} from "react";
 import Header from "@/components/Header";
-export default function About() {
+import {useAuth} from "@/hooks";
+import {useRouter} from "next/navigation";
+
+export default function Info() {
+  const {user, loading:authLoading} =useAuth();
+  const router = useRouter();
+
+ useEffect (()=>{
+   if (authLoading) return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  if(!user) router.push("/auth/login")
+
+}, [user, router, authLoading])
   const features = [
     { title: "Daily Football News", desc: "Stay updated with the latest happenings in the football world." },
     { title: "Live Match Updates", desc: "Follow live scores, match highlights, and results." },
@@ -13,7 +25,6 @@ export default function About() {
 
   return (<>
     <Header />
-
     <section className="max-w-4xl mx-auto p-6 mt-10 bg-white shadow-md rounded-xl text-center">
          <div className="space-y-3 mb-6 text-left">
         {features.map(({ title, desc }, i) => (

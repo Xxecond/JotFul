@@ -1,6 +1,6 @@
 "use client"
 
-import Button from "./Button";
+import Button from "@/components";
 
 
 export default function Modal({ message, onCancel, onConfirm,onOpen}){

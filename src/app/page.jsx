@@ -1,10 +1,9 @@
 "use client";
 
-import Button from "@/components/Button";
+import { Button } from "@/components/ui";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-
 export default function LandingPage() {
 const pathname = usePathname();
 
@@ -12,10 +11,10 @@ const pathname = usePathname();
     <div>
     <nav className="bg-white shadow-xl px-6 md:px-16 py-4 flex justify-end ">
     <div className="flex items-center gap-6 text-gray-700 font-medium">
-              <Link href="/login" className={(pathname, "/login")}>
+              <Link href="/auth/login" className={(pathname, "/auth/login")}>
               Login
             </Link>
-            <Link href="/signup" className={(pathname, "/signup")}>
+            <Link href="/auth/signup" className={(pathname, "/auth/signup")}>
               Sign Up
             </Link>
       </div>
@@ -24,11 +23,11 @@ const pathname = usePathname();
         <div className="md:w-1/2 py-30 ">
         <h1 className="text-5xl font-light leading-loose  ">Capture ideas✨,<br />Stay Organised 📁,<br /> Be JotFul✍️</h1>
         <div className="flex pt-15 gap-4 justify-center">
-          <Link href="/signup">
-            <Button>Enter Jot</Button>
+          <Link href="/auth/signup">
+            <Button variant="special">Enter Jot</Button>
           </Link>
-          <Link href="/login">
-            <Button variant="outline">Log In</Button>
+          <Link href="/auth/login">
+            <Button variant="outline" className={"hover:bg-cyan-600 hover:text-white border-cyan-700"}>Log In</Button>
           </Link>
         </div>
         </div>
