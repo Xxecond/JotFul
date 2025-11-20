@@ -60,8 +60,13 @@ export async function updatePost(id, { title, content, image }) {
   formData.append("title", title);
   formData.append("content", content);
 
-  if (image instanceof File) formData.append("image", image);
-  else if (image === "") formData.append("removeImage", "true");
+  if (image instanceof File) {
+    formData.append("image", image); // raw file upload
+  } else if (typeof image === "string" && image) {
+    formData.append("imageUrl", image); // Cloudinary URL string
+  } else if (image === "") {
+    formData.append("removeImage", "true");
+  }
 
   const res = await fetch(`/api/posts/${id}`, {
     method: "PUT",

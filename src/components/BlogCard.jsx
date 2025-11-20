@@ -42,12 +42,12 @@ export default function BlogCard({ blog, onDelete }) {
 
       {/* Image */}
       {blog.image && (
-        <div className="w-full h-[60vh] relative ">
+        <div className="w-full h-[60vh] relative z-0 ">
           <Image
             src={blog.image}
             alt={blog.title || "Blog image"}
             fill
-            className="object-cover z-1  absolute"
+            className="object-cover absolute"
           />
         </div>
       )}

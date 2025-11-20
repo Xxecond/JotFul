@@ -1,118 +1,102 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Header from "@/components/Header";
-import { getPostById, updatePost } from "@/lib/postService";
-import {useAuth} from "@/hooks"
+import { updatePost, getPostById } from "@/lib/postService"; // your post service functions
+import { Spinner, Button } from "@/components/ui";
+import { useAuth } from "@/hooks";
 
-export default function EditBlog() {
- {/*useEffect(()=>{
-if(!user) router.push("/login");
-}, [user]) 
-
-if (!user) return null*/}
-
-  const { id } = useParams();
+export default function EditBlog({ params }) {
+  const { user, loading: authLoading } = useAuth();
   const router = useRouter();
+  const postId = params.id;
+
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
-  const [existingImage, setExistingImage] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [uploading, setUploading] = useState(false);
-  const fileInputRef = useRef(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
+  // Fetch existing post
   useEffect(() => {
-    if (!id) return;
+    if (!authLoading && !user) {
+      router.push("/auth/login");
+      return;
+    }
 
-    const fetchBlog = async () => {
+    const fetchPost = async () => {
       try {
-        const data = await getPostById(id);
-        setTitle(data.title || "");
-        setContent(data.content || "");
-        if (data.image) {
-          setImagePreview(data.image);
-          setExistingImage(data.image);
-        }
+        const post = await getPostById(postId); // fetch from your backend
+        setTitle(post.title);
+        setContent(post.content);
+        setImagePreview(post.image || null);
       } catch (err) {
-        alert(err.message || "Failed to load blog");
-        router.push("/home");
-      } finally {
-        setLoading(false);
+        console.error(err);
       }
     };
 
-    fetchBlog();
-  }, [id, router]);
+    fetchPost();
+  }, [authLoading, user, postId, router]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    setSelectedFile(file);
     setImagePreview(URL.createObjectURL(file));
-  };
-
-  const handleRemoveImage = () => {
-    setImagePreview(null);
-    if (fileInputRef.current) fileInputRef.current.value = null;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setUploading(true);
+    setLoading(true);
 
     try {
-      let imageUrl = existingImage;
+      let imageUrl = imagePreview; // keep existing if no new file
 
-      // Upload new image via API route if changed
-      if (fileInputRef.current?.files[0]) {
+      if (selectedFile) {
+        // Upload new image to Cloudinary
         const formData = new FormData();
-        formData.append("file", fileInputRef.current.files[0]);
+        formData.append("file", selectedFile);
+        formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_PRESET);
 
-        const uploadRes = await fetch("/api/upload", {
+        const uploadRes = await fetch(process.env.NEXT_PUBLIC_CLOUDINARY_URL, {
           method: "POST",
           body: formData,
         });
 
         const uploadData = await uploadRes.json();
-        if (!uploadData.url) throw new Error("Cloudinary upload failed");
+        if (!uploadData.secure_url) throw new Error("Cloudinary upload failed");
 
-        imageUrl = uploadData.url;
-      } else if (imagePreview === null) {
-        // Image was removed
-        imageUrl = "";
+        imageUrl = uploadData.secure_url;
       }
 
-      await updatePost(id, { title, content, image: imageUrl });
+      await updatePost(postId, {
+        title,
+        content,
+        image: imageUrl,
+      });
 
-      alert("✅ Blog updated successfully!");
+      alert("✅ Post updated successfully!");
       router.push("/home");
     } catch (err) {
       alert(`Error: ${err.message}`);
       console.error(err);
     } finally {
-      setUploading(false);
+      setLoading(false);
     }
   };
-
-  if (loading)
-    return (
-      <div className="flex items-center justify-center h-screen text-gray-600">
-        Loading blog...
-      </div>
-    );
 
   return (
     <>
       <Header />
-      <div className="flex items-center justify-center min-h-screen bg-gray-50 p-4">
+      <section className="flex items-center justify-center h-170 bg-white px-10 md:px-5">
         <form
           onSubmit={handleSubmit}
-          className="bg-white shadow-md rounded-lg p-8 w-full max-w-2xl"
+          className="bg-gray-200 shadow-xl rounded-lg p-8 w-full max-w-2xl"
         >
-          <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
-            Edit Blog
+          <h2 className="md:text-xl xl:text-2xl font-bold mb-6 text-center text-black">
+            Edit Jot
           </h2>
 
           <input
@@ -121,22 +105,19 @@ if (!user) return null*/}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+            className="text-sm md:text-base md:text-lg w-full p-2 mb-5 border border-cyan-700 rounded-lg focus:ring-2 focus:ring-cyan-700 outline-none"
           />
 
           <input
             type="file"
             accept="image/*"
             onChange={handleImageChange}
-            ref={fileInputRef}
-            className={`block w-full mb-4 text-sm text-gray-600 border border-gray-300 rounded-lg cursor-pointer focus:ring-2 focus:ring-blue-500 ${
-              imagePreview ? "hidden" : ""
-            }`}
+            className="block mb-4 text-sm xl:text-base text-black border border-cyan-700 rounded-lg cursor-pointer focus:ring-2 focus:ring-blue-500"
           />
 
           {imagePreview && (
             <div className="mb-4 text-center">
-              <div className="relative w-full h-64 mb-3">
+              <div className="relative w-full h-40 md:h-55 xl:h-64 mb-3">
                 <Image
                   src={imagePreview}
                   alt="Preview"
@@ -144,38 +125,39 @@ if (!user) return null*/}
                   className="object-cover rounded-lg"
                 />
               </div>
-              <button
+              <Button
                 type="button"
-                onClick={handleRemoveImage}
-                className="px-3 py-1 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all"
+                variant="destructive"
+                onClick={() => {
+                  setImagePreview(null);
+                  setSelectedFile(null);
+                }}
               >
                 Remove Image
-              </button>
+              </Button>
             </div>
           )}
 
           <textarea
-            placeholder="Content"
+            placeholder="Write your content here..."
             value={content}
             onChange={(e) => setContent(e.target.value)}
             required
             rows="8"
-            className="w-full p-3 mb-6 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+            className="text-sm md:text-base md:text-lg w-full p-3 mb-6 border border-cyan-700 rounded-lg focus:ring-2 focus:ring-cyan-700 outline-none"
           ></textarea>
 
-          <button
-            type="submit"
-            disabled={uploading}
-            className={`w-full py-3 text-white font-medium rounded-lg transition-all ${
-              uploading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700"
-            }`}
-          >
-            {uploading ? "Updating..." : "Update Blog"}
-          </button>
+          <Button type="submit" disabled={loading} variant="special" className="w-full">
+            {loading ? (
+              <span className="flex items-center justify-center gap-3">
+                Updating... <Spinner />
+              </span>
+            ) : (
+              <>Update Jot</>
+            )}
+          </Button>
         </form>
-      </div>
+      </section>
     </>
   );
 }

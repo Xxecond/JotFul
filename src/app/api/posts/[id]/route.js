@@ -1,4 +1,4 @@
- import { connectDB } from "@/lib/db";
+import { connectDB } from "@/lib/db";
 import Post from "@/models/Post";
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
@@ -10,25 +10,6 @@ cloudinary.config({
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
-
-// ✅ GET one post
-export async function GET(req, { params }) {
-  const { id } = params;
-
-  try {
-    await connectDB();
-    const post = await Post.findById(id);
-
-    if (!post) {
-      return NextResponse.json({ error: "Post not found" }, { status: 404 });
-    }
-
-    return NextResponse.json(post, { status: 200 });
-  } catch (error) {
-    console.error("GET /api/posts/[id] error:", error);
-    return NextResponse.json({ error: "Failed to load post" }, { status: 500 });
-  }
-}
 
 // ✅ UPDATE post
 export async function PUT(req, { params }) {
@@ -51,6 +32,7 @@ export async function PUT(req, { params }) {
     const content = formData.get("content");
     const removeImage = formData.get("removeImage");
     const image = formData.get("image");
+    const imageUrlFromFrontend = formData.get("imageUrl"); // <-- NEW
 
     if (!title || !content) {
       return NextResponse.json(
@@ -69,6 +51,8 @@ export async function PUT(req, { params }) {
 
     // Handle image
     let imageUrl = post.image;
+
+    // New file uploaded
     if (image && typeof image === "object") {
       const bytes = await image.arrayBuffer();
       const buffer = Buffer.from(bytes);
@@ -82,7 +66,13 @@ export async function PUT(req, { params }) {
       });
 
       imageUrl = uploadResult.secure_url;
-    } else if (removeImage === "true") {
+    }
+    // Cloudinary URL from frontend
+    else if (imageUrlFromFrontend && typeof imageUrlFromFrontend === "string") {
+      imageUrl = imageUrlFromFrontend;
+    }
+    // Remove image
+    else if (removeImage === "true") {
       imageUrl = "";
     }
 
@@ -95,39 +85,5 @@ export async function PUT(req, { params }) {
   } catch (error) {
     console.error("PUT /api/posts/[id] error:", error);
     return NextResponse.json({ error: "Failed to update post" }, { status: 500 });
-  }
-}
-
-// ✅ DELETE post
-export async function DELETE(req, { params }) {
-  const { id } = params;
-
-  try {
-    await connectDB();
-
-    const authHeader = req.headers.get("authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const token = authHeader.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    const deleted = await Post.findOneAndDelete({
-      _id: id,
-      userId: decoded.id,
-    });
-
-    if (!deleted) {
-      return NextResponse.json(
-        { error: "Not found or unauthorized" },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json({ message: "Post deleted" }, { status: 200 });
-  } catch (error) {
-    console.error("DELETE /api/posts/[id] error:", error);
-    return NextResponse.json({ error: "Failed to delete post" }, { status: 500 });
   }
 }
