@@ -4,7 +4,7 @@ import Link from "next/link";
 import {Button} from "@/components/ui"
 import { BackwardIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
-import {ForgotPasswordForm} from "@/components/ui" 
+import {ForgotPasswordForm} from "@/components/forms" 
 
 export default function ForgotPasswordPage() {
  
