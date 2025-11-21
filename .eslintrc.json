@@ -2,6 +2,23 @@
   "extends": "next/core-web-vitals",
   "env": {
     "browser": true,
-    "node": true
+    "node": true,
+    "es2021": true
+  },
+  "globals": {
+    "Response": "readonly",
+    "URL": "readonly",
+    "fetch": "readonly",
+    "FormData": "readonly",
+    "File": "readonly",
+    "alert": "readonly",
+    "confirm": "readonly",
+    "setTimeout": "readonly",
+    "clearTimeout": "readonly",
+    "localStorage": "readonly",
+    "sessionStorage": "readonly",
+    "console": "readonly",
+    "Buffer": "readonly",
+    "process": "readonly"
   }
 }
