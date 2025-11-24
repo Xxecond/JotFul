@@ -1,0 +1,90 @@
+ // lib/postService.js
+
+// Helper: get token from localStorage safely
+function getAuthToken() {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("token");
+  }
+  return null;
+}
+
+// Helper: prepare headers with optional token
+function getHeaders(contentType = "application/json") {
+  const headers = {};
+  if (contentType) headers["Content-Type"] = contentType;
+
+  const token = getAuthToken();
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+
+  return headers;
+}
+
+// ✅ Create a new post
+export async function createPost(postData) {
+  const token = getAuthToken();
+  if (!token) throw new Error("No token found, please login.");
+
+  const res = await fetch("/api/posts", {
+    method: "POST",
+    headers: getHeaders(), // automatically includes token
+    body: JSON.stringify(postData),
+  });
+
+  if (!res.ok) throw new Error(`Failed to create post: ${res.status}`);
+  return res.json();
+}
+
+// ✅ Get a single post by ID
+export async function getPostById(id) {
+  const res = await fetch(`/api/posts/${id}`, {
+    headers: getHeaders(),
+  });
+
+  if (!res.ok) throw new Error(`Failed to fetch post: ${res.status}`);
+  return res.json();
+}
+
+// ✅ Get all posts for the logged-in user
+export async function getUserPosts() {
+  const res = await fetch("/api/posts", {
+    headers: getHeaders(), // includes token automatically
+  });
+
+  if (!res.ok) throw new Error(`Failed to fetch posts: ${res.status}`);
+  return res.json();
+}
+
+// ✅ Update a post using FormData (supports images)
+export async function updatePost(id, { title, content, image }) {
+  const formData = new FormData();
+  formData.append("title", title);
+  formData.append("content", content);
+
+  if (image instanceof File) {
+    formData.append("image", image); // raw file upload
+  } else if (typeof image === "string" && image) {
+    formData.append("imageUrl", image); // Cloudinary URL string
+  } else if (image === "") {
+    formData.append("removeImage", "true");
+  }
+
+  const res = await fetch(`/api/posts/${id}`, {
+    method: "PUT",
+    headers: getHeaders(null), // no Content-Type for FormData
+    body: formData,
+  });
+
+  if (!res.ok) throw new Error(`Failed to update post: ${res.status}`);
+  return res.json();
+}
+
+// ✅ Delete a post
+export async function deletePost(id) {
+  const res = await fetch(`/api/posts/${id}`, {
+    method: "DELETE",
+    headers: getHeaders(),
+  });
+
+  if (!res.ok) throw new Error(`Failed to delete post: ${res.status}`);
+  return res.json();
+}
