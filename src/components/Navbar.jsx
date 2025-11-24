@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Modal from "./Modal";
@@ -37,21 +37,21 @@ function Spin({ open, setOpen, className }) {
 export default function Navbar({ first, second }) {
   const [open, setOpen] = useState(false);
   const [textColor, setTextColor] = useState(false);
-  const [modal, setModal] = useState(false);
+  const [modal, setModal] = useState(false); // controls logout modal
   const { logout } = useAuth();
   const router = useRouter();
-
-  const handleLogout = () => {
-    logout();
-    setModal(false);
-    router.push("/auth/login");
-  };
 
   const navLinks = [
     { id: 1, href: "/home", text: "Home" },
     { id: 2, href: "/create", text: "Create Jot" },
     { id: 3, href: "/info", text: "Info" },
   ];
+
+  const handleLogout = () => {
+    logout();
+    setModal(false);
+    router.push("/auth/login");
+  };
 
   useEffect(() => {
     if (open) {
@@ -66,56 +66,60 @@ export default function Navbar({ first, second }) {
     return (
       <>
         <Spin setOpen={setOpen} open={open} className="z-3 relative transition-all duration-1000" />
+        
+        {/* Overlay behind sidebar */}
         <div
           className={`fixed inset-0 bg-gradient-to-b from-black/70 to-black/70 
             transition-opacity duration-300 md:hidden ${
               open ? "opacity-100" : "opacity-0 pointer-events-none"
             }`}
           onClick={() => setOpen(false)}
+        />
+
+        {/* Logout Modal */}
+        {modal && (
+          <Modal
+            open={modal}
+            message="Are you sure you want to logout?"
+            onConfirm={handleLogout}
+            onCancel={() => setModal(false)}
+          />
+        )}
+
+        {/* Sidebar */}
+        <div
+          className={`fixed left-0 top-0 h-full w-64 bg-cyan-700 shadow-xl transform 
+            transition-transform duration-800 ${
+              open ? "-translate-x-0" : "-translate-x-full"
+            }`}
+          onClick={(e) => e.stopPropagation()} // stop clicks from closing sidebar
         >
-          {modal && (
-            <Modal
-              message="Are you sure you want to logout?"
-              onConfirm={handleLogout}
-              onCancel={() => setModal(false)}
-              onOpen={() => setModal(true)}
-            />
-          )}
-
-          <div
-            className={`fixed left-0 top-0 h-full w-64 bg-cyan-700 shadow-xl transform 
-              transition-transform duration-800 ${
-                open ? "-translate-x-0" : "-translate-x-full"
-              }`}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <nav>
-              <ul className="slidein mt-20 flex flex-col px-5 space-y-5 pt-6 justify-center">
-                {navLinks.map((item) => (
-                  <li
-                    key={item.id}
-                    className="bg-black/70 rounded-md p-2 transition-all duration-300 hover:bg-black/50 hover:pl-5"
-                  >
-                    <Link
-                      href={item.href}
-                      onClick={() => setOpen(false)}
-                      className={`text-xl transform-all duration-1000 hover:text-cyan-500 ${textColor} block`}
-                    >
-                      {item.text}
-                    </Link>
-                  </li>
-                ))}
-
-                <button
-                  onClick={() => setModal(true)}
-                  className={`text-left text-xl bg-black/70 rounded-md p-2 
-                    transition-all duration-300 hover:bg-red-900 hover:text-cyan-500 hover:pl-5 ${textColor}`}
+          <nav>
+            <ul className="slidein mt-20 flex flex-col px-5 space-y-5 pt-6 justify-center">
+              {navLinks.map((item) => (
+                <li
+                  key={item.id}
+                  className="bg-black/70 rounded-md p-2 transition-all duration-300 hover:bg-black/50 hover:pl-5"
                 >
-                  Logout
-                </button>
-              </ul>
-            </nav>
-          </div>
+                  <Link
+                    href={item.href}
+                    onClick={() => setOpen(false)}
+                    className={`text-xl transform-all duration-1000 hover:text-cyan-500 ${textColor} block`}
+                  >
+                    {item.text}
+                  </Link>
+                </li>
+              ))}
+
+              <button
+                onClick={() => setModal(true)}
+                className={`text-left text-xl bg-black/70 rounded-md p-2 
+                  transition-all duration-300 hover:bg-red-900 hover:text-cyan-500 hover:pl-5 ${textColor}`}
+              >
+                Logout
+              </button>
+            </ul>
+          </nav>
         </div>
       </>
     );

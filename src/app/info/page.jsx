@@ -24,6 +24,7 @@ export default function Info() {
   ];
 
   return (<>
+  <div className="bg-white">
     <Header />
     <section className="max-w-4xl mx-auto p-6 mt-10 bg-white shadow-md rounded-xl text-center">
          <div className="space-y-3 mb-6 text-left">
@@ -55,6 +56,7 @@ export default function Info() {
         Subscribe now and follow us for daily football news and insights. Stay ahead of the game!
       </p>
     </section>
+   </div>
     </>
   );
 }

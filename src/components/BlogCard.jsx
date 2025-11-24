@@ -1,4 +1,4 @@
- "use client";
+'use client'
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
@@ -12,21 +12,14 @@ export default function BlogCard({ blog, onDelete }) {
 
   useEffect(() => {
     if (contentRef.current) {
-    const   el = contentRef.current;
-      setIsOverflowing(el.scrollHeight > el.clientHeight);
+      setIsOverflowing(contentRef.current.scrollHeight > contentRef.current.clientHeight);
     }
   }, [blog?.content]);
 
   if (!blog || !blog.content) return null;
 
   const handleToggle = () => {
-    if (isOverflowing) setIsExpanded((prev) => !prev);
-  };
-
-  const handleDelete = () => {
-    if (confirm("Delete this blog?")) {
-      onDelete(blog._id);
-    }
+    if (isOverflowing) setIsExpanded(prev => !prev);
   };
 
   const handleEdit = () => {
@@ -42,7 +35,7 @@ export default function BlogCard({ blog, onDelete }) {
 
       {/* Image */}
       {blog.image && (
-        <div className="w-full h-[60vh] relative z-0 ">
+        <div className="w-full h-[60vh] relative z-0">
           <Image
             src={blog.image}
             alt={blog.title || "Blog image"}
@@ -56,9 +49,7 @@ export default function BlogCard({ blog, onDelete }) {
       <div
         ref={contentRef}
         onClick={handleToggle}
-        className={`text-white p-2 text-[1.5rem] font-light max-w-[350px] cursor-${
-          isOverflowing ? "pointer" : "default"
-        } ${isExpanded ? "" : "line-clamp-2"} mx-auto`}
+        className={`text-white p-2 text-[1.5rem] font-light max-w-[350px] cursor-${isOverflowing ? "pointer" : "default"} ${isExpanded ? "" : "line-clamp-2"} mx-auto`}
       >
         <p className="font-[Segoe UI]">{blog.content}</p>
         {isOverflowing && !isExpanded && (
@@ -78,7 +69,7 @@ export default function BlogCard({ blog, onDelete }) {
           Edit
         </button>
         <button
-          onClick={handleDelete}
+          onClick={() => onDelete(blog._id)}
           className="text-[2.2rem] bg-red-600 text-white px-3 pt-1 rounded hover:font-bold"
         >
           Delete

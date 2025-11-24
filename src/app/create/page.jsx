@@ -71,7 +71,8 @@ useEffect(()=>{
   }; // <-- close handleSubmit
 
   return (
-    <>
+      <>
+      <div className="bg-white min-h-screen">
       <Header />
       <section className="flex items-center justify-center h-170 bg-white px-10 md:px-5">
         <form
@@ -141,6 +142,7 @@ useEffect(()=>{
           </Button>
         </form>
       </section>
+ </div>
     </>
   );
 }
