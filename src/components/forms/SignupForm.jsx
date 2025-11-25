@@ -9,7 +9,6 @@ import { Button, Spinner } from "@/components/ui"
 export default function SignupForm() {
   const { signup } = useAuth()
   const router = useRouter()
-  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -20,17 +19,9 @@ export default function SignupForm() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+      const emailRegex = /^\S+@\S+\.\S+$/
+    if (!emailRegex.test(email)) return setError('Email is not valid.')
 
- 
-    if(!email.endsWith("@gmail.com")){
-      setError('Email is not valid')
-      return  
-  }
-
-    if (!name || !email || !password || !confirmPassword) {
-      setError('All fields are required')
-      return
-    }
 
     if (password !== confirmPassword) {
       setError('Passwords do not match')
@@ -39,8 +30,8 @@ export default function SignupForm() {
 
     setLoading(true)
     try {
-      await signup(name, email, password)
-      router.push('/verify-email')
+      await signup( email, password)
+      router.push('/auth/verify-email')
     } catch (err) {
       setError(err.message)
     } finally {
@@ -50,18 +41,6 @@ export default function SignupForm() {
 
   return (
     <form onSubmit={handleSubmit} className='grid gap-5 mt-9'>
-     
-     <div>
-      <label className="text-sm md:text-base">Full Name</label>
-      <input
-        placeholder="Andrews Ampadu"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        required
-      className="focus:border-3 focus:border-black block w-full text-sm md:text-base border border-black rounded-xl p-2 bg-black/10"
-      />
-       </div>
-
 <div>
   <label className="text-sm md:text-base">Email</label>
       <input

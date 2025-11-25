@@ -34,16 +34,12 @@ export async function GET(req) {
     user.verificationTokenExpiry = undefined;
     await user.save();
 
-    return new Response(
-      `
-      <h2>✅ Email Verified Successfully!</h2>
-      <p>You can now log in to your account.</p>
-      <a href="${process.env.NEXT_PUBLIC_BASE_URL}/login" style="display:inline-block;margin-top:10px;padding:10px 16px;background:#4CAF50;color:white;border-radius:6px;text-decoration:none;">
-        Go to Login
-      </a>
-      `,
-      { headers: { "Content-Type": "text/html" } }
-    );
+    // Redirect the user to the login page after successful verification
+    // Build absolute URL using the request's host header for cross-device compatibility
+    const protocol = req.headers.get('x-forwarded-proto') || 'http';
+    const host = req.headers.get('host');
+    const loginUrl = new URL(`${protocol}://${host}/auth/login`);
+    return NextResponse.redirect(loginUrl);
   } catch (err) {
     console.error("Email verification error:", err);
     return new Response(

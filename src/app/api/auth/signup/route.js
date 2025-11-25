@@ -7,12 +7,7 @@ import { NextResponse } from "next/server";
 export async function POST(req) {
   try {
     await connectDB();
-    const { name, email, password } = await req.json();
-
-    // Basic validation
-    if (!name || !email || !password) {
-      return NextResponse.json({ error: "Name, email and password are required" }, { status: 400 });
-    }
+    const { email, password } = await req.json();
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -25,7 +20,6 @@ export async function POST(req) {
 
     // Create new user with `isVerified: false` by default
     const newUser = await User.create({
-      name,
       email,
       password: hashedPassword,
       isVerified: false
