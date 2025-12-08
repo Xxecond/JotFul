@@ -3,7 +3,11 @@
 // Helper: get token from localStorage safely
 function getAuthToken() {
   if (typeof window !== "undefined") {
-    return localStorage.getItem("token");
+    // Check localStorage first (remember me), then sessionStorage (no-remember)
+    const local = localStorage.getItem("token");
+    if (local) return local;
+    const sess = sessionStorage.getItem("token");
+    if (sess) return sess;
   }
   return null;
 }
@@ -26,7 +30,7 @@ export async function createPost(postData) {
 
   const res = await fetch("/api/posts", {
     method: "POST",
-    headers: getHeaders(), // automatically includes token
+    headers: getHeaders(),
     body: JSON.stringify(postData),
   });
 
@@ -47,7 +51,7 @@ export async function getPostById(id) {
 // ✅ Get all posts for the logged-in user
 export async function getUserPosts() {
   const res = await fetch("/api/posts", {
-    headers: getHeaders(), // includes token automatically
+    headers: getHeaders(),
   });
 
   if (!res.ok) throw new Error(`Failed to fetch posts: ${res.status}`);
@@ -83,6 +87,7 @@ export async function deletePost(id) {
   const res = await fetch(`/api/posts/${id}`, {
     method: "DELETE",
     headers: getHeaders(),
+    credentials: 'include',
   });
 
   if (!res.ok) throw new Error(`Failed to delete post: ${res.status}`);

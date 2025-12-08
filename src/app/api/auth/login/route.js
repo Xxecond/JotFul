@@ -31,6 +31,12 @@ export async function POST(req) {
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
 
+    // Build Set-Cookie header for HttpOnly access_token so middleware can detect auth
+    const maxAge = 60 * 60 * 24 // 1 day in seconds
+    const isProd = process.env.NODE_ENV === 'production'
+    let cookie = `access_token=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}`
+    if (isProd) cookie += '; Secure'
+
     return NextResponse.json({
       success: true,
       message: "Login successful",
@@ -39,7 +45,7 @@ export async function POST(req) {
         _id: user._id,
         email: user.email
       },
-    });
+    }, { status: 200, headers: { 'Set-Cookie': cookie } });
   } catch (error) {
     console.error("Login error:", error);
     return NextResponse.json(

@@ -9,6 +9,21 @@ export async function POST(req) {
     await connectDB();
     const { email, password } = await req.json();
 
+    // Server-side validation: password policy
+    const minLength = 8
+    const hasUpper = /[A-Z]/.test(password)
+    const hasSpecial = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>\/?~`]/.test(password)
+
+    if (!password || password.length < minLength) {
+      return NextResponse.json({ error: 'Password must be at least 8 characters long' }, { status: 400 })
+    }
+    if (!hasUpper) {
+      return NextResponse.json({ error: 'Password must contain at least one uppercase letter' }, { status: 400 })
+    }
+    if (!hasSpecial) {
+      return NextResponse.json({ error: 'Password must contain at least one special character' }, { status: 400 })
+    }
+
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {

@@ -28,6 +28,26 @@ export default function SignupForm() {
       return
     }
 
+    // Password policy: at least 8 chars, at least one uppercase letter, at least one special char
+    const minLength = 8
+    const hasUpper = /[A-Z]/.test(password)
+    const hasSpecial = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>\/?~`]/.test(password)
+
+    if (password.length < minLength) {
+      setError('Password must be at least 8 characters long.')
+      return
+    }
+
+    if (!hasUpper) {
+      setError('Password must contain at least one uppercase letter.')
+      return
+    }
+
+    if (!hasSpecial) {
+      setError('Password must contain at least one special character.')
+      return
+    }
+
     setLoading(true)
     try {
       await signup( email, password)

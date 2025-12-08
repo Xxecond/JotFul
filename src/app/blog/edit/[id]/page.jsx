@@ -1,17 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Header from "@/components/Header";
 import { updatePost, getPostById } from "@/lib/postService"; // your post service functions
 import { Spinner, Button } from "@/components/ui";
-import { useAuth } from "@/hooks";
 
 export default function EditBlog({ params }) {
-  const { user, loading: authLoading } = useAuth();
   const router = useRouter();
-  const postId = params.id;
+  // `params` may be a Promise in this Next.js version; unwrap with React.use()
+  const postId = React.use(params).id;
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -21,11 +20,7 @@ export default function EditBlog({ params }) {
 
   // Fetch existing post
   useEffect(() => {
-    if (!authLoading && !user) {
-      router.push("/auth/login");
-      return;
-    }
-
+    // Removed protected-route check; always fetch the post
     const fetchPost = async () => {
       try {
         const post = await getPostById(postId); // fetch from your backend
@@ -38,7 +33,7 @@ export default function EditBlog({ params }) {
     };
 
     fetchPost();
-  }, [authLoading, user, postId, router]);
+  }, [postId]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -77,7 +72,6 @@ export default function EditBlog({ params }) {
         image: imageUrl,
       });
 
-      alert("✅ Post updated successfully!");
       router.push("/home");
     } catch (err) {
       alert(`Error: ${err.message}`);

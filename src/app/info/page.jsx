@@ -3,18 +3,14 @@
 import Image from "next/image";
 import {useEffect} from "react";
 import Header from "@/components/Header";
-import {useAuth} from "@/hooks";
 import {useRouter} from "next/navigation";
 
 export default function Info() {
-  const {user, loading:authLoading} =useAuth();
   const router = useRouter();
 
- useEffect (()=>{
-   if (authLoading) return <div className="flex justify-center items-center h-screen">Loading...</div>;
-  if(!user) router.push("/auth/login")
-
-}, [user, router, authLoading])
+ useEffect(()=>{
+   // removed protected-route redirect; Info is public now
+ }, [])
   const features = [
     { title: "Daily Football News", desc: "Stay updated with the latest happenings in the football world." },
     { title: "Live Match Updates", desc: "Follow live scores, match highlights, and results." },

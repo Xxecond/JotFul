@@ -5,20 +5,18 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Header from "@/components/Header";
 import { createPost } from "@/lib/postService";
-import {Spinner, Button} from "@/components/ui"
-import {useAuth} from "@/hooks";
+import {Spinner, Button} from "@/components/ui";
 
 export default function CreateBlog() {
- const {user, loading:authLoading } =useAuth();
  const router = useRouter();
-
-useEffect(()=>{
-    if (authLoading) return; // wait for auth check
-
-    if (!user){ 
-      router.push("/auth/login");}
-      
-    }, [authLoading, user, router])
+ 
+ // Removed the authentication check and redirect
+ // const {user, loading:authLoading } =useAuth();
+ // useEffect(()=>{
+ //     if (authLoading) return; // wait for auth check
+ //     if (!user){ 
+ //       router.push("/auth/login");}
+ //     }, [authLoading, user, router])
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -60,7 +58,6 @@ useEffect(()=>{
         image: uploadData.secure_url,
       });
 
-      alert("✅ Post created successfully!");
       router.push("/home");
     } catch (err) {
       alert(`Error: ${err.message}`);
@@ -138,7 +135,7 @@ useEffect(()=>{
             variant="special"
             className="w-full"
           >
-            {loading ? (<span className="flex  items-center justify-center gap-3">Uploading...<Spinner /></span>) : (<>Add Jot</>)}
+            {loading ? (<span className="flex  items-center justify-center gap-3">Uploading...<Spinner size="small"/></span>) : (<>Add Jot</>)}
           </Button>
         </form>
       </section>

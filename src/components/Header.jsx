@@ -16,7 +16,7 @@ export default function Header() {
   const pageName = headings[pathname] || "Page";
 
   return (<>
-<header className="sticky bg-cyan-600 text-white py-3  xl:py-4 z-50">
+<header className="sticky top-0 w-full bg-cyan-600 text-white py-3 xl:py-4 z-50">
      <div className="md:hidden absolute top-0 -left-4">
       <Navbar first="icon" />
      </div>

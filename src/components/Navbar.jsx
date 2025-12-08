@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import Modal from "./Modal";
 import useAuth from "@/hooks/useAuth";
+import { useRouter } from 'next/navigation'
 
 function Spin({ open, setOpen, className }) {
   return (
@@ -39,7 +39,6 @@ export default function Navbar({ first, second }) {
   const [textColor, setTextColor] = useState(false);
   const [modal, setModal] = useState(false); // controls logout modal
   const { logout } = useAuth();
-  const router = useRouter();
 
   const navLinks = [
     { id: 1, href: "/home", text: "Home" },
@@ -47,11 +46,13 @@ export default function Navbar({ first, second }) {
     { id: 3, href: "/info", text: "Info" },
   ];
 
-  const handleLogout = () => {
-    logout();
-    setModal(false);
-    router.push("/auth/login");
-  };
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    await logout()
+    setModal(false)
+    router.push('/auth/login')
+  }
 
   useEffect(() => {
     if (open) {

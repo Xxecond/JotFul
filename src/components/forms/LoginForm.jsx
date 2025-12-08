@@ -26,7 +26,10 @@ export default function LoginForm() {
     setLoading(true)
     try {
       await login(email, password, rememberMe)
-      router.push('/home') // navigate after user is properly set
+      // If a `redirect` query param exists (e.g. /login?redirect=/home), honor it
+      const params = new URLSearchParams(window.location.search)
+      const redirect = params.get('redirect') || '/home'
+      router.push(redirect) // navigate after user is properly set
     } catch (err) {
       setError(err.message)
     } finally {

@@ -69,7 +69,11 @@ export async function PUT(req, { params }) {
 
     // Handle image
     let imageUrl = post.image;
-    if (image && typeof image === "object") {
+    // If client provided a direct image URL (uploaded from client-side to Cloudinary), use it
+    const imageUrlField = formData.get("imageUrl");
+    if (imageUrlField && typeof imageUrlField === "string" && imageUrlField.trim() !== "") {
+      imageUrl = imageUrlField;
+    } else if (image && typeof image === "object") {
       const bytes = await image.arrayBuffer();
       const buffer = Buffer.from(bytes);
 

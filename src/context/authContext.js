@@ -52,29 +52,26 @@ export function AuthProvider({ children }) {
   }, [])
 
   // Login function
-  const login = async (email, password) => { // removed rememberMe for simplicity
-  setLoading(true)
-  try {
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    })
-    const data = await res.json()
+  const login = async (email, password, rememberMe = true) => {
+    setLoading(true)
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      })
+      const data = await res.json()
 
-    if (!res.ok) throw new Error(data.error || 'Login failed')
+      if (!res.ok) throw new Error(data.error || 'Login failed')
 
-    // Always store user and token in localStorage for persistence
-    if (typeof window !== "undefined") {
-      localStorage.setItem('token', data.token)
-      localStorage.setItem('user', JSON.stringify(data.user))
+      // Persist user into context + storage using helper
+      persistUser(data.user, data.token, rememberMe)
+
+      return data.user
+    } finally {
+      setLoading(false)
     }
-
-    return data.user
-  } finally {
-    setLoading(false)
   }
-}
 
   // Signup function
   const signup = async ( email, password, rememberMe = true) => {
@@ -95,8 +92,16 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // Logout function
-  const logout = () => {
+  // Logout function — calls server to clear cookie then clears client state/storage
+  const logout = async () => {
+    try {
+      // Attempt to clear server cookie if present
+      await fetch('/api/auth/logout', { method: 'POST' })
+    } catch (err) {
+      // ignore network errors — still clear client state
+      console.warn('Logout request failed:', err)
+    }
+
     setUser(null)
     localStorage.removeItem('token')
     localStorage.removeItem('user')

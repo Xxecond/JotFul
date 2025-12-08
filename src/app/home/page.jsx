@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useAuth } from '@/hooks'
 import { useRouter } from 'next/navigation'
 import { Header, BlogCard, SearchBar } from '@/components'
 import { getUserPosts, deletePost } from '@/lib/postService'
@@ -10,7 +9,6 @@ import { Modal } from '@/components'
 import Link from 'next/link'
 
 export default function Home() {
-  const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const [blogs, setBlogs] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
@@ -18,12 +16,6 @@ export default function Home() {
   const [modal, setModal] = useState({ open: false, postId: null, message: '', onConfirm: null })
 
   useEffect(() => {
-    if (authLoading) return
-    if (!user) {
-      router.push('/auth/login')
-      return
-    }
-
     const fetchBlogs = async () => {
       try {
         const data = await getUserPosts()
@@ -36,9 +28,9 @@ export default function Home() {
     }
 
     fetchBlogs()
-  }, [user, authLoading, router])
+  }, [])
 
-  if (authLoading || loading) return <div className="flex justify-center items-center h-screen">Loading...</div>
+  if (loading) return <div className="flex justify-center items-center h-screen">Loading...</div>
 
   const filtered = blogs.filter(b => b?.title?.toLowerCase().includes(searchTerm.toLowerCase()))
 
