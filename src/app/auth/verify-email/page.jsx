@@ -7,7 +7,9 @@ import { Spinner } from "@/components/ui";
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 
-export default function VerifyEmail() {
+import { Suspense } from "react";
+
+function VerifyEmailContent() {
   const searchParams = useSearchParams();
   const paramEmail = searchParams?.get?.("email");
   const [loading, setLoading] = useState(false);
@@ -78,7 +80,7 @@ export default function VerifyEmail() {
           />
         </section>
 
-         <section className="absolute md:w-1/2 w-full h-full right-0
+        <section className="absolute md:w-1/2 w-full h-full right-0
            bg-white text-black grid grid-cols-1 gap-1 justify-center items-center">
   <h1 className="text-xl md:2xl font-semibold text-center">
     Verify Your Email
@@ -107,5 +109,13 @@ export default function VerifyEmail() {
      </section>
     </main>
     </div>
+  );
+}
+
+export default function VerifyEmail() {
+  return (
+    <Suspense>
+      <VerifyEmailContent />
+    </Suspense>
   );
 }
