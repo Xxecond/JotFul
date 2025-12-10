@@ -75,7 +75,7 @@ export default function LoginForm() {
       <div className=" flex items-center justify-center h-15">
         {error && <div className="text-red-600 font-bold">{error}</div>}
       </div>
-      <Button type="submit" disabled={loading} className="rounded-full">
+      <Button variant="special" type="submit" disabled={loading} className="rounded-full">
         {loading ? <span className="flex items-center gap-2">Signing in... <Spinner size="sm" /></span> : 'Sign in'}
       </Button>
 

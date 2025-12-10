@@ -27,9 +27,9 @@ export default function BlogCard({ blog, onDelete }) {
   };
 
   return (
-    <div className="w-full max-w-[500px] bg-[#333] rounded-lg overflow-hidden my-12 mx-auto break-words whitespace-normal">
+    <div className="w-[80%] max-w-xl bg-cyan-600 rounded-lg overflow-hidden my-12 mx-auto wrap-break-word whitespace-normal">
       {/* Title */}
-      <h2 className="text-[2.1rem] text-center m-0 pb-1 text-white font-light bg-gray-500 font-impact">
+      <h2 className="text-[2.1rem] text-center m-0 pb-1 text-white font-light bg-cyan-700 font-impact">
         {blog.title}
       </h2>
 
@@ -61,16 +61,16 @@ export default function BlogCard({ blog, onDelete }) {
       </div>
 
       {/* Actions */}
-      <div className="flex flex-row justify-center items-center my-1 gap-2">
+      <div className="flex flex-row justify-around items-center my-2  ">
         <button
           onClick={handleEdit}
-          className="text-[2.2rem] bg-green-600 text-white px-3 pt-1 rounded hover:font-bold"
+          className="text-[2rem] bg-green-600 text-white px-3  rounded hover:font-bold"
         >
           Edit
         </button>
         <button
           onClick={() => onDelete(blog._id)}
-          className="text-[2.2rem] bg-red-600 text-white px-3 pt-1 rounded hover:font-bold"
+          className="text-[2rem] bg-red-600 text-white px-3 rounded hover:font-bold"
         >
           Delete
         </button>

@@ -71,7 +71,7 @@ export default function CreateBlog() {
       <>
       <div className="bg-white min-h-screen">
       <Header />
-      <section className="flex items-center justify-center h-170 bg-white px-10 md:px-5">
+      <section className="flex items-center justify-center h-auto bg-white px-10 md:px-5 py-5 ">
         <form
           onSubmit={handleSubmit}
           className="bg-gray-200 shadow-xl rounded-lg p-8 w-full max-w-2xl"
@@ -86,7 +86,7 @@ export default function CreateBlog() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="text-sm md:text-base md:text-lg w-full p-1 md:p-2 xl:p-3 mb-5 border border-cyan-700 rounded-lg focus:ring-2 focus:ring-cyan-700 outline-none"
+            className="text-sm md:text-base  w-full p-1 md:p-2 xl:p-3 mb-5 border border-cyan-700 rounded-lg focus:ring-2 focus:ring-cyan-700 outline-none"
           />
 
           <input
@@ -94,12 +94,12 @@ export default function CreateBlog() {
             accept="image/*"
             onChange={handleImageChange}
             required
-            className="block  mb-4 text-sm xl:text-base text-black border border-cyan-700 rounded-lg cursor-pointer focus:ring-2 focus:ring-blue-500"
+            className="inline-block mb-4 text-sm xl:text-base text-black ring ring-cyan-700  p-1 rounded-lg cursor-pointer focus:ring-2 focus:ring-blue-500"
           />
 
           {imagePreview && (
-            <div className="mb-4 text-sm md:text-base md:text-lg text-center">
-              <div className="relative w-full h-40 md:55 xl:64 mb-3 text-sm md:text-base md:text-lg">
+            <div className="mb-4 text-sm md:text-base xl:text-lg text-center">
+              <div className="relative w-full h-40 md:55 xl:64 mb-3 text-sm md:text-base xl:text-lg">
                 <Image
                   src={imagePreview}
                   alt="Preview"
@@ -110,6 +110,7 @@ export default function CreateBlog() {
               <Button
                 type="button"
                 variant ="destructive"
+                className="bg-red-700"
                 onClick={() => {
                   setImagePreview(null);
                   setSelectedFile(null);
@@ -126,7 +127,7 @@ export default function CreateBlog() {
             onChange={(e) => setContent(e.target.value)}
             required
             rows="8"
-            className="text-sm md:text-base md:text-lg w-full md:p-3 mb-6 border border-cyan-700 rounded-lg focus:ring-2 focus:ring-cyan-700 outline-none"
+            className="text-sm md:text-base  w-full md:p-3 mb-6 border border-cyan-700 rounded-lg focus:ring-2 focus:ring-cyan-700 outline-none"
           ></textarea>
 
           <Button
@@ -135,7 +136,7 @@ export default function CreateBlog() {
             variant="special"
             className="w-full"
           >
-            {loading ? (<span className="flex  items-center justify-center gap-3">Uploading...<Spinner size="small"/></span>) : (<>Add Jot</>)}
+            {loading ? (<span className="flex  items-center justify-center gap-3">Uploading...<Spinner size="sm"/></span>) : (<>Add Jot</>)}
           </Button>
         </form>
       </section>
