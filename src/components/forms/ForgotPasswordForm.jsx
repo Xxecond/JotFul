@@ -52,7 +52,8 @@ return(
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-60"
+               variant="special"
+               className="w-full"
               >
                 
                 {loading ? (<span className="flex  items-center justify-center gap-3">Reseting...<Spinner size="sm" /></span>) :(<>Reset Link</>)}

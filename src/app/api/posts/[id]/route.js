@@ -1,4 +1,4 @@
- import { connectDB } from "@/lib/db";
+import { connectDB } from "@/lib/db";
 import Post from "@/models/Post";
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
@@ -13,7 +13,7 @@ cloudinary.config({
 
 // ✅ GET one post
 export async function GET(req, { params }) {
-  const { id } = params;
+  const { id } = await params;
 
   try {
     await connectDB();
@@ -32,20 +32,19 @@ export async function GET(req, { params }) {
 
 // ✅ UPDATE post
 export async function PUT(req, { params }) {
-  const { id } = params;
+  const { id } = await params;
 
   try {
     await connectDB();
 
-    // Verify token
     const authHeader = req.headers.get("authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
     const token = authHeader.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Parse formData
     const formData = await req.formData();
     const title = formData.get("title");
     const content = formData.get("content");
@@ -67,10 +66,9 @@ export async function PUT(req, { params }) {
       );
     }
 
-    // Handle image
     let imageUrl = post.image;
-    // If client provided a direct image URL (uploaded from client-side to Cloudinary), use it
     const imageUrlField = formData.get("imageUrl");
+
     if (imageUrlField && typeof imageUrlField === "string" && imageUrlField.trim() !== "") {
       imageUrl = imageUrlField;
     } else if (image && typeof image === "object") {
@@ -104,7 +102,7 @@ export async function PUT(req, { params }) {
 
 // ✅ DELETE post
 export async function DELETE(req, { params }) {
-  const { id } = params;
+  const { id } = await params;
 
   try {
     await connectDB();

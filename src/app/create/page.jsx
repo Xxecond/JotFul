@@ -71,7 +71,7 @@ export default function CreateBlog() {
       <>
       <div className="bg-white min-h-screen">
       <Header />
-      <section className="flex items-center justify-center h-auto bg-white px-10 md:px-5 py-5 ">
+      <section className="flex items-center justify-center h- bg-white px-10 md:px-5 py-5 pt-20 ">
         <form
           onSubmit={handleSubmit}
           className="bg-gray-200 shadow-xl rounded-lg p-8 w-full max-w-2xl"
@@ -89,13 +89,16 @@ export default function CreateBlog() {
             className="text-sm md:text-base  w-full p-1 md:p-2 xl:p-3 mb-5 border border-cyan-700 rounded-lg focus:ring-2 focus:ring-cyan-700 outline-none"
           />
 
+          <label
+          className="inline-block w-auto max-w-max ring ring-cyan-700 px-2  rounded-lg text-black mb-4 text-sm xl:text-base"
+          >Choose Image
           <input
             type="file"
             accept="image/*"
             onChange={handleImageChange}
             required
-            className="inline-block mb-4 text-sm xl:text-base text-black ring ring-cyan-700  p-1 rounded-lg cursor-pointer focus:ring-2 focus:ring-blue-500"
-          />
+            className="hidden"
+          /></label>
 
           {imagePreview && (
             <div className="mb-4 text-sm md:text-base xl:text-lg text-center">

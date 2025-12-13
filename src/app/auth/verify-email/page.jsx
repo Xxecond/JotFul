@@ -68,7 +68,7 @@ function VerifyEmailContent() {
   return (
     <div className="flex h-dvh items-center justify-center px-5 md:px-15
        relative bg-cyan-600">
-    <main className="relative rounded-4xl overflow-hidden  h-100  bg-red-900 w-full"> 
+    <main className="relative rounded-4xl overflow-hidden  h-100  bg-red-900 w-5/6"> 
         <Button variant="secondary" className="absolute left-4 top-5 z-20 w-5 md:w-12"><Link href="/auth/signup"><BackwardIcon /></Link></Button>
         <section  className=" absolute w-1/2 h-full left-0 bg-black text-white hidden md:block mx-auto">
           <Image

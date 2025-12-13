@@ -13,7 +13,7 @@ export default function SignupPage() {
   return (
     <div className="flex h-dvh items-center justify-center px-5 md:px-15
        relative bg-cyan-600">
-    <main className="relative rounded-4xl overflow-hidden  h-160  md:h-165  bg-red-900 w-full"> 
+    <main className="relative rounded-4xl overflow-hidden  h-160  md:h-165  bg-red-900 w-5/6"> 
         <Button variant="secondary" className="absolute left-4 top-5 z-20 w-5 md:w-12"><Link href="/"><BackwardIcon /></Link></Button>
         <section  className=" absolute w-1/2 h-full left-0 bg-black text-white hidden md:block">
           <h2 className="text-4xl font-bold mb-4">Join Blogger Web</h2>

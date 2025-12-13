@@ -13,7 +13,7 @@ export default function LoginPage() {
   return (
     <div className="flex h-dvh items-center justify-center px-10 md:px-15
        relative bg-cyan-600">
-      <main className="relative rounded-4xl overflow-hidden  h-150 max-h-150  bg-red-900 w-full">
+      <main className="relative rounded-4xl overflow-hidden  h-150 max-h-150  bg-red-900 w-5/6">
        <Button variant="secondary" className="absolute left-8 top-5 z-20 md:w-12 w-5"><Link href="/"><BackwardIcon /></Link></Button>
        <section  className=" absolute w-1/2 h-full left-0 bg-black text-white hidden md:block">
           <h2 className="text-4xl text-center mt-15 my-10 font-bold ">JotFul✍️</h2>
