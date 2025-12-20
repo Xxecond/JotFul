@@ -86,7 +86,7 @@ export default function CreateBlog() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="text-sm md:text-base  w-full p-1 md:p-2 xl:p-3 mb-5 border border-cyan-700 rounded-lg focus:ring-2 focus:ring-cyan-700 outline-none"
+            className="text-base  w-full p-1 md:p-2 xl:p-3 mb-5 border border-cyan-700 rounded-lg focus:ring-2 focus:ring-cyan-700 outline-none"
           />
 
           <label
@@ -101,7 +101,7 @@ export default function CreateBlog() {
           /></label>
 
           {imagePreview && (
-            <div className="mb-4 text-sm md:text-base xl:text-lg text-center">
+            <div className="mb-4 text-base xl:text-lg text-center">
               <div className="relative w-full h-40 md:55 xl:64 mb-3 text-sm md:text-base xl:text-lg">
                 <Image
                   src={imagePreview}
@@ -130,7 +130,7 @@ export default function CreateBlog() {
             onChange={(e) => setContent(e.target.value)}
             required
             rows="8"
-            className="text-sm md:text-base  w-full md:p-3 mb-6 border border-cyan-700 rounded-lg focus:ring-2 focus:ring-cyan-700 outline-none"
+            className="text-base  w-full md:p-3 mb-6 border border-cyan-700 rounded-lg focus:ring-2 focus:ring-cyan-700 outline-none"
           ></textarea>
 
           <Button

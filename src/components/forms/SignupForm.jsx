@@ -69,7 +69,7 @@ export default function SignupForm() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         required
-      className="focus:border-3 focus:border-black block w-full text-sm md:text-base border border-black rounded-xl p-2 bg-black/10"
+      className="focus:border-3 focus:border-black block w-full text-base border border-black rounded-xl p-2 bg-black/10"
       />
 </div>
       <div>
@@ -81,7 +81,7 @@ export default function SignupForm() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          className="focus:border-3 focus:border-black block w-full text-sm md:text-base border border-black rounded-xl p-2 bg-black/10"
+          className="focus:border-3 focus:border-black block w-full text-base border border-black rounded-xl p-2 bg-black/10"
         />
         <button
           type="button"
@@ -103,7 +103,7 @@ export default function SignupForm() {
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
-          className="inline-block focus:border-3 focus:border-black block w-full text-sm md:text-base border border-black rounded-xl p-2 bg-black/10"
+          className="focus:border-3 focus:border-black block w-full text-base border border-black rounded-xl p-2 bg-black/10"
         />
         
         <button

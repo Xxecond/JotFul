@@ -43,7 +43,7 @@ export default function LoginForm() {
         <label>Email</label>
         <input
           type="email"
-          placeholder="you@gmail.com"
+           placeholder="andrewsampadu9@gmail.com"
           value={email}
           required
           onChange={(e) => setEmail(e.target.value)}
@@ -57,6 +57,7 @@ export default function LoginForm() {
           <input
             type={show ? 'text' : 'password'}
             value={password}
+            placeholder="••••••••"
             required
             onChange={(e) => setPassword(e.target.value)}
             className="block w-full p-2 focus:outline-none ring-1 focus:ring-2 ring-black rounded-full"

@@ -27,7 +27,7 @@ export default function BlogCard({ blog, onDelete }) {
   };
 
   return (
-    <div className="w-[80%] max-w-xl bg-cyan-600 rounded-lg overflow-hidden my-12 mx-auto wrap-break-word whitespace-normal">
+    <div className="w-5/6 max-w-4xl bg-cyan-600 rounded-lg overflow-hidden my-12 mx-auto wrap-break-word whitespace-normal">
       {/* Title */}
       <h2 className="text-[2.1rem] text-center m-0 pb-1 text-white font-light bg-cyan-700 font-impact">
         {blog.title}

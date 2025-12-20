@@ -7,6 +7,11 @@ export const metadata = {
   description: "diary app",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1.0,
+};
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">

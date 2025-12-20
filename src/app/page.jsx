@@ -48,11 +48,10 @@ const pathname = usePathname();
     </div>
   <p className="">Jotful helps you note, plan and manage your thoughts all in one simple beautiful space. <br className="hidden md:block" />Write freely, sync instantly, and stay productive wherever you go</p>
 </section>
-<div className="border-t border-t-white">
-  <p className="text-center py-4 
-text-sm text-right font-light pr-5">
+<div className="border-t border-t-white flex justify-end items-start border-b-0">
+  <span className=" py-4 text-sm font-light pr-5 pt-3">
         © {new Date().getFullYear()} Jotful. All rights reserved.
-      </p>
+      </span>
 
 </div>
  </footer>
