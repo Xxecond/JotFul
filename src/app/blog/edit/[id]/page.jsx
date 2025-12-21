@@ -119,13 +119,14 @@ export default function EditBlog({ params }) {
                   src={imagePreview}
                   alt="Preview"
                   fill
-                  className="object-cover rounded-lg"
+                  className="object-contain rounded-lg"
                 />
               </div>
               <Button
                 type="button"
                 variant="destructive"
                 className="bg-red-700"
+                required
                 onClick={() => {
                   setImagePreview(null);
                   setSelectedFile(null);

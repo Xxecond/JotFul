@@ -29,13 +29,13 @@ export default function BlogCard({ blog, onDelete }) {
   return (
     <div className="w-5/6 max-w-4xl bg-cyan-600 rounded-lg overflow-hidden my-12 mx-auto wrap-break-word whitespace-normal">
       {/* Title */}
-      <h2 className="text-[2.1rem] text-center m-0 pb-1 text-white font-light bg-cyan-700 font-impact">
+      <h2 className="text-center p-2 text-xl md:text-2xl xl:3xl font-semibold text-white tracking-wide  bg-cyan-700 ">
         {blog.title}
       </h2>
 
       {/* Image */}
       {blog.image && (
-        <div className="w-full h-[60vh] relative z-0">
+        <div className="w-full h-[80vh] relative z-0">
           <Image
             src={blog.image}
             alt={blog.title || "Blog image"}
@@ -46,19 +46,36 @@ export default function BlogCard({ blog, onDelete }) {
       )}
 
       {/* Content */}
-      <div
-        ref={contentRef}
-        onClick={handleToggle}
-        className={`text-white p-2 text-[1.5rem] font-light max-w-[350px] cursor-${isOverflowing ? "pointer" : "default"} ${isExpanded ? "" : "line-clamp-2"} mx-auto`}
-      >
-        <p className="font-[Segoe UI]">{blog.content}</p>
-        {isOverflowing && !isExpanded && (
-          <span className="text-[#4fc3f7] font-bold text-[1rem]">... View more</span>
-        )}
-        {isOverflowing && isExpanded && (
-          <span className="text-[#4fc3f7] font-bold text-[1rem]">View less</span>
-        )}
-      </div>
+      {/* Content */}
+<div className="relative text-white p-2 text-xl tracking-wide leading-snug font-light mx-auto">
+  <div
+    ref={contentRef}
+    onClick={handleToggle}
+    className={`cursor-${isOverflowing ? "pointer" : "default"} ${
+      isExpanded ? "" : "line-clamp-2"
+    } pr-14 whitespace-pre-line`} // adds space on the right for "View more"
+  >
+    <p>{blog.content}</p>
+  </div>
+
+  {/* View more / View less - positioned at the bottom right of the clamped text */}
+  {isOverflowing && !isExpanded && (
+    <span
+      onClick={handleToggle}
+      className="absolute bottom-2 right-6 text-[#4fc3f7] font-bold text-[1rem] cursor-pointer"
+    >
+     ... View more
+    </span>
+  )}
+  {isOverflowing && isExpanded && (
+    <span
+      onClick={handleToggle}
+      className="block text-[#4fc3f7] font-bold text-[1rem] cursor-pointer mt-2"
+    >
+      View less
+    </span>
+  )}
+</div>
 
       {/* Actions */}
       <div className="flex flex-row justify-around items-center my-2  ">

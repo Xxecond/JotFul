@@ -86,7 +86,7 @@ export default function CreateBlog() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="text-base  w-full p-1 md:p-2 xl:p-3 mb-5 border border-cyan-700 rounded-lg focus:ring-2 focus:ring-cyan-700 outline-none"
+            className="text-base  w-full px-3 py-1 md:p-2 xl:p-3 mb-5 border border-cyan-700 rounded-lg focus:ring-2 focus:ring-cyan-700 outline-none"
           />
 
           <label
@@ -130,8 +130,8 @@ export default function CreateBlog() {
             onChange={(e) => setContent(e.target.value)}
             required
             rows="8"
-            className="text-base  w-full md:p-3 mb-6 border border-cyan-700 rounded-lg focus:ring-2 focus:ring-cyan-700 outline-none"
-          ></textarea>
+            className="text-base w-full p-3 mb-6 border border-cyan-700 rounded-lg focus:ring-2 focus:ring-cyan-700 outline-none"
+          ></textarea> 
 
           <Button
             type="submit"
