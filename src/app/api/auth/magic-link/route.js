@@ -24,9 +24,8 @@ export async function POST(req) {
     user.magicTokenExpiry = Date.now() + 15 * 60 * 1000;
     await user.save();
 
-    const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
-    const host = req.headers.get("host");
-    const magicLink = `${protocol}://${host}/api/auth/magic-callback?token=${token}`;
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `http://localhost:3000`;
+    const magicLink = `${baseUrl}/api/auth/magic-callback?token=${token}`;
 
     await sendMagicLinkEmail(email, magicLink);
 
