@@ -3,34 +3,34 @@
 
 import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useAuth } from '@/context/authContext' ;
 import { Spinner } from "@/components/ui";
+// Force dynamic rendering – fixes the build error
+export const dynamic = 'force-dynamic';
 
 export default function MagicSuccess() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { handleMagicCallback } = useAuth();
 
   useEffect(() => {
     const token = searchParams.get('token');
     const userParam = searchParams.get('user');
 
     if (!token || !userParam) {
-      router.push('/auth/login'); // or your signup page
+      router.push('/auth/signup'); // or your login/signup page
       return;
     }
 
     try {
       const user = JSON.parse(decodeURIComponent(userParam));
 
-      // Persist manually (in case handleMagicCallback fails)
+      // Save to storage manually
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
 
-      // Redirect to dashboard/app
-      router.push('/dashboard'); // change to your main app page
+      // Go to your main app page
+      router.push('/home'); // change to your actual protected page
     } catch (err) {
-      router.push('/auth/login');
+      router.push('/auth/signup');
     }
   }, [searchParams, router]);
 
