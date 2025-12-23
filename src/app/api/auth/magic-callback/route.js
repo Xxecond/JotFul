@@ -1,34 +1,57 @@
-import { NextResponse } from "next/server";
+// app/api/auth/magic-callback/route.js
 import { connectDB } from "@/lib/db";
 import User from "@/models/User";
-import crypto from "crypto";
-import { sendMagicLinkEmail } from "@/lib/sendEmail";
+import jwt from "jsonwebtoken";
+import { NextResponse } from "next/server";
 
-export async function POST(req) {
+const JWT_SECRET = process.env.JWT_SECRET;
+
+export async function GET(req) {
   try {
     await connectDB();
 
-    const { email } = await req.json();
-    if (!email) return NextResponse.json({ success: false, message: "Email required" }, { status: 400 });
+    const { searchParams } = new URL(req.url);
+    const token = searchParams.get("token");
 
-    const user = await User.findOne({ email });
-    if (!user) return NextResponse.json({ success: false, message: "User not found" }, { status: 404 });
+    if (!token) {
+      return new NextResponse("No token provided", { status: 400 });
+    }
 
-    if (user.isVerified) return NextResponse.json({ success: true, message: "Already verified" });
+    // Find user by magic token (not old verificationToken)
+    const user = await User.findOne({
+      magicToken: token,
+      magicTokenExpiry: { $gt: Date.now() },
+    });
 
-    // Generate new token if expired or missing
-    const token = user.verificationToken || crypto.randomUUID();
-    const expiry = Date.now() + 1000 * 60 * 60 * 24; // 24h
+    if (!user) {
+      return new NextResponse("Invalid or expired magic link", { status: 400 });
+    }
 
-    user.verificationToken = token;
-    user.verificationTokenExpiry = expiry;
+    // Clear the used token
+    user.magicToken = undefined;
+    user.magicTokenExpiry = undefined;
+    user.isVerified = true;
     await user.save();
 
-    await sendMagicLinkEmail(email, token);
+    if (!JWT_SECRET) {
+      return new NextResponse("Server missing JWT_SECRET", { status: 500 });
+    }
 
-    return NextResponse.json({ success: true, message: "Verification email sent" });
+    // Create real session token
+    const authToken = jwt.sign(
+      { userId: user._id, email: user.email },
+      JWT_SECRET,
+      { expiresIn: "30d" }
+    );
+
+    // Redirect to success page with token
+    const redirectUrl = `/magic-success?token=${authToken}&user=${encodeURIComponent(
+      JSON.stringify({ id: user._id, email: user.email })
+    )}`;
+
+    return NextResponse.redirect(new URL(redirectUrl, req.url));
   } catch (err) {
-    console.error("Resend verification error:", err);
-    return NextResponse.json({ success: false, message: "Server error" }, { status: 500 });
+    console.error("Magic callback error:", err);
+    return new NextResponse(`Error: ${err.message}`, { status: 500 });
   }
 }
