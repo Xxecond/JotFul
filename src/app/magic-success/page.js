@@ -3,7 +3,7 @@
 
 import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import useAuth from '@/hooks/useAuth';
+import { useAuth } from '@/context/authContext' ;
 import { Spinner } from "@/components/ui";
 
 export default function MagicSuccess() {

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Modal from "./Modal";
-import useAuth from "@/hooks/useAuth";
+import { useAuth } from '@/context/authContext' 
 import { useRouter } from 'next/navigation'
 
 function Spin({ open, setOpen, className }) {
