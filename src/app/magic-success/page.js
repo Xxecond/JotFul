@@ -1,13 +1,12 @@
-// app/magic-success/page.js
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Spinner } from "@/components/ui";
-// Force dynamic rendering – fixes the build error
+
 export const dynamic = 'force-dynamic';
 
-export default function MagicSuccess() {
+function MagicSuccessContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -16,20 +15,16 @@ export default function MagicSuccess() {
     const userParam = searchParams.get('user');
 
     if (!token || !userParam) {
-      router.push('/auth/signup'); // or your login/signup page
+      router.push('/auth/signup');
       return;
     }
 
     try {
       const user = JSON.parse(decodeURIComponent(userParam));
-
-      // Save to storage manually
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
-
-      // Go to your main app page
-      router.push('/home'); // change to your actual protected page
-    } catch (err) {
+      router.push('/home');
+    } catch {
       router.push('/auth/signup');
     }
   }, [searchParams, router]);
@@ -39,5 +34,13 @@ export default function MagicSuccess() {
       <Spinner size="lg" />
       <p className="mt-4 text-lg">Logging you in...</p>
     </div>
+  );
+}
+
+export default function MagicSuccess() {
+  return (
+    <Suspense fallback={<Spinner size="lg" />}>
+      <MagicSuccessContent />
+    </Suspense>
   );
 }
