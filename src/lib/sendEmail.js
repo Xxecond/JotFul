@@ -1,3 +1,4 @@
+ // lib/sendEmail.js
 import nodemailer from "nodemailer";
 
 let transporter;
@@ -9,12 +10,10 @@ function getTransporter() {
   const pass = process.env.EMAIL_PASS;
 
   if (!user || !pass) {
-    throw new Error(
-      'Missing email credentials. Set EMAIL_USER and EMAIL_PASS in your environment.'
-    );
+    throw new Error('Missing EMAIL_USER or EMAIL_PASS in .env');
   }
 
-  transporter = nodemailer.createTransport({
+  transporter = nodemailer.createTransport({  // no "r"
     host: "smtp.gmail.com",
     port: 465,
     secure: true,
@@ -24,19 +23,16 @@ function getTransporter() {
   return transporter;
 }
 
-export async function sendVerificationEmail(toEmail, token) {
-  const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-  const verifyURL = `${baseURL}/api/auth/verify-email?token=${token}`;
-
+export async function sendMagicLinkEmail(toEmail, magicLink) {
   const message = `
-    <h2>Verify Your Email</h2>
-    <p>Click the button below to confirm your account:</p>
-    <a href="${verifyURL}" 
-       style="display:inline-block;background:#4CAF50;color:white;
-              padding:10px 16px;border-radius:8px;text-decoration:none;">
-       ✅ Yes, it's me
+    <h2>Log in to jotFul</h2>
+    <p>Click the button below to log in:</p>
+    <a href="${magicLink}"
+       style="display:inline-block;background:#000000;color:white;padding:14px 24px;border-radius:12px;text-decoration:none;font-weight:bold;">
+       Log in now
     </a>
-    <p>If you didn’t request this, ignore this email.</p>
+    <p>Link expires in 15 minutes.</p>
+    <p>If you didn’t request this, ignore it.</p>
   `;
 
   const t = getTransporter();
@@ -44,7 +40,7 @@ export async function sendVerificationEmail(toEmail, token) {
   await t.sendMail({
     from: `"jotFul" <${process.env.EMAIL_USER}>`,
     to: toEmail,
-    subject: "Verify your jotFul account",
+    subject: "Your jotFul magic login link",
     html: message,
   });
 }

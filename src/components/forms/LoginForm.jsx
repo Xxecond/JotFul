@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
 import { Button, Spinner } from '@/components/ui'
-import { useAuth } from '@/hooks'
+import { useAuth } from '@/context/authContext' 
 import Link from 'next/link'
 
 export default function LoginForm() {

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import User from "@/models/User";
 import crypto from "crypto";
-import { sendVerificationEmail } from "@/lib/sendEmail";
+import { sendMagicLinkEmail } from "@/lib/sendEmail";
 
 export async function POST(req) {
   try {
@@ -24,7 +24,7 @@ export async function POST(req) {
     user.verificationTokenExpiry = expiry;
     await user.save();
 
-    await sendVerificationEmail(email, token);
+    await sendMagicLinkEmail(email, token);
 
     return NextResponse.json({ success: true, message: "Verification email sent" });
   } catch (err) {

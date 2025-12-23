@@ -1,3 +1,4 @@
+// models/User.js
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
@@ -9,25 +10,33 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
-    password: {
-      type: String,
-      required: true,
-    },
+    // Removed password since we're pure magic link now
+    // password: { type: String },  // commented out – no need
+
     isVerified: {
       type: Boolean,
-      default: false,
+      default: true,  // auto-verified on first magic login
     },
+
+    // New fields for magic link
+    magicToken: {
+      type: String,
+    },
+    magicTokenExpiry: {
+      type: Number,  // timestamp in ms
+    },
+
+    // Old verification fields – can delete later but keep for now if you want
     verificationToken: String,
     verificationTokenExpiry: Date,
 
-    // Optional fields for password reset
+    // Optional reset fields – keep if you ever add password later
     resetToken: String,
     tokenExpiry: Date,
   },
   { timestamps: true }
 );
 
-// ✅ Prevent model overwrite on hot reloads (Next.js fix)
 const User = mongoose.models.User || mongoose.model("User", userSchema);
 
 export default User;
