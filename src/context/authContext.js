@@ -1,11 +1,11 @@
- 'use client'
+'use client'
+
 import { createContext, useContext, useState, useEffect } from 'react'
 
 const AuthContext = createContext({
   user: null,
   loading: true,
   sendMagicLink: async () => {},
-  handleMagicCallback: async () => {},
   logout: () => {},
   isLoggedIn: false,
 })
@@ -14,33 +14,26 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  const persistUser = (userData, token, rememberMe = true) => {
-    if (!userData || !token) return
-    setUser(userData)
-    if (rememberMe) {
-      localStorage.setItem('token', token)
-      localStorage.setItem('user', JSON.stringify(userData))
-    } else {
-      sessionStorage.setItem('token', token)
-      sessionStorage.setItem('user', JSON.stringify(userData))
-    }
-  }
-
+  // Load user from storage on mount
   useEffect(() => {
     const storedUser = localStorage.getItem('user') || sessionStorage.getItem('user')
     const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+
     if (storedUser && token && storedUser !== 'undefined') {
       try {
         setUser(JSON.parse(storedUser))
       } catch (e) {
-        localStorage.clear()
-        sessionStorage.clear()
+        // Bad data – clear it
+        localStorage.removeItem('user')
+        localStorage.removeItem('token')
+        sessionStorage.removeItem('user')
+        sessionStorage.removeItem('token')
       }
     }
     setLoading(false)
   }, [])
 
-  // New: Send magic link
+  // Send magic link (signup or login – same thing)
   const sendMagicLink = async (email) => {
     setLoading(true)
     try {
@@ -57,29 +50,14 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // New: Handle magic link click (call this from a callback page)
-  const handleMagicCallback = async (token) => {
-    setLoading(true)
-    try {
-      const res = await fetch('/api/auth/magic-callback?token=' + token)
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Invalid link')
-      persistUser(data.user, data.token, true)  // remember by default
-      return data.user
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const logout = async () => {
-    try {
-      await fetch('/api/auth/logout', { method: 'POST' })
-    } catch {}
+  // Logout
+  const logout = () => {
     setUser(null)
     localStorage.removeItem('token')
     localStorage.removeItem('user')
     sessionStorage.removeItem('token')
     sessionStorage.removeItem('user')
+    // Optional: call backend logout if you have one
   }
 
   return (
@@ -88,7 +66,6 @@ export function AuthProvider({ children }) {
         user,
         loading,
         sendMagicLink,
-        handleMagicCallback,
         logout,
         isLoggedIn: !!user,
       }}

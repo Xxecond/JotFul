@@ -17,39 +17,45 @@ export async function GET(req) {
       return new NextResponse("No token provided", { status: 400 });
     }
 
-    // Find user by magic token (not old verificationToken)
     const user = await User.findOne({
       magicToken: token,
       magicTokenExpiry: { $gt: Date.now() },
     });
 
     if (!user) {
-      return new NextResponse("Invalid or expired magic link", { status: 400 });
+      return new NextResponse("Invalid or expired link", { status: 400 });
     }
 
-    // Clear the used token
+    // Clear the one-time magic token
     user.magicToken = undefined;
     user.magicTokenExpiry = undefined;
     user.isVerified = true;
     await user.save();
 
     if (!JWT_SECRET) {
-      return new NextResponse("Server missing JWT_SECRET", { status: 500 });
+      return new NextResponse("Missing JWT_SECRET", { status: 500 });
     }
 
-    // Create real session token
+    // Generate long-lived JWT
     const authToken = jwt.sign(
       { userId: user._id, email: user.email },
       JWT_SECRET,
       { expiresIn: "30d" }
     );
 
-    // Redirect to success page with token
-    const redirectUrl = `/magic-success?token=${authToken}&user=${encodeURIComponent(
-      JSON.stringify({ id: user._id, email: user.email })
-    )}`;
+    // Create response that redirects straight to /home
+    const response = NextResponse.redirect(new URL("/home", req.url));
 
-    return NextResponse.redirect(new URL(redirectUrl, req.url));
+    // Set httpOnly cookie – this is what middleware checks
+    response.cookies.set("access_token", authToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 30 * 24 * 60 * 60, // 30 days
+      path: "/",
+    });
+
+    return response;
   } catch (err) {
     console.error("Magic callback error:", err);
     return new NextResponse(`Error: ${err.message}`, { status: 500 });
