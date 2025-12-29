@@ -25,16 +25,17 @@ function getHeaders(contentType = "application/json") {
 
 // ✅ Create a new post
 export async function createPost(postData) {
-  const token = getAuthToken();
-  if (!token) throw new Error("No token found, please login.");
-
   const res = await fetch("/api/posts", {
     method: "POST",
-    headers: getHeaders(),
+    headers: { "Content-Type": "application/json" },
+    credentials: "include", // Include cookies
     body: JSON.stringify(postData),
   });
 
-  if (!res.ok) throw new Error(`Failed to create post: ${res.status}`);
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.error || `Failed to create post: ${res.status}`);
+  }
   return res.json();
 }
 
@@ -51,10 +52,13 @@ export async function getPostById(id) {
 // ✅ Get all posts for the logged-in user
 export async function getUserPosts() {
   const res = await fetch("/api/posts", {
-    headers: getHeaders(),
+    credentials: "include", // Include cookies
   });
 
-  if (!res.ok) throw new Error(`Failed to fetch posts: ${res.status}`);
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.error || `Failed to fetch posts: ${res.status}`);
+  }
   return res.json();
 }
 

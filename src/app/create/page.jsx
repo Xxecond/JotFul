@@ -38,24 +38,28 @@ export default function CreateBlog() {
     try {
       if (!selectedFile) throw new Error("No image selected");
 
-      // Upload image to Cloudinary
+      // Upload image via your auth-protected API
       const formData = new FormData();
       formData.append("file", selectedFile);
-      formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_PRESET);
 
-      const uploadRes = await fetch(process.env.NEXT_PUBLIC_CLOUDINARY_URL, {
+      const uploadRes = await fetch("/api/upload", {
         method: "POST",
         body: formData,
       });
 
+      if (!uploadRes.ok) {
+        const error = await uploadRes.json();
+        throw new Error(error.error || "Upload failed");
+      }
+
       const uploadData = await uploadRes.json();
-      if (!uploadData.secure_url) throw new Error("Cloudinary upload failed");
+      if (!uploadData.url) throw new Error("Upload failed - no URL returned");
 
       // Create the post using postService.js
       await createPost({
         title,
         content,
-        image: uploadData.secure_url,
+        image: uploadData.url,
       });
 
       router.push("/home");
@@ -65,7 +69,7 @@ export default function CreateBlog() {
     } finally {
       setLoading(false);
     }
-  }; // <-- close handleSubmit
+  };
 
   return (
       <>

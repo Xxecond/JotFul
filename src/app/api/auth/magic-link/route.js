@@ -8,7 +8,7 @@ import { NextResponse } from "next/server";
 export async function POST(req) {
   try {
     await connectDB();
-    const { email } = await req.json();
+    const { email, sessionId } = await req.json();
 
     if (!email || !email.includes("@")) {
       return NextResponse.json({ error: "Valid email required" }, { status: 400 });
@@ -24,12 +24,17 @@ export async function POST(req) {
     user.magicTokenExpiry = Date.now() + 15 * 60 * 1000;
     await user.save();
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `http://localhost:3000`;
+    const baseUrl = process.env.NODE_ENV === 'production' 
+      ? process.env.NEXT_PUBLIC_BASE_URL 
+      : 'http://localhost:3000';
     const magicLink = `${baseUrl}/api/auth/magic-callback?token=${token}`;
 
-    await sendMagicLinkEmail(email, magicLink);
+    await sendMagicLinkEmail(email, magicLink, sessionId);
 
-    return NextResponse.json({ message: "Magic link sent" });
+    return NextResponse.json({ 
+      message: "Magic link sent",
+      waitingUrl: `${baseUrl}/auth/waiting`
+    });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "Server error" }, { status: 500 });

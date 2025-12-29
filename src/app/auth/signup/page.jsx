@@ -7,7 +7,6 @@ import { FaFacebook, FaApple} from "react-icons/fa";
 import {Button} from "@/components/ui";
 import {BackwardIcon} from "@heroicons/react/24/solid"
 
-
 export default function SignupPage() {
 
   return (

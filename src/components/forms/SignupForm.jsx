@@ -21,9 +21,26 @@ export default function SignupForm() {
 
     setLoading(true)
     try {
-      await sendMagicLink(email)
+      // Generate sessionId for cross-device auth
+      const sessionId = Math.random().toString(36).substring(7);
+      
+      // Send magic link with sessionId
+      const res = await fetch('/api/auth/magic-link', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, sessionId }),
+      })
+      
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to send link')
+      
       setMessage('Magic link sent! Check your email (and spam folder).')
       setEmail('') // clear field
+      
+      // Redirect to waiting page with sessionId
+      setTimeout(() => {
+        window.location.href = `/auth/waiting?sessionId=${sessionId}`;
+      }, 2000);
     } catch (err) {
       setError(err.message || 'Something went wrong. Try again.')
     } finally {
