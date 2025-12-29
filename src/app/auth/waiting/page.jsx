@@ -1,8 +1,8 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function WaitingAuth() {
+function WaitingAuthContent() {
   const [sessionId, setSessionId] = useState("");
   const [status, setStatus] = useState("waiting");
   const router = useRouter();
@@ -66,5 +66,19 @@ export default function WaitingAuth() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function WaitingAuth() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="bg-white p-8 rounded-lg shadow-md text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
+        </div>
+      </div>
+    }>
+      <WaitingAuthContent />
+    </Suspense>
   );
 }
