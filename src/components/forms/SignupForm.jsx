@@ -28,7 +28,7 @@ export default function SignupForm() {
       const res = await fetch('/api/auth/magic-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, sessionId }),
+        body: JSON.stringify({ email, sessionId, action: 'signup' }),
       })
       
       const data = await res.json()

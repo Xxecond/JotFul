@@ -28,9 +28,10 @@ export async function GET(req) {
       return redirect("/login?error=expired-token");
     }
 
-    // Clear the magic token
+    // Clear the magic token and verify user
     user.magicToken = undefined;
     user.magicTokenExpiry = undefined;
+    user.isVerified = true; // Only verify when they approve
     await user.save();
 
     // Handle deny action
@@ -42,9 +43,13 @@ export async function GET(req) {
           denied: true
         });
       }
-      return NextResponse.json({ 
-        message: "Login request denied. You can close this tab." 
-      });
+      return new Response(`
+        <html><body style="font-family:Arial;text-align:center;padding:50px;">
+          <h2>❌ Request Denied</h2>
+          <p>Login request has been denied. You can close this tab.</p>
+          <script>setTimeout(() => window.close(), 2000);</script>
+        </body></html>
+      `, { headers: { 'Content-Type': 'text/html' } });
     }
 
     // Handle approve action (default)
@@ -62,18 +67,23 @@ export async function GET(req) {
         jwtToken
       });
       
-      return NextResponse.json({ 
-        message: "Authentication successful! You can close this tab." 
-      });
+      return new Response(`
+        <html><body style="font-family:Arial;text-align:center;padding:50px;">
+          <h2>✅ Authentication Successful!</h2>
+          <p>You can close this tab now.</p>
+          <script>setTimeout(() => window.close(), 2000);</script>
+        </body></html>
+      `, { headers: { 'Content-Type': 'text/html' } });
     }
 
     // Normal flow - set cookie and redirect
     const response = NextResponse.redirect(new URL("/home", req.url));
     response.cookies.set("access_token", jwtToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: true, // Always secure in production
       sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60
+      maxAge: 7 * 24 * 60 * 60,
+      path: "/" // Ensure cookie is available site-wide
     });
 
     return response;

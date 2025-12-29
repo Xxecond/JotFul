@@ -24,9 +24,9 @@ function getTransporter() {
 }
 
 export async function sendMagicLinkEmail(toEmail, magicLink, sessionId = null) {
-  // Add sessionId to magic link if provided for cross-device auth
-  const yesLink = sessionId ? `${magicLink}&sessionId=${sessionId}&action=approve` : `${magicLink}&action=approve`;
-  const noLink = sessionId ? `${magicLink}&sessionId=${sessionId}&action=deny` : `${magicLink}&action=deny`;
+  // Create simple tracking URLs
+  const yesUrl = sessionId ? `${magicLink}&sessionId=${sessionId}&action=approve` : `${magicLink}&action=approve`;
+  const noUrl = sessionId ? `${magicLink}&sessionId=${sessionId}&action=deny` : `${magicLink}&action=deny`;
   
   const message = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -34,19 +34,24 @@ export async function sendMagicLinkEmail(toEmail, magicLink, sessionId = null) {
       <p>Was this you?</p>
       
       <div style="text-align: center; margin: 30px 0;">
-        <a href="${yesLink}"
-           style="display:inline-block;background:#22c55e;color:white;padding:14px 30px;border-radius:8px;text-decoration:none;font-weight:bold;margin:10px;">
-           ✓ Yes, it's me
-        </a>
-        
-        <a href="${noLink}"
-           style="display:inline-block;background:#ef4444;color:white;padding:14px 30px;border-radius:8px;text-decoration:none;font-weight:bold;margin:10px;">
-           ✗ No, it's not me
-        </a>
+        <table cellpadding="0" cellspacing="0" style="margin: 0 auto;">
+          <tr>
+            <td style="padding: 10px;">
+              <a href="${yesUrl}" style="display:block;background:#22c55e;color:white;padding:14px 30px;border-radius:8px;text-decoration:none;font-weight:bold;">
+                ✓ Yes, it's me
+              </a>
+            </td>
+            <td style="padding: 10px;">
+              <a href="${noUrl}" style="display:block;background:#ef4444;color:white;padding:14px 30px;border-radius:8px;text-decoration:none;font-weight:bold;">
+                ✗ No, it's not me
+              </a>
+            </td>
+          </tr>
+        </table>
       </div>
       
       <p style="font-size: 14px; color: #666;">This request expires in 15 minutes.</p>
-      <p style="font-size: 12px; color: #999;">If you didn't request this, you can safely ignore this email.</p>
+      <p style="font-size: 12px; color: #999;">Clicking will open a minimal confirmation page that you can close immediately.</p>
     </div>
   `;
 

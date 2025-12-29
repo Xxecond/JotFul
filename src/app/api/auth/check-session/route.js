@@ -25,9 +25,10 @@ export async function GET(req) {
       const response = NextResponse.json({ authenticated: true });
       response.cookies.set("access_token", session.jwtToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: true, // Always secure in production
         sameSite: "lax",
-        maxAge: 7 * 24 * 60 * 60
+        maxAge: 7 * 24 * 60 * 60,
+        path: "/" // Ensure cookie is available site-wide
       });
       
       // Clean up the session

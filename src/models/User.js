@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema(
 
     isVerified: {
       type: Boolean,
-      default: true,  // auto-verified on first magic login
+      default: false,  // Only verified after clicking "Yes, it's me"
     },
 
     // New fields for magic link
