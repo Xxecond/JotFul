@@ -32,6 +32,15 @@ function WaitingAuthContent() {
         if (data.authenticated) {
           setStatus("authenticated");
           clearInterval(interval);
+          
+          // Store token and user in localStorage
+          if (data.token) {
+            localStorage.setItem("token", data.token);
+          }
+          if (data.user) {
+            localStorage.setItem("user", JSON.stringify(data.user));
+          }
+          
           router.push("/home");
         } else if (data.denied) {
           setStatus("denied");

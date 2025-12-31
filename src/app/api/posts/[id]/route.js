@@ -29,12 +29,17 @@ async function getUserId(req) {
 // GET one post (public – no auth needed)
 export async function GET(req, { params }) {
   const { id } = params;
+  console.log('GET post request for ID:', id);
 
   try {
     await connectDB();
+    console.log('Database connected, searching for post...');
+    
     const post = await Post.findById(id);
+    console.log('Post found:', !!post);
 
     if (!post) {
+      console.log('Post not found in database');
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
@@ -48,12 +53,17 @@ export async function GET(req, { params }) {
 // PUT – update post
 export async function PUT(req, { params }) {
   const { id } = params;
+  console.log('PUT request for post ID:', id);
 
   try {
     await connectDB();
+    console.log('Database connected for PUT request');
 
     const userId = await getUserId(req);
+    console.log('User ID from token:', userId);
+    
     if (!userId) {
+      console.log('No user ID found - unauthorized');
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -64,11 +74,15 @@ export async function PUT(req, { params }) {
     const image = formData.get("image"); // new file
     const imageUrl = formData.get("imageUrl"); // existing URL from frontend
 
+    console.log('Form data received:', { title, content, hasImage: !!image, imageUrl, removeImage });
+
     if (!title || !content) {
       return NextResponse.json({ error: "Title and content required" }, { status: 400 });
     }
 
     const post = await Post.findOne({ _id: id, userId });
+    console.log('Post found for update:', !!post);
+    
     if (!post) {
       return NextResponse.json({ error: "Post not found or unauthorized" }, { status: 404 });
     }
@@ -103,6 +117,7 @@ export async function PUT(req, { params }) {
     post.image = finalImageUrl;
     await post.save();
 
+    console.log('Post updated successfully');
     return NextResponse.json(post);
   } catch (error) {
     console.error("PUT post error:", error);
@@ -113,20 +128,28 @@ export async function PUT(req, { params }) {
 // DELETE post
 export async function DELETE(req, { params }) {
   const { id } = params;
+  console.log('DELETE request for post ID:', id);
 
   try {
     await connectDB();
+    console.log('Database connected for DELETE request');
 
     const userId = await getUserId(req);
+    console.log('User ID from token:', userId);
+    
     if (!userId) {
+      console.log('No user ID found - unauthorized');
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const deleted = await Post.findOneAndDelete({ _id: id, userId });
+    console.log('Post deleted:', !!deleted);
+    
     if (!deleted) {
       return NextResponse.json({ error: "Post not found or unauthorized" }, { status: 404 });
     }
 
+    console.log('Post deleted successfully');
     return NextResponse.json({ message: "Post deleted" });
   } catch (error) {
     console.error("DELETE post error:", error);

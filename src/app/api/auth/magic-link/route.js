@@ -32,9 +32,7 @@ export async function POST(req) {
       user.magicTokenExpiry = Date.now() + 15 * 60 * 1000;
       await user.save();
 
-      const baseUrl = process.env.NODE_ENV === 'production' 
-        ? process.env.NEXT_PUBLIC_BASE_URL 
-        : 'http://localhost:3000';
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
       const magicLink = `${baseUrl}/api/auth/magic-callback?token=${token}`;
 
       await sendMagicLinkEmail(email, magicLink, sessionId);
@@ -56,9 +54,7 @@ export async function POST(req) {
       existingUser.magicTokenExpiry = Date.now() + 15 * 60 * 1000;
       await existingUser.save();
 
-      const baseUrl = process.env.NODE_ENV === 'production' 
-        ? process.env.NEXT_PUBLIC_BASE_URL 
-        : 'http://localhost:3000';
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
       const magicLink = `${baseUrl}/api/auth/magic-callback?token=${token}`;
 
       await sendMagicLinkEmail(email, magicLink, sessionId);
@@ -80,9 +76,7 @@ export async function POST(req) {
     user.magicTokenExpiry = Date.now() + 15 * 60 * 1000;
     await user.save();
 
-    const baseUrl = process.env.NODE_ENV === 'production' 
-      ? process.env.NEXT_PUBLIC_BASE_URL 
-      : 'http://localhost:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const magicLink = `${baseUrl}/api/auth/magic-callback?token=${token}`;
 
     await sendMagicLinkEmail(email, magicLink, sessionId);

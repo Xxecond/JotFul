@@ -42,7 +42,7 @@ export async function createPost(postData) {
 // ✅ Get a single post by ID
 export async function getPostById(id) {
   const res = await fetch(`/api/posts/${id}`, {
-    headers: getHeaders(),
+    credentials: "include", // Include cookies
   });
 
   if (!res.ok) throw new Error(`Failed to fetch post: ${res.status}`);
@@ -78,7 +78,7 @@ export async function updatePost(id, { title, content, image }) {
 
   const res = await fetch(`/api/posts/${id}`, {
     method: "PUT",
-    headers: getHeaders(null), // no Content-Type for FormData
+    credentials: "include", // Include cookies
     body: formData,
   });
 
@@ -90,8 +90,7 @@ export async function updatePost(id, { title, content, image }) {
 export async function deletePost(id) {
   const res = await fetch(`/api/posts/${id}`, {
     method: "DELETE",
-    headers: getHeaders(),
-    credentials: 'include',
+    credentials: "include", // Include cookies
   });
 
   if (!res.ok) throw new Error(`Failed to delete post: ${res.status}`);

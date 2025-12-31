@@ -80,10 +80,10 @@ export async function GET(req) {
     const response = NextResponse.redirect(new URL("/home", req.url));
     response.cookies.set("access_token", jwtToken, {
       httpOnly: true,
-      secure: true, // Always secure in production
+      secure: process.env.NODE_ENV === 'production',
       sameSite: "lax",
       maxAge: 7 * 24 * 60 * 60,
-      path: "/" // Ensure cookie is available site-wide
+      path: "/"
     });
 
     return response;

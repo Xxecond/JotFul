@@ -1,6 +1,7 @@
 import { connectDB } from "@/lib/db";
 import AuthSession from "@/models/AuthSession";
 import { NextResponse } from "next/server";
+import jwt from "jsonwebtoken";
 
 export async function GET(req) {
   try {
@@ -22,13 +23,17 @@ export async function GET(req) {
     
     if (session && session.authenticated) {
       // Transfer the JWT cookie to this response
-      const response = NextResponse.json({ authenticated: true });
+      const response = NextResponse.json({ 
+        authenticated: true,
+        token: session.jwtToken,
+        user: jwt.decode(session.jwtToken)
+      });
       response.cookies.set("access_token", session.jwtToken, {
         httpOnly: true,
-        secure: true, // Always secure in production
+        secure: process.env.NODE_ENV === 'production',
         sameSite: "lax",
         maxAge: 7 * 24 * 60 * 60,
-        path: "/" // Ensure cookie is available site-wide
+        path: "/"
       });
       
       // Clean up the session
