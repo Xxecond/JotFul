@@ -27,6 +27,7 @@ export default function CreateBlog() {
   const [imagePreview, setImagePreview] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
   // Auto-save functionality
   useEffect(() => {
     if (settings.autoSave && (title || content)) {
