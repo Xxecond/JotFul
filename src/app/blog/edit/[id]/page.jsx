@@ -17,6 +17,7 @@ export default function EditBlog({ params }) {
   const [imagePreview, setImagePreview] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
 
   // Fetch existing post
   useEffect(() => {
@@ -40,6 +41,31 @@ export default function EditBlog({ params }) {
     if (!file) return;
     setSelectedFile(file);
     setImagePreview(URL.createObjectURL(file));
+  };
+
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    
+    const files = e.dataTransfer.files;
+    if (files && files[0]) {
+      const file = files[0];
+      if (file.type.startsWith('image/')) {
+        setSelectedFile(file);
+        setImagePreview(URL.createObjectURL(file));
+      }
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -83,23 +109,20 @@ export default function EditBlog({ params }) {
 
   return (
     <>
-      <Header />
-      <section className="flex items-center justify-center h-auto bg-white px-10 md:px-5 py-5 pt-20">
-        <form
-          onSubmit={handleSubmit}
-          className="bg-gray-200 shadow-xl rounded-lg p-8 w-full max-w-2xl"
-        >
-          <h2 className="md:text-xl xl:text-2xl font-bold mb-6 text-center text-black">
-            Edit Jot
-          </h2>
-
+      <div className="bg-white min-h-screen">
+        <Header />
+        <section className="flex items-center justify-center h- bg-white py-5 pt-20 ">
+          <form
+            onSubmit={handleSubmit}
+            className="bg-gray-200 shadow-xl rounded-lg p-8 w-[90%] max-w-4xl"
+          >    
           <input
             type="text"
             placeholder="Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="text-base xl:text-lg w-full p-2 mb-5 border border-cyan-700 rounded-lg focus:ring-2 focus:ring-cyan-700 outline-none"
+            className="text-base  w-full px-3 py-1 md:p-2 xl:p-3 mb-5 border border-cyan-700 rounded-lg focus:ring-2 focus:ring-cyan-700 outline-none"
           />
 
          <label
@@ -111,22 +134,41 @@ export default function EditBlog({ params }) {
             onChange={handleImageChange}
             className="hidden"
           /></label>
+
+          {/* Drag and Drop Box - only show when no image is selected */}
+          {!imagePreview && (
+            <div
+              className={`w-full h-32 border-2 border-dashed rounded-lg mb-4 flex items-center justify-center cursor-pointer transition-colors ${
+                dragActive 
+                  ? 'border-cyan-500 bg-cyan-50' 
+                  : 'border-gray-400 bg-gray-50'
+              }`}
+              onDragEnter={handleDrag}
+              onDragLeave={handleDrag}
+              onDragOver={handleDrag}
+              onDrop={handleDrop}
+              onClick={() => document.querySelector('input[type="file"]').click()}
+            >
+              <p className="text-gray-600 text-center">
+                {dragActive ? 'Drop image here' : 'Drag image here to upload'}
+              </p>
+            </div>
+          )}
           
           {imagePreview && (
-            <div className="mb-4 text-center">
-              <div className="relative w-full h-40 md:h-55 xl:h-64 mb-3">
+            <div className="mb-4 text-base xl:text-lg text-center">
+              <div className="relative w-[95%] max-w-4xl mx-auto h-80 md:h-95 xl:h-120 mb-3 text-sm md:text-base xl:text-lg">
                 <Image
                   src={imagePreview}
                   alt="Preview"
                   fill
-                  className="object-contain rounded-lg"
+                  className="object-cover rounded-lg"
                 />
               </div>
               <Button
                 type="button"
                 variant="destructive"
                 className="bg-red-700"
-                required
                 onClick={() => {
                   setImagePreview(null);
                   setSelectedFile(null);
@@ -142,7 +184,7 @@ export default function EditBlog({ params }) {
             value={content}
             onChange={(e) => setContent(e.target.value)}
             required
-            rows="8"
+            rows="5"
             className="text-base w-full p-3 mb-6 border border-cyan-700 rounded-lg focus:ring-2 focus:ring-cyan-700 outline-none"
           ></textarea>
 
@@ -157,6 +199,7 @@ export default function EditBlog({ params }) {
           </Button>
         </form>
       </section>
+    </div>
     </>
   );
 }

@@ -28,7 +28,9 @@ async function getUserId(req) {
 
 // GET one post (public – no auth needed)
 export async function GET(req, { params }) {
-  const { id } = params;
+  // Handle both sync and async params
+  const resolvedParams = await params;
+  const { id } = resolvedParams;
   console.log('GET post request for ID:', id);
 
   try {
@@ -52,7 +54,9 @@ export async function GET(req, { params }) {
 
 // PUT – update post
 export async function PUT(req, { params }) {
-  const { id } = params;
+  // Handle both sync and async params
+  const resolvedParams = await params;
+  const { id } = resolvedParams;
   console.log('PUT request for post ID:', id);
 
   try {
@@ -127,7 +131,9 @@ export async function PUT(req, { params }) {
 
 // DELETE post
 export async function DELETE(req, { params }) {
-  const { id } = params;
+  // Handle both sync and async params
+  const resolvedParams = await params;
+  const { id } = resolvedParams;
   console.log('DELETE request for post ID:', id);
 
   try {

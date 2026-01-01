@@ -5,18 +5,25 @@ import {Navbar} from "@/components";
 
 export default function Header() {
   const pathname = usePathname();
+  console.log('Current pathname:', pathname);
 
   const headings = {
     "/home": "JOTFUL",
     "/create": "New Jot",
     "/edit": "Edit Jot",
-    "/info": "Info",
+    "/settings": "Settings",
   };
 
-  const pageName = headings[pathname] || "Page";
+  const getPageName = (path) => {
+    if (headings[path]) return headings[path];
+    if (path.startsWith('/edit') || path.includes('/edit/')) return 'Edit Jot';
+    return 'Page';
+  };
+
+  const pageName = getPageName(pathname);
 
   return (<>
-<header className="sticky top-0 w-full bg-cyan-600 text-white py-3 xl:py-4 z-50">
+<header className="sticky top-0 w-full bg-cyan-600 dark:bg-gray-800 text-white py-3 xl:py-4 z-50">
      <div className="md:hidden absolute top-0 -left-4">
       <Navbar first="icon" />
      </div>

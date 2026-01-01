@@ -6,9 +6,13 @@ import Image from "next/image";
 import Header from "@/components/Header";
 import { createPost } from "@/lib/postService";
 import {Spinner, Button} from "@/components/ui";
+import { useSettings } from "@/contexts/SettingsContext";
+import { useNotifications } from "@/contexts/NotificationContext";
 
 export default function CreateBlog() {
  const router = useRouter();
+ const { settings } = useSettings();
+ const { addNotification } = useNotifications();
  
  // Removed the authentication check and redirect
  // const {user, loading:authLoading } =useAuth();
@@ -23,12 +27,58 @@ export default function CreateBlog() {
   const [imagePreview, setImagePreview] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  // Auto-save functionality
+  useEffect(() => {
+    if (settings.autoSave && (title || content)) {
+      const timer = setTimeout(() => {
+        localStorage.setItem('draft', JSON.stringify({ title, content }));
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [title, content, settings.autoSave]);
+
+  // Load draft on mount
+  useEffect(() => {
+    if (settings.autoSave) {
+      const draft = localStorage.getItem('draft');
+      if (draft) {
+        const { title: draftTitle, content: draftContent } = JSON.parse(draft);
+        if (draftTitle) setTitle(draftTitle);
+        if (draftContent) setContent(draftContent);
+      }
+    }
+  }, [settings.autoSave]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
     setSelectedFile(file);
     setImagePreview(URL.createObjectURL(file));
+  };
+
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    
+    const files = e.dataTransfer.files;
+    if (files && files[0]) {
+      const file = files[0];
+      if (file.type.startsWith('image/')) {
+        setSelectedFile(file);
+        setImagePreview(URL.createObjectURL(file));
+      }
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -62,9 +112,15 @@ export default function CreateBlog() {
         image: uploadData.url,
       });
 
+      // Clear draft after successful post
+      if (settings.autoSave) {
+        localStorage.removeItem('draft');
+      }
+
       router.push("/home");
+      addNotification("Post created successfully!", "success");
     } catch (err) {
-      alert(`Error: ${err.message}`);
+      addNotification(`Error: ${err.message}`, "error");
       console.error(err);
     } finally {
       setLoading(false);
@@ -73,16 +129,13 @@ export default function CreateBlog() {
 
   return (
       <>
-      <div className="bg-white min-h-screen">
+      <div className="bg-white dark:bg-gray-900 min-h-screen">
       <Header />
-      <section className="flex items-center justify-center h- bg-white px-10 md:px-5 py-5 pt-20 ">
+      <section className="flex items-center justify-center h- bg-white dark:bg-gray-900 py-5 pt-20 ">
         <form
           onSubmit={handleSubmit}
-          className="bg-gray-200 shadow-xl rounded-lg p-8 w-full max-w-2xl"
+          className="bg-gray-200 dark:bg-gray-800 shadow-xl rounded-lg p-8 w-[90%] max-w-4xl"
         >
-          <h2 className="md:text-xl xl:text-2xl font-bold mb-6 text-center text-black">
-            Create New Jot
-          </h2>
 
           <input
             type="text"
@@ -90,7 +143,7 @@ export default function CreateBlog() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="text-base  w-full px-3 py-1 md:p-2 xl:p-3 mb-5 border border-cyan-700 rounded-lg focus:ring-2 focus:ring-cyan-700 outline-none"
+            className="text-base  w-full px-3 py-1 md:p-2 xl:p-3 mb-5 border border-cyan-700 dark:border-cyan-500 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-cyan-700 outline-none"
           />
 
           <label
@@ -104,9 +157,29 @@ export default function CreateBlog() {
             className="hidden"
           /></label>
 
+          {/* Drag and Drop Box - only show when no image is selected */}
+          {!imagePreview && (
+            <div
+              className={`w-full h-32 border-2 border-dashed rounded-lg mb-4 flex items-center justify-center cursor-pointer transition-colors ${
+                dragActive 
+                  ? 'border-cyan-500 bg-cyan-50' 
+                  : 'border-gray-400 bg-gray-50'
+              }`}
+              onDragEnter={handleDrag}
+              onDragLeave={handleDrag}
+              onDragOver={handleDrag}
+              onDrop={handleDrop}
+              onClick={() => document.querySelector('input[type="file"]').click()}
+            >
+              <p className="text-gray-600 text-center">
+                {dragActive ? 'Drop image here' : 'Drag image here to upload'}
+              </p>
+            </div>
+          )}
+
           {imagePreview && (
             <div className="mb-4 text-base xl:text-lg text-center">
-              <div className="relative w-full h-40 md:55 xl:64 mb-3 text-sm md:text-base xl:text-lg">
+              <div className="relative w-[95%] max-w-4xl mx-auto h-80 md:h-95 xl:h-120 mb-3 text-sm md:text-base xl:text-lg">
                 <Image
                   src={imagePreview}
                   alt="Preview"
@@ -133,7 +206,7 @@ export default function CreateBlog() {
             value={content}
             onChange={(e) => setContent(e.target.value)}
             required
-            rows="8"
+            rows="5"
             className="text-base w-full p-3 mb-6 border border-cyan-700 rounded-lg focus:ring-2 focus:ring-cyan-700 outline-none"
           ></textarea> 
 

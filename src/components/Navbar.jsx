@@ -43,7 +43,7 @@ export default function Navbar({ first, second }) {
   const navLinks = [
     { id: 1, href: "/home", text: "Home" },
     { id: 2, href: "/create", text: "Create Jot" },
-    { id: 3, href: "/info", text: "Info" },
+    { id: 3, href: "/settings", text: "settings" },
   ];
 
   const router = useRouter()

@@ -32,6 +32,6 @@ export const config = {
     '/create/:path*',
     '/home/:path*',
     '/blog/edit/:path*',
-    '/info/:path*',
+    '/settings/:path*',
   ],
 }

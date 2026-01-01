@@ -1,6 +1,6 @@
 "use client";
 
-export default function Modal({ open, message, onCancel, onConfirm }) {
+export default function Modal({ open, message, onCancel, onConfirm, singleButton = false }) {
   if (!open) return null; // early return if modal is not open
 
   return (
@@ -10,20 +10,31 @@ export default function Modal({ open, message, onCancel, onConfirm }) {
 
       {/* Modal content */}
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/5 max-w-sm rounded-xl bg-cyan-700 z-50 space-y-4">
-        <p className="text-white p-4">{message}</p>
+        <p className="text-white text-center pt-4">{message}</p>
         <div className="flex justify-around">
-          <button
-            className="text-white p-2 w-1/2 hover:bg-black/20 border-t-2 border-white"
-            onClick={onConfirm}
-          >
-            Yes
-          </button>
-          <button
-            className="text-white p-2 w-1/2 hover:bg-black/20 border-l-2 border-t-2 border-white"
-            onClick={onCancel}
-          >
-            No
-          </button>
+          {singleButton ? (
+            <button
+              className="text-white p-2 w-full hover:bg-black/20 border-t-2 border-white"
+              onClick={onConfirm}
+            >
+              OK
+            </button>
+          ) : (
+            <>
+              <button
+                className="text-white p-2 w-1/2 hover:bg-black/20 border-t-2 border-white"
+                onClick={onConfirm}
+              >
+                Yes
+              </button>
+              <button
+                className="text-white p-2 w-1/2 hover:bg-black/20 border-l-2 border-t-2 border-white"
+                onClick={onCancel}
+              >
+                No
+              </button>
+            </>
+          )}
         </div>
       </div>
     </section>
