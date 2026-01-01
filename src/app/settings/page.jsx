@@ -80,11 +80,11 @@ export default function Settings() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Font Size</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Font Size</label>
                   <select 
                     value={settings.fontSize} 
                     onChange={(e) => updateSettings({ fontSize: e.target.value })}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500"
+                    className="w-full p-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-cyan-500"
                   >
                     <option value="small">Small</option>
                     <option value="medium">Medium</option>
@@ -101,7 +101,7 @@ export default function Settings() {
                     onChange={(e) => updateSettings({ showTimestamps: e.target.checked })}
                     className="w-4 h-4 text-cyan-600 rounded focus:ring-cyan-500"
                   />
-                  <span className="text-sm text-gray-700">Show timestamps on posts</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300">Show timestamps on posts</span>
                 </label>
                 
                 <label className="flex items-center gap-2 cursor-pointer">
@@ -111,14 +111,14 @@ export default function Settings() {
                     onChange={(e) => updateSettings({ compactView: e.target.checked })}
                     className="w-4 h-4 text-cyan-600 rounded focus:ring-cyan-500"
                   />
-                  <span className="text-sm text-gray-700">Compact view</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300">Compact view</span>
                 </label>
               </div>
             </div>
 
             {/* Content Settings */}
             <div className="mb-8">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
                 </svg>
@@ -127,11 +127,11 @@ export default function Settings() {
               
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Image Quality</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Image Quality</label>
                   <select 
                     value={settings.imageQuality} 
                     onChange={(e) => updateSettings({ imageQuality: e.target.value })}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500"
+                    className="w-full p-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-cyan-500"
                   >
                     <option value="low">Low (Faster upload)</option>
                     <option value="medium">Medium</option>
@@ -147,7 +147,7 @@ export default function Settings() {
                       onChange={(e) => updateSettings({ autoSave: e.target.checked })}
                       className="w-4 h-4 text-cyan-600 rounded focus:ring-cyan-500"
                     />
-                    <span className="text-sm text-gray-700">Auto-save drafts</span>
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Auto-save drafts</span>
                   </label>
                 </div>
               </div>
@@ -155,7 +155,7 @@ export default function Settings() {
 
             {/* Notifications */}
             <div className="mb-8">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
                 </svg>
@@ -169,13 +169,13 @@ export default function Settings() {
                   onChange={(e) => updateSettings({ notifications: e.target.checked })}
                   className="w-4 h-4 text-cyan-600 rounded focus:ring-cyan-500"
                 />
-                <span className="text-sm text-gray-700">Enable notifications</span>
+                <span className="text-sm text-gray-700 dark:text-gray-300">Enable notifications</span>
               </label>
             </div>
 
             {/* Data Management */}
             <div className="mb-8">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
                 </svg>
@@ -194,11 +194,11 @@ export default function Settings() {
                   Export Data
                 </Button>
               </div>
-              <p className="text-xs text-gray-500 mt-2">Download a readable text backup of all your posts</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Download a readable text backup of all your posts</p>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-4 pt-6 border-t border-gray-200">
+            <div className="flex gap-4 pt-6 border-t border-gray-200 dark:border-gray-600">
               <Button 
                 onClick={saveSettings}
                 variant="special"
@@ -217,10 +217,10 @@ export default function Settings() {
             </div>
 
             {/* App Info */}
-            <div className="mt-8 pt-6 border-t border-gray-200 text-center">
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">JotFul</h3>
-              <p className="text-sm text-gray-600">Version 1.0.0</p>
-              <p className="text-xs text-gray-500 mt-2">Your personal blogging companion</p>
+            <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-600 text-center">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">JotFul</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Version 1.0.0</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Your personal blogging companion</p>
             </div>
           </div>
         </section>
