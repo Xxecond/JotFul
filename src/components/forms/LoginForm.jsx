@@ -60,7 +60,7 @@ export default function LoginForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="block w-full p-3 mt-1 focus:outline-none ring-1 ring-black focus:ring-2 rounded-full"
+          className="block w-full p-3 mt-1 focus:outline-none ring-1 ring-black dark:ring-white focus:ring-2 rounded-full dark:bg-white/20 bg-black/20"
         />
       </div>
 

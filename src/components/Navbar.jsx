@@ -56,8 +56,8 @@ export default function Navbar({ first, second }) {
 
   useEffect(() => {
     if (open) {
-      setTextColor("text-cyan-500");
-      const timer = setTimeout(() => setTextColor("text-white"), 1000);
+      setTextColor("text-cyan-500 dark:text-cyan-800");
+      const timer = setTimeout(() => setTextColor("text-white dark:text-black"), 1000);
       return () => clearTimeout(timer);
     }
   }, [open]);
@@ -70,7 +70,7 @@ export default function Navbar({ first, second }) {
         
         {/* Overlay behind sidebar */}
         <div
-          className={`fixed inset-0 bg-gradient-to-b from-black/70 to-black/70 
+          className={`fixed inset-0 bg-linear-to-b from-black/70 to-black/70 
             transition-opacity duration-300 md:hidden ${
               open ? "opacity-100" : "opacity-0 pointer-events-none"
             }`}
@@ -89,7 +89,7 @@ export default function Navbar({ first, second }) {
 
         {/* Sidebar */}
         <div
-          className={`fixed left-0 top-0 h-full w-64 bg-cyan-700 shadow-xl transform 
+          className={`fixed left-0 top-0 h-full w-64 bg-cyan-700 dark:bg-cyan-950 shadow-xl transform 
             transition-transform duration-800 ${
               open ? "-translate-x-0" : "-translate-x-full"
             }`}
@@ -100,12 +100,12 @@ export default function Navbar({ first, second }) {
               {navLinks.map((item) => (
                 <li
                   key={item.id}
-                  className="bg-black/70 rounded-md p-2 transition-all duration-300 hover:bg-black/50 hover:pl-5"
+                  className="bg-black/70 dark:bg-white/70 rounded-md p-2 transition-all duration-300 hover:bg-black/50 dark:hover:bg-white/50 hover:pl-5"
                 >
                   <Link
                     href={item.href}
                     onClick={() => setOpen(false)}
-                    className={`text-xl transform-all duration-1000 hover:text-cyan-500 ${textColor} block`}
+                    className={`text-xl transform-all duration-1000 hover:text-cyan-500 dark:hover:text-cyan-700 ${textColor} block`}
                   >
                     {item.text}
                   </Link>
@@ -114,8 +114,8 @@ export default function Navbar({ first, second }) {
 
               <button
                 onClick={() => setModal(true)}
-                className={`text-left text-xl bg-black/70 rounded-md p-2 
-                  transition-all duration-300 hover:bg-red-900 hover:text-cyan-500 hover:pl-5 ${textColor}`}
+                className={`text-left text-xl bg-black/70 dark:bg-white/70 rounded-md p-2 
+                  transition-all duration-300 hover:bg-red-900 dark:hover:bg-red-950 hover:text-cyan-500 dark:hover:text-cyan-700 hover:pl-5 ${textColor}`}
               >
                 Logout
               </button>

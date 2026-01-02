@@ -13,15 +13,6 @@ export default function CreateBlog() {
  const router = useRouter();
  const { settings } = useSettings();
  const { addNotification } = useNotifications();
- 
- // Removed the authentication check and redirect
- // const {user, loading:authLoading } =useAuth();
- // useEffect(()=>{
- //     if (authLoading) return; // wait for auth check
- //     if (!user){ 
- //       router.push("/auth/login");}
- //     }, [authLoading, user, router])
-
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
@@ -130,9 +121,9 @@ export default function CreateBlog() {
 
   return (
       <>
-      <div className="bg-white dark:bg-gray-900 min-h-screen">
+      <div className="bg-white dark:bg-gray-900 min-h-screen flex flex-col">
       <Header />
-      <section className="flex items-center justify-center h- bg-white dark:bg-gray-900 py-5 pt-20 ">
+      <section className="flex flex-1 items-center justify-center bg-white dark:bg-gray-900">
         <form
           onSubmit={handleSubmit}
           className="bg-gray-200 dark:bg-gray-800 shadow-xl rounded-lg p-8 w-[90%] max-w-4xl"
@@ -144,11 +135,11 @@ export default function CreateBlog() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="text-base  w-full px-3 py-1 md:p-2 xl:p-3 mb-5 border border-cyan-700 dark:border-cyan-500 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-cyan-700 outline-none"
+           className="text-base  w-full px-3 py-1 md:p-2 xl:p-3 mb-5 border border-cyan-700 dark:border-cyan-950 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-cyan-700 dark:ring-cyan-950 outline-none"
           />
 
           <label
-          className="inline-block w-auto max-w-max ring ring-cyan-700 px-2  rounded-lg text-black mb-4 text-sm xl:text-base"
+           className="inline-block w-auto max-w-max ring ring-cyan-700 px-2  rounded-lg text-black dark:text-white mb-4 text-sm xl:text-base"
           >Choose Image
           <input
             type="file"
@@ -161,10 +152,10 @@ export default function CreateBlog() {
           {/* Drag and Drop Box - only show when no image is selected */}
           {!imagePreview && (
             <div
-              className={`w-full h-32 border-2 border-dashed rounded-lg mb-4 flex items-center justify-center cursor-pointer transition-colors ${
+              className={`w-full h-62 border-2 border-dashed rounded-lg mb-4 flex items-center justify-center cursor-pointer transition-colors ${
                 dragActive 
-                  ? 'border-cyan-500 bg-cyan-50' 
-                  : 'border-gray-400 bg-gray-50'
+                  ? 'border-cyan-500 dark:border-cyan-900 bg-cyan-50 dark:bg-cyan-800' 
+                  : 'border-cyan-700 dark:border-cyan-900 bg-gray-50 dark:bg-gray-800'
               }`}
               onDragEnter={handleDrag}
               onDragLeave={handleDrag}
@@ -172,7 +163,7 @@ export default function CreateBlog() {
               onDrop={handleDrop}
               onClick={() => document.querySelector('input[type="file"]').click()}
             >
-              <p className="text-gray-600 text-center">
+              <p className="text-gray-600 text-center dark:text-gray-100">
                 {dragActive ? 'Drop image here' : 'Drag image here to upload'}
               </p>
             </div>
@@ -191,7 +182,7 @@ export default function CreateBlog() {
               <Button
                 type="button"
                 variant ="destructive"
-                className="bg-red-700"
+                className="bg-red-700 dark:bg-red-850"
                 onClick={() => {
                   setImagePreview(null);
                   setSelectedFile(null);
@@ -208,7 +199,7 @@ export default function CreateBlog() {
             onChange={(e) => setContent(e.target.value)}
             required
             rows="5"
-            className="text-base w-full p-3 mb-6 border border-cyan-700 rounded-lg focus:ring-2 focus:ring-cyan-700 outline-none"
+            className="text-base w-full px-3 py-1 md:p-2 xl:p-3 mb-5 border border-cyan-700 dark:border-cyan-950 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-cyan-700 dark:ring-cyan-950 outline-none"
           ></textarea> 
 
           <Button

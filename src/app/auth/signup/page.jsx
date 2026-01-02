@@ -11,9 +11,9 @@ export default function SignupPage() {
 
   return (
     <div className="flex h-dvh items-center justify-center
-       relative bg-cyan-600">
-    <main className="relative rounded-4xl overflow-hidden  h-160  md:h-165  bg-red-900 w-5/6 max-w-4xl"> 
-        <Button variant="secondary" className="absolute left-4 top-5 z-20 w-5 md:w-12"><Link href="/"><BackwardIcon /></Link></Button>
+       relative bg-cyan-600 dark:bg-cyan-900">
+    <main className="relative rounded-4xl overflow-hidden  h-100 bg-red-900 w-5/6 max-w-4xl"> 
+        <Button variant="secondary" className="absolute left-4  dark:text-white top-5 z-20 w-5 md:w-12"><Link href="/"><BackwardIcon /></Link></Button>
         <section  className=" absolute w-1/2 h-full left-0 bg-black text-white hidden md:block">
           <h2 className="text-4xl font-bold mb-4">Join Blogger Web</h2>
           <p className="text-sm text-cyan-100 text-center leading-relaxed">
@@ -28,7 +28,7 @@ export default function SignupPage() {
           />
         </section>
 
-         <section className="absolute md:w-1/2 w-full h-full right-0  bg-white text-black shadow-2xl p-10 ">
+         <section className="absolute md:w-1/2 w-full h-full right-0 bg-white dark:bg-black text-gray-900 dark:text-white shadow-2xl p-10 ">
           <h1 className="md:text-3xl text-2xl font-semibold text-center mt-3 ">
             Create Account
           </h1>

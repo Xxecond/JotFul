@@ -27,7 +27,7 @@ export default function BlogCard({ blog, onDelete }) {
   };
 
   const getThemeClass = () => {
-    return 'bg-cyan-600 dark:bg-gray-800 text-white';
+    return 'bg-cyan-600 dark:bg-cyan-900 text-white';
   };
 
   const getTimeAgo = (date) => {
@@ -57,12 +57,12 @@ export default function BlogCard({ blog, onDelete }) {
       settings.compactView ? 'my-6' : 'my-12'
     } ${getThemeClass()}`}>
       {/* Title */}
-      <div className="text-center p-2 relative bg-cyan-700 dark:bg-gray-900">
+      <div className="text-center p-2 relative bg-cyan-700 dark:bg-cyan-950">
         <h2 className="text-xl md:text-2xl xl:3xl font-semibold text-white tracking-wide">
           {blog.title}
         </h2>
         {blog.createdAt && settings.showTimestamps && (
-          <p className="absolute -translate-y-1/2 top-1/2 right-2 text-xs xl:text-sm text-cyan-100 flex items-center gap-1">
+          <p className="absolute -translate-y-1/2 top-1/2 right-2 text-xs xl:text-sm text-cyan-100 dark:text-cyan-400 flex items-center gap-1">
             <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
             </svg>
@@ -121,13 +121,13 @@ export default function BlogCard({ blog, onDelete }) {
       <div className="flex flex-row justify-between mx-9 items-center my-2  ">
         <button
           onClick={handleEdit}
-          className="text-xl md:2xl bg-green-600 text-white px-3 rounded hover:font-bold"
+          className="text-xl md:2xl bg-green-600 dark:bg-green-800 text-white px-3 rounded hover:font-bold"
         >
           Edit
         </button>
         <button
           onClick={() => onDelete(blog._id)}
-          className="text-xl md:2xl  bg-red-600 text-white px-3 rounded hover:font-bold"
+          className="text-xl md:2xl  bg-red-600 dark:bg-red-800 text-white px-3 rounded hover:font-bold"
         >
           Delete
         </button>

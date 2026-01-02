@@ -58,7 +58,7 @@ export default function SignupForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="focus:border-3 focus:border-black block w-full text-base border border-black rounded-xl p-2 bg-black/10"
+          className="block w-full p-3 mt-1 focus:outline-none ring-1 ring-black dark:ring-white focus:ring-2 rounded-full dark:bg-white/20 bg-black/20"
         />
       </div>
 

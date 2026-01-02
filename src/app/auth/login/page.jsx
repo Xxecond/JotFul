@@ -12,9 +12,9 @@ export default function LoginPage() {
   
   return (
     <div className="flex h-dvh items-center justify-center
-       relative bg-cyan-600">
-      <main className="relative rounded-4xl overflow-hidden  h-150 max-h-150  bg-red-900 w-5/6 max-w-4xl">
-       <Button variant="secondary" className="absolute left-8 top-5 z-20 md:w-12 w-5"><Link href="/"><BackwardIcon /></Link></Button>
+       relative bg-cyan-600 dark:bg-cyan-900">
+      <main className="relative rounded-4xl overflow-hidden  h-150 max-h-100  bg-red-900 w-5/6 max-w-4xl">
+       <Button variant="secondary" className="absolute dark:text-white left-8 top-5 z-20 md:w-12 w-5"><Link href="/"><BackwardIcon /></Link></Button>
        <section  className=" absolute w-1/2 h-full left-0 bg-black text-white hidden md:block">
           <h2 className="text-4xl text-center mt-15 my-10 font-bold ">JotFul✍️</h2>
           <p className=" text-sm text-center leading-relaxed">
@@ -30,7 +30,7 @@ export default function LoginPage() {
           </div>
         </section>
 
-        <section className="absolute md:w-1/2 w-full h-full right-0  bg-white text-black shadow-2xl p-10 ">
+        <section className="absolute md:w-1/2 w-full h-full right-0  bg-white dark:bg-gray-900 text-black dark:text-white shadow-2xl p-10 ">
    <h1 className="md:text-3xl text-2xl font-semibold text-center  mt-3">
             Welcome Back 
           </h1>
