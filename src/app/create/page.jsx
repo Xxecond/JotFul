@@ -110,7 +110,6 @@ export default function CreateBlog() {
       }
 
       router.push("/home");
-      addNotification("Post created successfully!", "success");
     } catch (err) {
       addNotification(`Error: ${err.message}`, "error");
       console.error(err);
@@ -135,7 +134,7 @@ export default function CreateBlog() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-           className="text-base  w-full px-3 py-1 md:p-2 xl:p-3 mb-5 border border-cyan-700 dark:border-cyan-950 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-cyan-700 dark:ring-cyan-950 outline-none"
+           className="text-base w-full px-3 py-1 md:p-2 xl:p-3 mb-5 border border-cyan-700 dark:border-cyan-500 dark:bg-gray-700 dark:text-white rounded-lg outline-none"
           />
 
           <label
@@ -199,7 +198,7 @@ export default function CreateBlog() {
             onChange={(e) => setContent(e.target.value)}
             required
             rows="5"
-            className="text-base w-full px-3 py-1 md:p-2 xl:p-3 mb-5 border border-cyan-700 dark:border-cyan-950 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-cyan-700 dark:ring-cyan-950 outline-none"
+            className="text-base w-full px-3 py-1 md:p-2 xl:p-3 mb-5 border border-cyan-700 dark:bg-gray-700 dark:text-white rounded-lg noutline-none"
           ></textarea> 
 
           <Button

@@ -34,9 +34,9 @@ export default function LoginForm() {
       })
       
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Failed to send link')
+      if (!res.ok) throw new Error(data.error || 'Failed to send email')
       
-      setMessage('Magic link sent – check your email')
+      setMessage('Verification mail sent! Check email to verify.')
       setEmail('') // clear field
       
       // Redirect to waiting page with sessionId
@@ -44,7 +44,7 @@ export default function LoginForm() {
         window.location.href = `/auth/waiting?sessionId=${sessionId}`;
       }, 2000);
     } catch (err) {
-      setError('Failed to send link')
+      setError('Failed to send email')
     } finally {
       setLoading(false)
     }
@@ -78,7 +78,7 @@ export default function LoginForm() {
             Sending... <Spinner size="sm" />
           </span>
         ) : (
-          'Send magic link'
+          'Send Email'
         )}
       </Button>
     </form>

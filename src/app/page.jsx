@@ -9,7 +9,7 @@ const pathname = usePathname();
 
   return (
     <div>
-    <nav className="bg-white dark:bg-gray-900 shadow-xl px-6 md:px-16 py-4 flex justify-end ">
+    <nav className="bg-white dark:bg-black/50 shadow-xl px-6 md:px-16 py-4 flex justify-end ">
     <div className="flex items-center gap-6 text-gray-700 dark:text-gray-100 font-medium">
               <Link href="/auth/login" className={(pathname, "/auth/login")}>
               Login
@@ -19,7 +19,7 @@ const pathname = usePathname();
             </Link>
       </div>
     </nav>
-      <section className=" flex h-185 justify-center text-center dark:text-white text-black bg-white dark:bg-gray-900">
+      <section className=" flex h-185 justify-center text-center dark:text-white text-black bg-white dark:bg-black/50">
         <div className="md:w-1/2 py-30 ">
         <h1 className="text-5xl font-light leading-loose  ">Capture ideas✨,<br />Stay Organised 📁,<br /> Be JotFul✍️</h1>
         <div className="flex pt-15 gap-4 justify-center">
@@ -27,7 +27,7 @@ const pathname = usePathname();
             <Button variant="special">Enter Jot</Button>
           </Link>
           <Link href="/auth/login">
-            <Button variant="outline" className={"hover:bg-cyan-600 dark:hover:bg-cyan-950 hover:text-white border-cyan-700"}>Log In</Button>
+            <Button variant="outline" className={"hover:bg-cyan-600 dark:hover:bg-cyan-950 hover:text-white border-cyan-700 dark:border-cyan-950"}>Log In</Button>
           </Link>
         </div>
         </div>

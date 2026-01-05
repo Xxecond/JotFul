@@ -16,7 +16,7 @@ export async function GET(req) {
     const action = searchParams.get("action");
 
     if (!token) {
-      return redirect("/login?error=invalid-token");
+      return redirect("/auth/login?error=invalid-token");
     }
 
     const user = await User.findOne({
@@ -25,7 +25,7 @@ export async function GET(req) {
     });
 
     if (!user) {
-      return redirect("/login?error=expired-token");
+      return redirect("/auth/login?error=expired-token");
     }
 
     // Clear the magic token and verify user
@@ -77,7 +77,8 @@ export async function GET(req) {
     }
 
     // Normal flow - set cookie and redirect
-    const response = NextResponse.redirect(new URL("/home", req.url));
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const response = NextResponse.redirect(new URL("/home", baseUrl));
     response.cookies.set("access_token", jwtToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',

@@ -11,42 +11,20 @@ export default function Settings() {
   const { settings, updateSettings, resetSettings } = useSettings();
   const { addNotification } = useNotifications();
   const [showModal, setShowModal] = useState(false);
+  const [showResetModal, setShowResetModal] = useState(false);
 
   const saveSettings = () => {
     setShowModal(true);
   };
 
   const handleResetSettings = () => {
-    if (confirm("Are you sure you want to reset all settings to default?")) {
-      resetSettings();
-      addNotification("Settings reset to default!", "success");
-    }
+    setShowResetModal(true);
   };
 
-  const exportData = () => {
-    const posts = JSON.parse(localStorage.getItem("posts") || "[]");
-    
-    // Create a readable text format
-    let textContent = `JotFul Backup - ${new Date().toLocaleDateString()}\n`;
-    textContent += `=====================================\n\n`;
-    
-    posts.forEach((post, index) => {
-      textContent += `Post ${index + 1}: ${post.title}\n`;
-      textContent += `Date: ${new Date(post.createdAt).toLocaleDateString()}\n`;
-      textContent += `Content:\n${post.content}\n`;
-      if (post.image) textContent += `Image: ${post.image}\n`;
-      textContent += `\n---\n\n`;
-    });
-    
-    const blob = new Blob([textContent], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `JotFul-Backup-${new Date().toISOString().split('T')[0]}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
-    
-    addNotification("Backup downloaded successfully!", "success");
+  const confirmReset = () => {
+    resetSettings();
+    addNotification("Settings reset to default!", "success");
+    setShowResetModal(false);
   };
 
   return (
@@ -173,30 +151,6 @@ export default function Settings() {
               </label>
             </div>
 
-            {/* Data Management */}
-            <div className="mb-8">
-              <h2 className="text-xl md:text-2xl xl:3xl font-bold text-black dark:text-white mb-4 flex items-center gap-2">
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
-                Data Management
-              </h2>
-              
-              <div className="flex gap-4">
-                <Button 
-                  onClick={exportData}
-                  variant="special"
-                  className="flex items-center gap-2"
-                >
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
-                  Export Data
-                </Button>
-              </div>
-              <p className="text-xs lg:text-sm text-gray-500 dark:text-gray-400 mt-2">Download a readable text backup of all your posts</p>
-            </div>
-
             {/* Action Buttons */}
             <div className="flex gap-4 pt-6 border-t border-gray-200 dark:border-cyan-950">
               <Button 
@@ -230,6 +184,13 @@ export default function Settings() {
           message="Settings saved successfully!"
           onConfirm={() => setShowModal(false)}
           singleButton={true}
+        />
+        
+        <Modal 
+          open={showResetModal}
+          message="Are you sure you want to reset all settings to default?"
+          onConfirm={confirmReset}
+          onCancel={() => setShowResetModal(false)}
         />
       </div>
     </>

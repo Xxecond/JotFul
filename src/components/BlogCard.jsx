@@ -93,7 +93,7 @@ export default function BlogCard({ blog, onDelete }) {
     onClick={handleToggle}
     className={`cursor-${isOverflowing ? "pointer" : "default"} ${
       isExpanded ? "" : "line-clamp-2"
-    } pr-14 whitespace-pre-line`} // adds space on the right for "View more"
+    } whitespace-pre-line`}
   >
     <p>{blog.content}</p>
   </div>
@@ -102,9 +102,9 @@ export default function BlogCard({ blog, onDelete }) {
   {isOverflowing && !isExpanded && (
     <span
       onClick={handleToggle}
-      className="absolute bottom-2 right-6 text-[#4fc3f7] font-bold text-[1rem] cursor-pointer"
+      className="absolute bottom-2 right-2 text-[#4fc3f7] font-bold text-[1rem] cursor-pointer bg-cyan-600 dark:bg-cyan-900 pl-2"
     >
-     ... View more
+     ...View more
     </span>
   )}
   {isOverflowing && isExpanded && (

@@ -32,9 +32,9 @@ export default function SignupForm() {
       })
       
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Failed to send link')
+      if (!res.ok) throw new Error(data.error || 'Failed to send email')
       
-      setMessage('Magic link sent! Check your email (and spam folder).')
+      setMessage('Verification mail sent! Check email to verify.')
       setEmail('') // clear field
       
       // Redirect to waiting page with sessionId
@@ -54,7 +54,7 @@ export default function SignupForm() {
         <label className="text-sm md:text-base">Email</label>
         <input
           type="email"
-          placeholder="andrews@gmail.com"
+          placeholder="andrewsampadu9@gmail.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -62,8 +62,8 @@ export default function SignupForm() {
         />
       </div>
 
-      {error && <div className="text-red-600 font-bold text-center">{error}</div>}
-      {message && <div className="text-green-600 font-bold text-center">{message}</div>}
+      {error && <div className="text-red-600 dark:text-red-500 font-bold text-center">{error}</div>}
+      {message && <div className="text-green-600 dark:text-green-500 font-bold text-center">{message}</div>}
 
       <Button
         variant="special"
@@ -76,7 +76,7 @@ export default function SignupForm() {
             Sending link...<Spinner size="sm" />
           </span>
         ) : (
-          'Send magic link'
+          'Send Email'
         )}
       </Button>
     </form>

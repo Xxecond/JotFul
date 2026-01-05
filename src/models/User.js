@@ -33,6 +33,14 @@ const userSchema = new mongoose.Schema(
     // Optional reset fields – keep if you ever add password later
     resetToken: String,
     tokenExpiry: Date,
+
+    // OAuth fields
+    provider: {
+      type: String,
+      enum: ['google', 'twitter', 'apple'],
+    },
+    providerId: String,
+    name: String,
   },
   { timestamps: true }
 );

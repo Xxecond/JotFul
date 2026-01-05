@@ -58,9 +58,9 @@ function WaitingAuthContent() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md text-center">
-        <h1 className="text-2xl mb-4">Check Your Email</h1>
+        <h1 className="text-2xl mb-4"> Click "Yes, it's me" in email to verify.</h1>
         <p className="text-gray-600 mb-6">
-          Click "Yes, it's me" in your email to authenticate
+         
         </p>
         
         <div className="mb-4">
@@ -68,7 +68,6 @@ function WaitingAuthContent() {
         </div>
         
         <p className="text-sm text-gray-500">
-          Session ID: {sessionId}
         </p>
         <p className="text-xs text-gray-400 mt-2">
           This page will automatically redirect when you authenticate

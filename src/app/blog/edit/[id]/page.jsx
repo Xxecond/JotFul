@@ -104,7 +104,6 @@ export default function EditBlog({ params }) {
       });
 
       router.push("/home");
-      addNotification("Post updated successfully!", "success");
     } catch (err) {
       addNotification(`Error: ${err.message}`, "error");
       console.error(err);
@@ -128,7 +127,7 @@ export default function EditBlog({ params }) {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
-              className="text-base w-full px-3 py-1 md:p-2 xl:p-3 mb-5 border border-cyan-700 dark:border-cyan-500 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-cyan-700 outline-none"
+              className="text-base w-full px-3 py-1 md:p-2 xl:p-3 mb-5 border border-cyan-700 dark:border-cyan-500 dark:bg-gray-700 dark:text-white rounded-lg outline-none"
             />
 
             <label
@@ -193,7 +192,7 @@ export default function EditBlog({ params }) {
               onChange={(e) => setContent(e.target.value)}
               required
               rows="5"
-              className="text-base dark:text-white w-full p-3 mb-6 border border-cyan-700 rounded-lg focus:ring-2 focus:ring-cyan-700 outline-none"
+              className="text-base dark:text-white w-full p-3 mb-6 border-2 border-cyan-700 dark:bg-gray-700 rounded-lg outline-none"
             ></textarea>
 
             <Button type="submit" disabled={loading} variant="special" className="w-full">
