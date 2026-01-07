@@ -54,7 +54,7 @@ export default function Home() {
   const closeModal = () => setModal({ open: false, postId: null, message: '', onConfirm: null })
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black">
+    <div className="min-h-screen bg-white dark:bg-black/90">
       <Header />
       <SearchBar setSearchTerm={setSearchTerm} />
       <section className="home px-4 py-6">

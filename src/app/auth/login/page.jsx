@@ -13,10 +13,10 @@ export default function LoginPage() {
   
   return (
     <div className="flex h-dvh items-center justify-center
-       relative bg-cyan-600 dark:bg-cyan-900">
-      <main className="relative rounded-4xl overflow-hidden  h-150 max-h-105 w-5/6 max-w-4xl">
-       <Button variant="secondary" className="absolute dark:text-white left-8 top-5 z-20 md:w-12 w-5"><Link href="/"><BackwardIcon /></Link></Button>
-       <section  className=" absolute w-1/2 h-full left-0 bg-black text-white hidden md:block">
+      relative bg-cyan-600 dark:bg-cyan-950">
+      <main className="relative rounded-4xl overflow-hidden h-120  w-5/6 max-w-4xl dark:shadow-[0_0_20px_rgba(255,255,255,0.1)] shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+      <Button variant="secondary" className="absolute dark:text-white left-8 top-5 z-20 md:w-12 w-5"><Link href="/"><BackwardIcon /></Link></Button>
+       <section className="absolute w-1/2 h-full left-0 bg-black text-white hidden md:block">
           <h2 className="text-4xl text-center mt-15 my-10 font-bold ">JotFul✍️</h2>
           <p className=" text-sm text-center leading-relaxed">
             Sign in to manage your posts, connect with your readers, and keep your thoughts flowing.
@@ -30,23 +30,22 @@ export default function LoginPage() {
             />
           </div>
         </section>
-
-        <section className="absolute md:w-1/2 w-full h-full right-0  bg-white dark:bg-black/50 text-black dark:text-white shadow-2xl p-10 ">
+        <section className="absolute md:w-1/2 w-full h-full right-0 bg-white dark:bg-black/90  dark:text-white p-10 ">
    <h1 className="md:text-3xl text-2xl font-semibold text-center  mt-3">
             Welcome Back 
           </h1>
 <LoginForm />
- <ul className="pt-8 flex justify-center text-sm space-x-2">
-  <li className="w-[27.43px] h-[27.43px] bg-[#313030] rounded-full justify-center items-center flex">
-    <a href="/api/auth/google">
-      <FcGoogle />
+ <div className="pt-12 flex flex-col justify-center text-sm space-y-4 text-white md:text-white">
+  <a href="/api/auth/google">
+  <button className="w-full cursor-pointer h-9 bg-cyan-700 dark:bg-cyan-950 hover:bg-cyan-600 text-white dark:text-slate-100 rounded-xl text-sm md:text-base xl:text-lg justify-center items-center flex"> 
+      <FcGoogle className="mr-3 text-lg" />Continue with Google<FcGoogle className="ml-3 text-lg" />
+  </button>
     </a>
-  </li>
-  <li className="w-[27.43px] h-[27.43px] bg-[#313030] rounded-full text-white justify-center items-center flex">
-    <a href="/api/auth/twitter">
-      <FaXTwitter />
-    </a>
-  </li>
+  <a href="/api/auth/twitter">
+  <button className="w-full cursor-pointer h-9 bg-cyan-700 dark:bg-cyan-950 hover:bg-cyan-600 text-white dark:text-slate-100 rounded-xl text-sm md:text-base xl:text-lg justify-center items-center flex">
+      <FaXTwitter className="mr-3 text-lg"/>Continue with X<FaXTwitter className="ml-3 text-lg"/>
+  </button>
+  </a>
   {/* Uncomment when Apple OAuth is configured
   <li className="w-[27.43px] h-[27.43px] bg-[#313030] rounded-full text-gray-300 justify-center items-center flex">
     <a href="/api/auth/apple">
@@ -54,7 +53,7 @@ export default function LoginPage() {
     </a>
   </li>
   */}
-</ul>
+</div>
      </section>
       </main>
     </div>

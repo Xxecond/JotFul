@@ -122,10 +122,10 @@ export default function CreateBlog() {
       <>
       <div className="bg-white dark:bg-gray-900 min-h-screen flex flex-col">
       <Header />
-      <section className="flex flex-1 items-center justify-center bg-white dark:bg-gray-900">
+      <section className="flex flex-1 items-center justify-center bg-white dark:bg-black/90">
         <form
           onSubmit={handleSubmit}
-          className="bg-gray-200 dark:bg-gray-800 shadow-xl rounded-lg p-8 w-[90%] max-w-4xl"
+          className="bg-gray-200 dark:text-white text-black dark:bg-gray-500/10 dark:shadow-[0_0_20px_rgba(255,255,255,0.1)] shadow-[0_0_20px_rgba(0,0,0,0.7)] rounded-lg p-8 w-[90%] max-w-4xl"
         >
 
           <input
@@ -134,11 +134,11 @@ export default function CreateBlog() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-           className="text-base w-full px-3 py-1 md:p-2 xl:p-3 mb-5 border border-cyan-700 dark:border-cyan-500 dark:bg-gray-700 dark:text-white rounded-lg outline-none"
+           className="text-base w-full px-3 py-1 md:p-2 xl:p-3 mb-5 focus:outline-none ring-1 ring-black dark:ring-white focus:ring-2 dark:bg-white/20 bg-black/20 rounded-lg outline-none placeholder:text-white/50"
           />
 
           <label
-           className="inline-block w-auto max-w-max ring ring-cyan-700 px-2  rounded-lg text-black dark:text-white mb-4 text-sm xl:text-base"
+           className="inline-block w-auto max-w-max ring dark:ring-white ring-black px-2  rounded-lg mb-4 text-sm xl:text-base"
           >Choose Image
           <input
             type="file"
@@ -154,7 +154,7 @@ export default function CreateBlog() {
               className={`w-full h-62 border-2 border-dashed rounded-lg mb-4 flex items-center justify-center cursor-pointer transition-colors ${
                 dragActive 
                   ? 'border-cyan-500 dark:border-cyan-900 bg-cyan-50 dark:bg-cyan-800' 
-                  : 'border-cyan-700 dark:border-cyan-900 bg-gray-50 dark:bg-gray-800'
+                  : 'border-black dark:border-white bg-gray-50 dark:bg-black/90'
               }`}
               onDragEnter={handleDrag}
               onDragLeave={handleDrag}
@@ -198,7 +198,7 @@ export default function CreateBlog() {
             onChange={(e) => setContent(e.target.value)}
             required
             rows="5"
-            className="text-base w-full px-3 py-1 md:p-2 xl:p-3 mb-5 border border-cyan-700 dark:bg-gray-700 dark:text-white rounded-lg noutline-none"
+            className="text-base w-full px-3 py-1 md:p-2 xl:p-3 mb-5 focus:outline-none ring-1 ring-black dark:ring-white focus:ring-2 dark:bg-white/20 bg-black/20 rounded-lg outline-none placeholder:text-white/50"
           ></textarea> 
 
           <Button

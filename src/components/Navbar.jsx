@@ -89,7 +89,7 @@ export default function Navbar({ first, second }) {
 
         {/* Sidebar */}
         <div
-          className={`fixed left-0 top-0 h-full w-64 bg-cyan-700 dark:bg-cyan-950 shadow-xl transform 
+          className={`fixed left-0 top-0 h-full w-64 bg-cyan-700 dark:bg-cyan-950 shadow-xl shadow-white/10 transform 
             transition-transform duration-800 ${
               open ? "-translate-x-0" : "-translate-x-full"
             }`}

@@ -32,7 +32,7 @@ export default function Settings() {
       <div className="bg-white dark:bg-black min-h-screen">
         <Header />
         <section className="max-w-4xl mx-auto p-6 pt-20">
-          <div className="bg-gray-50 dark:bg-gray-950 rounded-xl shadow-lg p-8">
+          <div className="bg-gray-200 dark:text-white text-black dark:bg-gray-500/10 dark:shadow-[0_0_20px_rgba(255,255,255,0.1)] shadow-[0_0_20px_rgba(0,0,0,0.7)] rounded-lg p-8">
             
             {/* Appearance Settings */}
             <div className="mb-8">
