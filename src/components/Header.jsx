@@ -1,11 +1,11 @@
- "use client";
+"use client";
 import React from "react";
 import { usePathname } from "next/navigation";
 import {Navbar} from "@/components";
+import Profile from "@/components/Profile";
 
 export default function Header() {
   const pathname = usePathname();
-  console.log('Current pathname:', pathname);
 
   const headings = {
     "/home": "JOTFUL",
@@ -22,19 +22,27 @@ export default function Header() {
 
   const pageName = getPageName(pathname);
 
-  return (<>
-<header className="sticky top-0 w-full bg-cyan-600 dark:bg-cyan-950 text-white dark:text-cyan-50 py-3 xl:py-4 z-50">
-     <div className="md:hidden absolute top-0 -left-4">
-      <Navbar first="icon" />
-     </div>
-      <div className="hidden md:block absolute top-1 translate-y-1/2 right-0 ">
-      <Navbar second="plain" />
-     </div>
-      <div className=" text-center md:text-left md:pl-5 ">
-        <h1 className="text-xl md:text-2xl xl:3xl font-semibold tracking-wide">
+  return (
+    <header className="sticky top-0 w-full bg-cyan-600 dark:bg-cyan-950 text-white dark:text-cyan-50 py-3 xl:py-4 z-50">
+      {/* Mobile Layout */}
+      <div className="md:hidden absolute top-0 -left-4">
+        <Navbar first="icon" />
+      </div>
+      
+      {/* Desktop Layout */}
+      <div className="hidden md:flex absolute top-1 translate-y-1/2 right-3 items-center gap-4">
+        <Navbar second="plain" />
+      </div>
+      
+      {/* Title */}
+      <div className="text-center md:flex md:text-left md:pl-5">
+        <div className="hidden md:flex">
+        <Profile />
+        </div>
+        <h1 className="text-xl md:text-2xl md:pl-10 xl:3xl font-semibold tracking-wide">
           {pageName}
         </h1>
       </div>
     </header>
-</>  );
+  );
 }

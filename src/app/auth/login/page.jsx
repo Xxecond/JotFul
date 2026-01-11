@@ -14,7 +14,7 @@ export default function LoginPage() {
   return (
     <div className="flex h-dvh items-center justify-center
       relative bg-cyan-600 dark:bg-cyan-950">
-      <main className="relative rounded-4xl overflow-hidden h-120  w-5/6 max-w-4xl dark:shadow-[0_0_20px_rgba(255,255,255,0.1)] shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+      <main className="relative rounded-4xl overflow-hidden h-120  w-[87%] max-w-4xl dark:shadow-[0_0_20px_rgba(255,255,255,0.1)] shadow-[0_0_20px_rgba(0,0,0,0.5)]">
       <Button variant="secondary" className="absolute dark:text-white left-8 top-5 z-20 md:w-12 w-5"><Link href="/"><BackwardIcon /></Link></Button>
        <section className="absolute w-1/2 h-full left-0 bg-black text-white hidden md:block">
           <h2 className="text-4xl text-center mt-15 my-10 font-bold ">JotFul✍️</h2>
@@ -60,4 +60,4 @@ export default function LoginPage() {
   );
 }
 //so after installing any dependencies make sure to run npm install
-//so button instead of Button
+//so button instead of Button         

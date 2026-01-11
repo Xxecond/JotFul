@@ -58,7 +58,11 @@ export default function BlogCard({ blog, onDelete }) {
     } ${getThemeClass()}`}>
       {/* Title */}
       <div className="text-center p-2 relative bg-cyan-700 dark:bg-cyan-950">
-        <h2 className="text-xl md:text-2xl xl:3xl font-semibold text-white tracking-wide">
+        <h2 className={`font-semibold text-white tracking-wide ${
+          settings.fontSize === 'small' ? 'text-lg md:text-xl xl:text-2xl' :
+          settings.fontSize === 'large' ? 'text-2xl md:text-3xl xl:text-4xl' :
+          'text-xl md:text-2xl xl:text-3xl'
+        }`}>
           {blog.title}
         </h2>
         {blog.createdAt && settings.showTimestamps && (
@@ -118,16 +122,24 @@ export default function BlogCard({ blog, onDelete }) {
 </div>
 
       {/* Actions */}
-      <div className="flex flex-row justify-between mx-9 items-center my-2  ">
+      <div className="flex flex-row justify-between mx-9 items-center my-2">
         <button
           onClick={handleEdit}
-          className="text-xl md:2xl bg-green-600 dark:bg-green-800 text-white px-3 rounded hover:font-bold"
+          className={`bg-green-600 dark:bg-green-800 text-white px-3 rounded hover:font-bold ${
+            settings.fontSize === 'small' ? 'text-lg' :
+            settings.fontSize === 'large' ? 'text-2xl' :
+            'text-xl'
+          }`}
         >
           Edit
         </button>
         <button
           onClick={() => onDelete(blog._id)}
-          className="text-xl md:2xl  bg-red-600 dark:bg-red-800 text-white px-3 rounded hover:font-bold"
+          className={`bg-red-600 dark:bg-red-800 text-white px-3 rounded hover:font-bold ${
+            settings.fontSize === 'small' ? 'text-lg' :
+            settings.fontSize === 'large' ? 'text-2xl' :
+            'text-xl'
+          }`}
         >
           Delete
         </button>

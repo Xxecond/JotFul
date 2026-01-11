@@ -64,8 +64,8 @@ export default function LoginForm() {
         />
       </div>
 
-      {error && <p className="text-red-600 text-center font-bold">{error}</p>}
-      {message && <p className="text-green-600 text-center font-bold">{message}</p>}
+      {error && <p className="text-red-600 dark:text-red-500 text-center font-bold">{error}</p>}
+      {message && <p className="text-green-600 dark:text-green-500 text-center font-bold">{message}</p>}
 
       <Button
         variant="special"

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Modal from "./Modal";
 import { useAuth } from '@/context/authContext' 
+import { useUser } from '@/context/UserContext'
 import { useRouter } from 'next/navigation'
 
 function Spin({ open, setOpen, className }) {
@@ -37,13 +38,14 @@ function Spin({ open, setOpen, className }) {
 export default function Navbar({ first, second }) {
   const [open, setOpen] = useState(false);
   const [textColor, setTextColor] = useState(false);
-  const [modal, setModal] = useState(false); // controls logout modal
+  const [modal, setModal] = useState(false);
   const { logout } = useAuth();
+  const { user } = useUser();
 
   const navLinks = [
     { id: 1, href: "/home", text: "Home" },
     { id: 2, href: "/create", text: "Create Jot" },
-    { id: 3, href: "/settings", text: "settings" },
+    { id: 3, href: "/settings", text: "Settings" },
   ];
 
   const router = useRouter()
@@ -68,7 +70,6 @@ export default function Navbar({ first, second }) {
       <>
         <Spin setOpen={setOpen} open={open} className="z-3 relative transition-all duration-1000" />
         
-        {/* Overlay behind sidebar */}
         <div
           className={`fixed inset-0 bg-linear-to-b from-black/70 to-black/70 
             transition-opacity duration-300 md:hidden ${
@@ -77,7 +78,6 @@ export default function Navbar({ first, second }) {
           onClick={() => setOpen(false)}
         />
 
-        {/* Logout Modal */}
         {modal && (
           <Modal
             open={modal}
@@ -87,13 +87,12 @@ export default function Navbar({ first, second }) {
           />
         )}
 
-        {/* Sidebar */}
         <div
           className={`fixed left-0 top-0 h-full w-64 bg-cyan-700 dark:bg-cyan-950 shadow-xl shadow-white/10 transform 
             transition-transform duration-800 ${
               open ? "-translate-x-0" : "-translate-x-full"
             }`}
-          onClick={(e) => e.stopPropagation()} // stop clicks from closing sidebar
+          onClick={(e) => e.stopPropagation()}
         >
           <nav>
             <ul className="slidein mt-20 flex flex-col px-5 space-y-5 pt-6 justify-center">
@@ -119,6 +118,24 @@ export default function Navbar({ first, second }) {
               >
                 Logout
               </button>
+              
+              {/* Profile Section at Bottom */}
+              {user && (
+                <li className=" rounded-md p-3 absolute translate-y-40 top-100  text-center">
+                  <Link
+                    href="/settings"
+                    onClick={() => setOpen(false)}
+                    className="flex flex-col items-center gap-2"
+                  >
+                    <div className="w-12 h-12 bg-white text-cyan-600 rounded-full flex items-center justify-center font-bold text-lg">
+                      {user.email ? user.email.charAt(0).toUpperCase() : "U"}
+                    </div>
+                    <div>
+                      <p className="text-white text-sm font-medium">{user.email}</p>
+                    </div>
+                  </Link>
+                </li>
+              )}
             </ul>
           </nav>
         </div>
@@ -126,11 +143,11 @@ export default function Navbar({ first, second }) {
     );
   }
 
-  // Plain Navbar
+  // Desktop Navbar
   if (second === "plain") {
     return (
       <nav>
-        <ul className="flex space-x-4 py-0 px-5">
+        <ul className="flex space-x-4 py-0">
           {navLinks.map((item) => (
             <li key={item.id} className="tracking-tight text-white hover:font-semibold xl:text-lg">
               <Link href={item.href}>{item.text}</Link>

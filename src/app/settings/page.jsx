@@ -5,11 +5,13 @@ import Header from "@/components/Header";
 import { Button } from "@/components/ui";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useNotifications } from "@/contexts/NotificationContext";
+import { useUser } from "@/context/UserContext";
 import Modal from "@/components/Modal";
 
 export default function Settings() {
   const { settings, updateSettings, resetSettings } = useSettings();
   const { addNotification } = useNotifications();
+  const { user } = useUser();
   const [showModal, setShowModal] = useState(false);
   const [showResetModal, setShowResetModal] = useState(false);
 
@@ -34,6 +36,26 @@ export default function Settings() {
         <section className="max-w-4xl mx-auto p-6 pt-20">
           <div className="bg-gray-200 dark:text-white text-black dark:bg-gray-500/10 dark:shadow-[0_0_20px_rgba(255,255,255,0.1)] shadow-[0_0_20px_rgba(0,0,0,0.7)] rounded-lg p-8">
             
+            {/* Profile Section */}
+            <div className="mb-8">
+              <h2 className="text-xl md:text-2xl xl:3xl font-bold text-black dark:text-white mb-4 flex items-center gap-2">
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                </svg>
+                Profile
+              </h2>
+              
+              <div className="flex items-center gap-4 p-4 bg-white dark:bg-gray-800 rounded-lg">
+                <div className="w-16 h-16 bg-cyan-600 text-white rounded-full flex items-center justify-center font-bold text-xl">
+                  {user?.email ? user.email.charAt(0).toUpperCase() : "U"}
+                </div>
+                <div>
+                  <p className="text-lg font-medium text-gray-800 dark:text-white">{user?.email || "No email"}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">User Account</p>
+                </div>
+              </div>
+            </div>
+
             {/* Appearance Settings */}
             <div className="mb-8">
               <h2 className="text-xl md:text-2xl xl:3xl font-bold text-black dark:text-white mb-4 flex items-center gap-2">
