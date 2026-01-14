@@ -19,34 +19,36 @@ const pathname = usePathname();
             </Link>
       </div>
     </nav>
-      <section className=" flex h-185 justify-center text-center dark:text-white text-black bg-white dark:bg-black/90">
-        <div className="md:w-1/2 py-30 ">
-        <h1 className="text-5xl font-light leading-loose  ">Capture ideas✨,<br />Stay Organised 📁,<br /> Be JotFul✍️</h1>
+      <section className=" flex h-dvh justify-center items-center text-center dark:text-white text-black bg-white dark:bg-black/90">
+      <main className="flex w-full h-150 pb-35">
+        <div className="w-full md:w-1/2 flex flex-col justify-center">
+        <h1 className="text-[40px] sm:text-5xl font-light leading-loose text-nowrap">Capture ideas✨,<br />Stay Organised 📁,<br /> Be JotFul✍️</h1>
         <div className="flex pt-15 gap-4 justify-center">
           <Link href="/auth/signup">
             <Button variant="special">Enter Jot</Button>
           </Link>
           <Link href="/auth/login">
-            <Button variant="outline" className={"hover:bg-cyan-600 dark:hover:bg-cyan-950 hover:text-white border-cyan-700 dark:border-cyan-950"}>Log In</Button>
+            <Button variant="outline" className={"hover:bg-cyan-500 dark:hover:bg-cyan-900  hover:text-white border-cyan-600 dark:border-cyan-900"}>Log In</Button>
           </Link>
         </div>
         </div>
-          <div className="w-1/2 relative md:block hidden">
+          <div className="w-1/2 relative md:block hidden mx-10">
             <Image
-            alt="land-pic"
-            src="/assets/b.jpg"
-            fill className="object-cover" />
+            alt="logo-pic"
+            src="/assets/bok.png"
+            fill />
           </div>
+          </main>
  </section>       
- <footer className=" h-50  bg-cyan-700 dark:bg-cyan-950 text-red-100">
-  <section className="flex p-9 gap-9">
-    <div className="relative h-10 md:h-20 w-30">
-    <Image src="/assets/b.jpg"
+ <footer className=" h-50  bg-cyan-700 dark:bg-cyan-950 dark:text-gray-100 text-gray-200">
+  <section className="flex pt-5 py-9 gap-8 ">
+    <div className="relative h-20 md:h-30  w-70 ml-6 ">
+    <Image src="/assets/bok.png"
     alt="logo"
     fill
      />
     </div>
-  <p className="">Jotful helps you note, plan and manage your thoughts all in one simple beautiful space. <br className="hidden md:block" />Write freely, sync instantly, and stay productive wherever you go</p>
+  <p className="flex md:items-center items-end mr-3">Jotful helps you note, plan and manage your thoughts all in one simple beautiful space. <br className="hidden md:block" />Write freely, sync instantly, and stay productive wherever you go.</p>
 </section>
 <div className="border-t bg-cyan-700 dark:bg-cyan-950 border-t-white flex justify-end items-start border-b-0">
   <span className=" py-4 text-sm font-light pr-5 pt-3">

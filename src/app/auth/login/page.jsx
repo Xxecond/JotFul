@@ -14,35 +14,35 @@ export default function LoginPage() {
   return (
     <div className="flex h-dvh items-center justify-center
       relative bg-cyan-600 dark:bg-cyan-950">
-      <main className="relative rounded-4xl overflow-hidden h-120  w-[87%] max-w-4xl dark:shadow-[0_0_20px_rgba(255,255,255,0.1)] shadow-[0_0_20px_rgba(0,0,0,0.5)]">
-      <Button variant="secondary" className="absolute dark:text-white left-8 top-5 z-20 md:w-12 w-5"><Link href="/"><BackwardIcon /></Link></Button>
-       <section className="absolute w-1/2 h-full left-0 bg-black text-white hidden md:block">
-          <h2 className="text-4xl text-center mt-15 my-10 font-bold ">JotFul✍️</h2>
-          <p className=" text-sm text-center leading-relaxed">
-            Sign in to manage your posts, connect with your readers, and keep your thoughts flowing.
-          </p>
-          <div className="h-50 w-50 mx-auto mt-10 relative  bg-white rounded-xl">
-            <Image
-              src="/assets/green.jpg"
-              alt="QR code placeholder"
-              fill
-              className="object-cover absolute"
-            />
-          </div>
-        </section>
-        <section className="absolute md:w-1/2 w-full h-full right-0 bg-white dark:bg-black/90  dark:text-white p-10 ">
+      <main className="flex rounded-4xl overflow-hidden h-115  w-[87%] max-w-4xl dark:shadow-[0_0_20px_rgba(255,255,255,0.1)] shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+      <section  className="relative py-10 space-y-10  mx-auto w-1/2  bg-white dark:bg-black text-black dark:text-white hidden md:block">
+                  <Button variant="secondary" className="absolute left-4  dark:text-white top-5 z-20 w-5 md:w-12 hidden md:block"><Link href="/"><BackwardIcon /></Link></Button>
+                <h2 className="pt-3 text-3xl font-bold text-center ">JotFul✍️</h2>
+                <p className="text-sm xl:text-base dark:text-gray-300 text-gray-800 text-center leading-relaxed w-4/5 mx-auto">
+              Sign in to view, write and manage your posts while keeping your thoughts flowing.
+                </p>
+               <div className="absolute translate-x-1/2 right-1/2 h-40 w-70">
+                <Image
+                  src="/assets/bok.png"
+                  alt="book"
+                  fill
+                />
+                </div>
+              </section>
+        <section className="relative md:w-1/2 w-full  bg-white dark:bg-black/90  dark:text-white p-10 ">
+                  <Button variant="secondary" className="absolute left-4  dark:text-white top-5 z-20 w-5 md:w-12 md:hidden"><Link href="/"><BackwardIcon /></Link></Button>
    <h1 className="md:text-3xl text-2xl font-semibold text-center  mt-3">
             Welcome Back 
           </h1>
 <LoginForm />
  <div className="pt-12 flex flex-col justify-center text-sm space-y-4 text-white md:text-white">
   <a href="/api/auth/google">
-  <button className="w-full cursor-pointer h-9 bg-cyan-700 dark:bg-cyan-950 hover:bg-cyan-600 text-white dark:text-slate-100 rounded-xl text-sm md:text-base xl:text-lg justify-center items-center flex"> 
+  <button className="w-full cursor-pointer h-9 bg-cyan-600 dark:bg-cyan-950 dark:hover:bg-cyan-900 hover:bg-cyan-500 text-white dark:text-slate-100 rounded-xl text-sm md:text-base xl:text-lg justify-center items-center flex"> 
       <FcGoogle className="mr-3 text-lg" />Continue with Google<FcGoogle className="ml-3 text-lg" />
   </button>
     </a>
   <a href="/api/auth/twitter">
-  <button className="w-full cursor-pointer h-9 bg-cyan-700 dark:bg-cyan-950 hover:bg-cyan-600 text-white dark:text-slate-100 rounded-xl text-sm md:text-base xl:text-lg justify-center items-center flex">
+  <button className="w-full cursor-pointer h-9 bg-cyan-600 dark:bg-cyan-950 dark:hover:bg-cyan-900 hover:bg-cyan-500 text-white dark:text-slate-100 rounded-xl text-sm md:text-base xl:text-lg justify-center items-center flex">
       <FaXTwitter className="mr-3 text-lg"/>Continue with X<FaXTwitter className="ml-3 text-lg"/>
   </button>
   </a>

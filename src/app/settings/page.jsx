@@ -46,12 +46,12 @@ export default function Settings() {
               </h2>
               
               <div className="flex items-center gap-4 p-4 bg-white dark:bg-gray-800 rounded-lg">
-                <div className="w-16 h-16 bg-cyan-600 text-white rounded-full flex items-center justify-center font-bold text-xl">
+                <div className="w-16 h-16 shrink-0 bg-cyan-600 text-white rounded-full flex items-center justify-center font-bold text-xl">
                   {user?.email ? user.email.charAt(0).toUpperCase() : "U"}
                 </div>
                 <div>
-                  <p className="text-lg font-medium text-gray-800 dark:text-white">{user?.email || "No email"}</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">User Account</p>
+                  <p className="text-md md:text-lg text-wrap font-medium text-gray-800 dark:text-white bg-red-700  wrap-break-word">{user?.email || "No email"}</p>
+                  <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">User Account</p>
                 </div>
               </div>
             </div>
@@ -167,7 +167,7 @@ export default function Settings() {
                   type="checkbox" 
                   checked={settings.notifications} 
                   onChange={(e) => updateSettings({ notifications: e.target.checked })}
-                  className="w-4 h-4 text-cyan-600 rounded focus:ring-cyan-500"
+                  className="w-4 h-4 text-cyan-500 rounded focus:ring-cyan-500"
                 />
                 <span className="text-sm lg:text-base text-gray-800 dark:text-gray-300">Enable notifications</span>
               </label>
