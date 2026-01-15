@@ -20,9 +20,9 @@ export default function BlogCard({ blog, onDelete }) {
 
   const getFontSizeClass = () => {
     switch (settings.fontSize) {
-      case 'small': return 'text-lg';
-      case 'large': return 'text-2xl';
-      default: return 'text-xl';
+      case 'small': return 'text-sm md:text-base';
+      case 'large': return 'text-xl md:text-2xl';
+      default: return 'text-base md:text-lg';
     }
   };
 
@@ -98,16 +98,15 @@ export default function BlogCard({ blog, onDelete }) {
       )}
 
       {/* Content */}
-      {/* Content */}
-<div className={`relative text-white p-2 tracking-wide leading-snug font-light mx-auto ${getFontSizeClass()}`}>
+<div className="relative text-white p-2 tracking-wide leading-snug font-light mx-auto">
   <div
     ref={contentRef}
     onClick={handleToggle}
     className={`cursor-${isOverflowing ? "pointer" : "default"} ${
       isExpanded ? "" : "line-clamp-2"
-    } whitespace-pre-line`}
+    } whitespace-pre-line ${getFontSizeClass()}`}
   >
-    <p>{blog.content}</p>
+    {blog.content}
   </div>
 
   {/* View more / View less - positioned at the bottom right of the clamped text */}
@@ -134,9 +133,9 @@ export default function BlogCard({ blog, onDelete }) {
         <button
           onClick={handleEdit}
           className={`bg-green-600 dark:bg-green-800 text-white px-3 rounded hover:font-bold ${
-            settings.fontSize === 'small' ? 'text-lg' :
-            settings.fontSize === 'large' ? 'text-2xl' :
-            'text-xl'
+            settings.fontSize === 'small' ? 'text-sm md:text-base' :
+            settings.fontSize === 'large' ? 'text-lg md:text-xl' :
+            'text-base md:text-lg'
           }`}
         >
           Edit
@@ -144,9 +143,9 @@ export default function BlogCard({ blog, onDelete }) {
         <button
           onClick={() => onDelete(blog._id)}
           className={`bg-red-600 dark:bg-red-800 text-white px-3 rounded hover:font-bold ${
-            settings.fontSize === 'small' ? 'text-lg' :
-            settings.fontSize === 'large' ? 'text-2xl' :
-            'text-xl'
+            settings.fontSize === 'small' ? 'text-sm md:text-base' :
+            settings.fontSize === 'large' ? 'text-lg md:text-xl' :
+            'text-base md:text-lg'
           }`}
         >
           Delete

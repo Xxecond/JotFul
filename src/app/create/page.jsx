@@ -83,6 +83,7 @@ export default function CreateBlog() {
       // Upload image via your auth-protected API
       const formData = new FormData();
       formData.append("file", selectedFile);
+      formData.append("quality", settings.imageQuality);
 
       const uploadRes = await fetch("/api/upload", {
         method: "POST",
@@ -163,7 +164,7 @@ export default function CreateBlog() {
               onClick={() => document.querySelector('input[type="file"]').click()}
             >
               <p className="text-gray-600 text-center dark:text-gray-100">
-                {dragActive ? 'Drop image here' : 'Drag image here to upload'}
+                {dragActive ? 'Drop image here' : <><span className="md:hidden">Tap to select image</span><span className="hidden md:inline">Drag image here to upload</span></>}
               </p>
             </div>
           )}

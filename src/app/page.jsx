@@ -12,7 +12,7 @@ const pathname = usePathname();
     <nav className="bg-white dark:bg-black/90 shadow-xl dark:shadow-white/10 px-6 md:px-16 py-4 flex justify-end ">
     <div className="flex items-center gap-6 text-gray-700 dark:text-gray-100 font-medium">
               <Link href="/auth/login" className={(pathname, "/auth/login")}>
-              Login
+              Log in
             </Link>
             <Link href="/auth/signup" className={(pathname, "/auth/signup")}>
               Sign Up

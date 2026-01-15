@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import Modal from "./Modal";
 import { useAuth } from '@/context/authContext' 
@@ -122,7 +123,7 @@ export default function Navbar({ first, second }) {
               
             {/* Profile Section at Bottom */}
             {user && (
-              <div className="mt-auto mb-20 px-5 pb-4">
+              <div className="mt-auto mb-10 px-5 pb-4">
                 <Link
                   href="/settings"
                   onClick={() => setOpen(false)}
@@ -146,15 +147,34 @@ export default function Navbar({ first, second }) {
   // Desktop Navbar
   if (second === "plain") {
     return (
-      <nav>
-        <ul className="flex space-x-4 py-0">
-          {navLinks.map((item) => (
-            <li key={item.id} className="tracking-tight text-white hover:font-semibold xl:text-lg">
-              <Link href={item.href}>{item.text}</Link>
+      <>
+        <nav>
+          <ul className="flex space-x-4 py-0 items-center">
+            {navLinks.map((item) => (
+              <li key={item.id} className="tracking-tight text-white hover:font-semibold xl:text-lg">
+                <Link href={item.href}>{item.text}</Link>
+              </li>
+            ))}
+            <li>
+              <button
+                onClick={() => setModal(true)}
+                className="tracking-tight text-white hover:font-semibold xl:text-lg"
+              >
+                Logout
+              </button>
             </li>
-          ))}
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+        {modal && typeof document !== 'undefined' && createPortal(
+          <Modal
+            open={modal}
+            message="Are you sure you want to logout?"
+            onConfirm={handleLogout}
+            onCancel={() => setModal(false)}
+          />,
+          document.body
+        )}
+      </>
     );
   }
 }

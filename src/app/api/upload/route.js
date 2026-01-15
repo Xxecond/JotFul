@@ -35,7 +35,8 @@ export async function POST(req) {
     // Get file from formData
     const data = await req.formData();
     const file = data.get("file");
-    console.log('File received:', !!file, file?.name, file?.size);
+    const quality = data.get("quality") || "medium";
+    console.log('File received:', !!file, file?.name, file?.size, 'Quality:', quality);
 
     if (!file || file.size === 0) {
       return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
@@ -53,13 +54,23 @@ export async function POST(req) {
 
     console.log('Starting Cloudinary upload...');
     
+    // Map quality setting to Cloudinary quality
+    const qualityMap = {
+      low: "auto:low",
+      medium: "auto:good",
+      high: "auto:best"
+    };
+    
     // Upload to Cloudinary
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
     const uploadResult = await new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
-        { folder: "blog_images" },
+        { 
+          folder: "blog_images",
+          quality: qualityMap[quality] || "auto:good"
+        },
         (err, result) => {
           if (err) {
             console.log('Cloudinary error:', err);

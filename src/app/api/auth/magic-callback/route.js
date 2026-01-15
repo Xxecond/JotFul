@@ -82,7 +82,7 @@ export async function GET(req) {
           <body style="font-family:Arial;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f3f4f6;">
             <div style="text-align:center;">
               <h2 style="font-size:2rem;font-weight:bold;color:#22c55e;margin-bottom:1rem;">✅ Authentication Successful!</h2>
-              <p style="font-size:1.125rem;color:#6b7280;">You can close this tab now.</p>
+      <p>Redirecting...</p>
             </div>
             <script>setTimeout(() => window.close(), 2000);</script>
           </body>
