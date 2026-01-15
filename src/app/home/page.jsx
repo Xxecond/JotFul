@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Header, BlogCard, SearchBar } from '@/components'
 import { getUserPosts, deletePost } from '@/lib/postService'
+import { ProgressBar } from '@/components/ui'
 import { Button } from '@/components/ui'
 import { Modal } from '@/components'
 import Link from 'next/link'
@@ -30,7 +31,13 @@ export default function Home() {
     fetchBlogs()
   }, [])
 
-  if (loading) return <div className="flex justify-center items-center h-screen">Loading...</div>
+  if (loading) return (
+    <div className="flex justify-center items-center h-screen bg-white dark:bg-black/90">
+      <div className="w-64">
+        <ProgressBar height="h-2" size="lg" />
+      </div>
+    </div>
+  )
 
   const filtered = blogs.filter(b => b?.title?.toLowerCase().includes(searchTerm.toLowerCase()))
 

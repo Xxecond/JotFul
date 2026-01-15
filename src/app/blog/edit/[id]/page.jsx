@@ -120,10 +120,8 @@ export default function EditBlog({ params }) {
     return (
       <div className="bg-white dark:bg-gray-900 min-h-screen flex flex-col">
         <Header />
-        <div className="flex justify-center items-center flex-1">
-          <div className="text-center">
-            <ProgressBar size="lg" color="text-cyan-600 dark:text-cyan-400" />
-          </div>
+        <div className="flex justify-center items-center h-screen">
+            <ProgressBar size="lg" height="h-2" />
         </div>
       </div>
     );

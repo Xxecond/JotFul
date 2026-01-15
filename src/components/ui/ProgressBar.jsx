@@ -2,7 +2,7 @@
 
 export default function ProgressBar({ 
   height = "h-1", 
-  color = "bg-cyan-600 dark:bg-cyan-400",
+  color = "bg-cyan-800 dark:bg-cyan-300",
   bgColor = "bg-gray-200 dark:bg-gray-700",
   className = ""
 }) {
