@@ -35,11 +35,11 @@ export async function sendMagicLinkEmail(toEmail, magicLink, sessionId = null) {
       
       <div style="display: flex; justify-content: center; text-align: center; gap:12px; margin: 30px 0;">
               <a href="${yesUrl}" 
-              style="display:inline-block;background:#22c55e;color:white;padding:12px 0;border-radius:8px;text-decoration:none;font-weight:bold;">
+              style="flex-1; text-align:center; display:inline-block;background:#22c55e;color:white;padding:12px 0;border-radius:8px;text-decoration:none;font-weight:bold;">
                 Yes, it's me
               </a>
               <a href="${noUrl}" 
-              style="display:inline-block;background:#ef4444;color:white;padding:12px 0;border-radius:8px;text-decoration:none;font-weight:bold;">
+              style="flex-1; text-align: center; display:inline-block;background:#ef4444;color:white;padding:12px 0;border-radius:8px;text-decoration:none;font-weight:bold;">
               No, it's not me
               </a>
       </div>
