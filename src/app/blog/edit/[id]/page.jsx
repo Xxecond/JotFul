@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Header from "@/components/Header";
 import { updatePost, getPostById } from "@/lib/postService";
-import { Spinner, Button } from "@/components/ui";
+import { Spinner,ProgressBar, Button } from "@/components/ui";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useNotifications } from "@/contexts/NotificationContext";
 
@@ -20,6 +20,7 @@ export default function EditBlog({ params }) {
   const [imagePreview, setImagePreview] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [fetchingPost, setFetchingPost] = useState(true);
   const [dragActive, setDragActive] = useState(false);
 
   // Fetch existing post
@@ -32,6 +33,8 @@ export default function EditBlog({ params }) {
         setImagePreview(post.image || null);
       } catch (err) {
         console.error(err);
+      } finally {
+        setFetchingPost(false);
       }
     };
 
@@ -113,6 +116,19 @@ export default function EditBlog({ params }) {
     }
   };
 
+  if (fetchingPost) {
+    return (
+      <div className="bg-white dark:bg-gray-900 min-h-screen flex flex-col">
+        <Header />
+        <div className="flex justify-center items-center flex-1">
+          <div className="text-center">
+            <ProgressBar size="lg" color="text-cyan-600 dark:text-cyan-400" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="bg-white dark:bg-gray-900 min-h-screen flex flex-col">
@@ -165,7 +181,7 @@ export default function EditBlog({ params }) {
             
             {imagePreview && (
               <div className="mb-4 text-base xl:text-lg text-center">
-                <div className="relative w-[95%] max-w-4xl mx-auto h-80 md:h-95 xl:h-120 mb-3 text-sm md:text-base xl:text-lg">
+                <div className="relative w-[95%] max-w-4xl mx-auto h-90 md:h-95 xl:h-120 mb-3 text-sm md:text-base xl:text-lg">
                   <Image
                     src={imagePreview}
                     alt="Preview"

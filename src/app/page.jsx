@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui";
+import { Button, ProgressBar, PulseFade } from "@/components/ui";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
@@ -22,7 +22,7 @@ const pathname = usePathname();
       <section className=" flex h-dvh justify-center items-center text-center dark:text-white text-black bg-white dark:bg-black/90">
       <main className="flex w-full h-150 pb-35">
         <div className="w-full md:w-1/2 flex flex-col justify-center">
-        <h1 className="text-[40px] sm:text-5xl font-light leading-loose text-nowrap">Capture ideas✨,<br />Stay Organised 📁,<br /> Be JotFul✍️</h1>
+        <h1 className="text-[40px] sm:text-5xl font-light leading-loose text-nowrap">Capture ideas✨,<br />Stay Organised 📁,<br /> Be JotFul✍️ </h1>
         <div className="flex pt-15 gap-4 justify-center">
           <Link href="/auth/signup">
             <Button variant="special">Begin Here</Button>
