@@ -58,7 +58,15 @@ export default function BlogCard({ blog, onDelete }) {
     } ${getThemeClass()}`}>
       {/* Title */}
       <div className="text-center p-2 relative bg-cyan-700 dark:bg-cyan-950">
-        <h2 className={`font-semibold text-white tracking-wide ${
+        {blog.createdAt && settings.showTimestamps && (
+          <p className="absolute -translate-y-1/2 top-1/2 left-2 text-xs xl:text-sm text-cyan-100 dark:text-cyan-400 flex items-center gap-1 opacity-0 pointer-events-none">
+            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+            </svg>
+            {getTimeAgo(blog.createdAt)}
+          </p>
+        )}
+        <h2 className={`font-semibold text-white wrap-break-word tracking-wide px-16 break-words ${
           settings.fontSize === 'small' ? 'text-lg md:text-xl xl:text-2xl' :
           settings.fontSize === 'large' ? 'text-2xl md:text-3xl xl:text-4xl' :
           'text-xl md:text-2xl xl:text-3xl'
@@ -66,7 +74,7 @@ export default function BlogCard({ blog, onDelete }) {
           {blog.title}
         </h2>
         {blog.createdAt && settings.showTimestamps && (
-          <p className="absolute -translate-y-1/2 top-1/2 right-2 text-xs xl:text-sm text-cyan-100 dark:text-cyan-400 flex items-center gap-1">
+          <p className="absolute -translate-y-1/2 top-1/2 right-2 text-xs xl:text-sm text-cyan-100 dark:text-cyan-400 flex items-center gap-1 flex-shrink-0">
             <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
             </svg>

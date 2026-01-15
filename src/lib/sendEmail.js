@@ -36,14 +36,14 @@ export async function sendMagicLinkEmail(toEmail, magicLink, sessionId = null) {
       <div style="text-align: center; margin: 30px 0;">
         <table cellpadding="0" cellspacing="0" style="margin: 0 auto;">
           <tr>
-            <td style="padding: 10px;">
-              <a href="${yesUrl}" style="display:block;background:#22c55e;color:white;padding:14px 30px;border-radius:8px;text-decoration:none;font-weight:bold;">
-                ✓ Yes, it's me
+            <td style="padding: 8px;">
+              <a href="${yesUrl}" style="display:block;background:#22c55e;color:white;padding:12px 10px;border-radius:8px;text-decoration:none;font-weight:bold;">
+                Yes, it's me
               </a>
             </td>
-            <td style="padding: 10px;">
-              <a href="${noUrl}" style="display:block;background:#ef4444;color:white;padding:14px 30px;border-radius:8px;text-decoration:none;font-weight:bold;">
-                ✗ No, it's not me
+            <td style="padding: 8px;">
+              <a href="${noUrl}" style="display:block;background:#ef4444;color:white;padding:12px 10px;border-radius:8px;text-decoration:none;font-weight:bold;">
+              No, it's not me
               </a>
             </td>
           </tr>

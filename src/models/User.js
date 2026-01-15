@@ -15,7 +15,11 @@ const userSchema = new mongoose.Schema(
 
     isVerified: {
       type: Boolean,
-      default: false,  // Only verified after clicking "Yes, it's me"
+      default: false,
+    },
+
+    lastEmailSent: {
+      type: Number,
     },
 
     // New fields for magic link

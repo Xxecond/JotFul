@@ -19,12 +19,32 @@ export async function POST(req) {
     // Handle signup
     if (action === 'signup') {
       if (existingUser) {
-        return NextResponse.json({ error: "User already exists. Please login instead." }, { status: 400 });
+        if (!existingUser.isVerified) {
+          // Allow resending verification email
+          const token = crypto.randomBytes(32).toString("hex");
+          existingUser.magicToken = token;
+          existingUser.magicTokenExpiry = Date.now() + 15 * 60 * 1000;
+          existingUser.lastEmailSent = Date.now();
+          await existingUser.save();
+
+          const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+          const magicLink = `${baseUrl}/api/auth/magic-callback?token=${token}`;
+          await sendMagicLinkEmail(email, magicLink, sessionId);
+
+          return NextResponse.json({ 
+            message: "Verification email resent! Check your email.",
+            isUnverified: true,
+            waitingUrl: `${baseUrl}/auth/waiting`
+          });
+        }
+        return NextResponse.json({ error: "Email already registered. Please login instead." }, { status: 400 });
       }
+      
       // Create new user
       const user = await User.create({ 
         email,
-        isVerified: false // Not verified until they click "Yes, it's me"
+        isVerified: false,
+        lastEmailSent: Date.now()
       });
       
       const token = crypto.randomBytes(32).toString("hex");
@@ -49,9 +69,14 @@ export async function POST(req) {
         return NextResponse.json({ error: "No account found. Please signup first." }, { status: 400 });
       }
       
+      if (!existingUser.isVerified) {
+        return NextResponse.json({ error: "Please verify your email first. Check your inbox or signup again to resend." }, { status: 403 });
+      }
+      
       const token = crypto.randomBytes(32).toString("hex");
       existingUser.magicToken = token;
       existingUser.magicTokenExpiry = Date.now() + 15 * 60 * 1000;
+      existingUser.lastEmailSent = Date.now();
       await existingUser.save();
 
       const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';

@@ -31,7 +31,7 @@ export async function GET(req) {
     // Clear the magic token and verify user
     user.magicToken = undefined;
     user.magicTokenExpiry = undefined;
-    user.isVerified = true; // Only verify when they approve
+    user.isVerified = true;
     await user.save();
 
     // Handle deny action
@@ -44,11 +44,18 @@ export async function GET(req) {
         });
       }
       return new Response(`
-        <html><body style="font-family:Arial;text-align:center;padding:50px;">
-          <h2>❌ Request Denied</h2>
-          <p>Login request has been denied. You can close this tab.</p>
-          <script>setTimeout(() => window.close(), 2000);</script>
-        </body></html>
+        <html>
+          <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          </head>
+          <body style="font-family:Arial;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f3f4f6;">
+            <div style="text-align:center;">
+              <h2 style="font-size:2rem;font-weight:bold;color:#ef4444;margin-bottom:1rem;">❌ Request Denied</h2>
+              <p style="font-size:1.125rem;color:#6b7280;">Login request has been denied. You can close this tab.</p>
+            </div>
+            <script>setTimeout(() => window.close(), 2000);</script>
+          </body>
+        </html>
       `, { headers: { 'Content-Type': 'text/html' } });
     }
 
@@ -68,11 +75,18 @@ export async function GET(req) {
       });
       
       return new Response(`
-        <html><body style="font-family:Arial;text-align:center;padding:50px;">
-          <h2>✅ Authentication Successful!</h2>
-          <p>You can close this tab now.</p>
-          <script>setTimeout(() => window.close(), 2000);</script>
-        </body></html>
+        <html>
+          <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          </head>
+          <body style="font-family:Arial;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f3f4f6;">
+            <div style="text-align:center;">
+              <h2 style="font-size:2rem;font-weight:bold;color:#22c55e;margin-bottom:1rem;">✅ Authentication Successful!</h2>
+              <p style="font-size:1.125rem;color:#6b7280;">You can close this tab now.</p>
+            </div>
+            <script>setTimeout(() => window.close(), 2000);</script>
+          </body>
+        </html>
       `, { headers: { 'Content-Type': 'text/html' } });
     }
 

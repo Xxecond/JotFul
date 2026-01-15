@@ -89,13 +89,13 @@ export default function Navbar({ first, second }) {
 
         <div
           className={`fixed left-0 top-0 h-full w-64 bg-cyan-700 dark:bg-cyan-950 shadow-xl shadow-white/10 transform 
-            transition-transform duration-800 ${
+            transition-transform duration-800 pb-safe ${
               open ? "-translate-x-0" : "-translate-x-full"
             }`}
           onClick={(e) => e.stopPropagation()}
         >
-          <nav>
-            <ul className="slidein mt-20 flex flex-col px-5 space-y-5 pt-6 justify-center">
+          <nav className="h-full flex flex-col">
+            <ul className="slidein mt-20 flex flex-col px-5 space-y-5 pt-6 flex-grow">
               {navLinks.map((item) => (
                 <li
                   key={item.id}
@@ -118,25 +118,25 @@ export default function Navbar({ first, second }) {
               >
                 Logout
               </button>
-              
-              {/* Profile Section at Bottom */}
-              {user && (
-                <li className=" rounded-md p-3 absolute translate-y-40 top-100  text-center">
-                  <Link
-                    href="/settings"
-                    onClick={() => setOpen(false)}
-                    className="flex flex-col items-center gap-2"
-                  >
-                    <div className="w-12 h-12 bg-white text-cyan-600 rounded-full flex items-center justify-center font-bold text-lg">
-                      {user.email ? user.email.charAt(0).toUpperCase() : "U"}
-                    </div>
-                    <div>
-                      <p className="text-white text-sm font-medium">{user.email}</p>
-                    </div>
-                  </Link>
-                </li>
-              )}
             </ul>
+              
+            {/* Profile Section at Bottom */}
+            {user && (
+              <div className="mt-auto mb-20 px-5 pb-4">
+                <Link
+                  href="/settings"
+                  onClick={() => setOpen(false)}
+                  className="flex flex-col items-center gap-2"
+                >
+                  <div className="w-12 h-12 bg-white text-cyan-600 rounded-full flex items-center justify-center font-bold text-lg">
+                    {user.email ? user.email.charAt(0).toUpperCase() : "U"}
+                  </div>
+                  <div>
+                    <p className="text-white text-sm font-medium">{user.email}</p>
+                  </div>
+                </Link>
+              </div>
+            )}
           </nav>
         </div>
       </>

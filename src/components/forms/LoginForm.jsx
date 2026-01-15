@@ -1,15 +1,62 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button, Spinner } from '@/components/ui'
 import { useAuth } from '@/context/authContext'
+import { useRouter } from 'next/navigation'
 
 export default function LoginForm() {
   const { sendMagicLink } = useAuth()
+  const router = useRouter()
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
+  const [canResend, setCanResend] = useState(true)
+  const [countdown, setCountdown] = useState(0)
+  const [sessionId, setSessionId] = useState(null)
+  const [polling, setPolling] = useState(false)
+
+  useEffect(() => {
+    if (!sessionId || !polling) return
+
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch(`/api/auth/check-session?sessionId=${sessionId}`)
+        const data = await res.json()
+        
+        if (data.authenticated) {
+          clearInterval(interval)
+          setPolling(false)
+          router.push('/home')
+        } else if (data.denied) {
+          clearInterval(interval)
+          setPolling(false)
+          setError('Login request was denied')
+          setSessionId(null)
+        }
+      } catch (err) {
+        console.error('Polling error:', err)
+      }
+    }, 2000)
+
+    return () => clearInterval(interval)
+  }, [sessionId, polling, router])
+
+  const startCountdown = () => {
+    setCanResend(false)
+    setCountdown(60)
+    const timer = setInterval(() => {
+      setCountdown(prev => {
+        if (prev <= 1) {
+          clearInterval(timer)
+          setCanResend(true)
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -21,30 +68,30 @@ export default function LoginForm() {
       return
     }
 
+    if (!canResend) {
+      setError(`Please wait ${countdown}s before resending`)
+      return
+    }
+
     setLoading(true)
     try {
-      // Generate sessionId for cross-device auth
-      const sessionId = Math.random().toString(36).substring(7);
+      const newSessionId = Math.random().toString(36).substring(7)
       
-      // Send magic link with sessionId
       const res = await fetch('/api/auth/magic-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, sessionId, action: 'login' }),
+        body: JSON.stringify({ email, sessionId: newSessionId, action: 'login' }),
       })
       
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed to send email')
       
-      setMessage('Verification mail sent! Check email to verify.')
-      setEmail('') // clear field
-      
-      // Redirect to waiting page with sessionId
-      setTimeout(() => {
-        window.location.href = `/auth/waiting?sessionId=${sessionId}`;
-      }, 2000);
+      setMessage('Login link sent! Check your email.')
+      setSessionId(newSessionId)
+      setPolling(true)
+      startCountdown()
     } catch (err) {
-      setError('Failed to send email')
+      setError(err.message || 'Failed to send email')
     } finally {
       setLoading(false)
     }
@@ -70,13 +117,15 @@ export default function LoginForm() {
       <Button
         variant="special"
         type="submit"
-        disabled={loading}
+        disabled={loading || !canResend}
         className="rounded-full"
       >
         {loading ? (
           <span className="flex items-center justify-center gap-2">
             Sending... <Spinner size="sm" />
           </span>
+        ) : !canResend ? (
+          `Resend in ${countdown}s`
         ) : (
           'Send Email'
         )}

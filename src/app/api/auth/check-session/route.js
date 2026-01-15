@@ -1,7 +1,7 @@
 import { connectDB } from "@/lib/db";
 import AuthSession from "@/models/AuthSession";
 import { NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
+import { cookies } from "next/headers";
 
 export async function GET(req) {
   try {
@@ -14,20 +14,17 @@ export async function GET(req) {
     }
 
     const session = await AuthSession.findOne({ sessionId });
-    
-    if (session && session.denied) {
-      // Clean up the session
-      await AuthSession.deleteOne({ sessionId });
+
+    if (!session) {
+      return NextResponse.json({ authenticated: false, denied: false });
+    }
+
+    if (session.denied) {
       return NextResponse.json({ authenticated: false, denied: true });
     }
-    
-    if (session && session.authenticated) {
-      // Transfer the JWT cookie to this response
-      const response = NextResponse.json({ 
-        authenticated: true,
-        token: session.jwtToken,
-        user: jwt.decode(session.jwtToken)
-      });
+
+    if (session.authenticated && session.jwtToken) {
+      const response = NextResponse.json({ authenticated: true });
       response.cookies.set("access_token", session.jwtToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
@@ -36,13 +33,11 @@ export async function GET(req) {
         path: "/"
       });
       
-      // Clean up the session
       await AuthSession.deleteOne({ sessionId });
-      
       return response;
     }
 
-    return NextResponse.json({ authenticated: false });
+    return NextResponse.json({ authenticated: false, denied: false });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
