@@ -37,11 +37,17 @@ export default function BlogCard({ blog, onDelete }) {
     const diffMins = Math.floor(diffMs / 60000);
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
+    const diffWeeks = Math.floor(diffDays / 7);
+    const diffMonths = Math.floor(diffDays / 30);
+    const diffYears = Math.floor(diffDays / 365);
 
     if (diffMins < 1) return 'just now';
-    if (diffMins < 60) return `${diffMins}min ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    return `${diffDays}d ago`;
+    if (diffMins < 60) return `${diffMins}m`;
+    if (diffHours < 24) return `${diffHours}h`;
+    if (diffDays < 7) return `${diffDays}d`;
+    if (diffWeeks < 4) return `${diffWeeks}w`;
+    if (diffMonths < 12) return `${diffMonths}mo`;
+    return `${diffYears}y`;
   };
 
   const handleToggle = () => {
@@ -57,7 +63,7 @@ export default function BlogCard({ blog, onDelete }) {
       settings.compactView ? 'my-6' : 'my-12'
     } ${getThemeClass()}`}>
       {/* Title */}
-      <div className="text-center p-2 relative bg-cyan-700 dark:bg-cyan-950">
+      <div className="text-center py-1 px-2 relative bg-cyan-700 dark:bg-cyan-950">
         {blog.createdAt && settings.showTimestamps && (
           <p className="absolute -translate-y-1/2 top-1/2 left-2 text-xs xl:text-sm text-cyan-100 dark:text-cyan-400 flex items-center gap-1 opacity-0 pointer-events-none">
             <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -66,7 +72,7 @@ export default function BlogCard({ blog, onDelete }) {
             {getTimeAgo(blog.createdAt)}
           </p>
         )}
-        <h2 className={`font-semibold text-white wrap-break-word tracking-wide px-16 break-words ${
+        <h2 className={`font-semibold text-white wrap-break-word tracking-wide pr-12 break-words ${
           settings.fontSize === 'small' ? 'text-lg md:text-xl xl:text-2xl' :
           settings.fontSize === 'large' ? 'text-2xl md:text-3xl xl:text-4xl' :
           'text-xl md:text-2xl xl:text-3xl'

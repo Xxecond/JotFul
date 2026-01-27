@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, ProgressBar, PulseFade } from "@/components/ui";
+import { Button, } from "@/components/ui";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
@@ -48,7 +48,7 @@ const pathname = usePathname();
     fill
      />
     </div>
-  <p className="flex md:items-center items-end mr-3">Jotful helps you note, plan and manage your thoughts all in one simple beautiful space. <br className="hidden md:block" />Write freely, sync instantly, and stay productive wherever you go.</p>
+  <p className="flex md:items-center items-end mr-3">JotFul is a simple space designed to jot thoughts, capture moments and remember what matters through notes and photos.</p>
 </section>
 <div className="border-t bg-cyan-700 dark:bg-cyan-950 border-t-white flex justify-end items-start border-b-0">
   <span className=" py-4 text-sm font-light pr-5 pt-3">
