@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Header from "@/components/Header";
 import { createPost } from "@/lib/postService";
-import {Spinner, Button} from "@/components/ui";
+import {Spinner, Button, SkeletonLoader} from "@/components/ui";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useNotifications } from "@/contexts/NotificationContext";
 
@@ -118,6 +118,15 @@ export default function CreateBlog() {
       setLoading(false);
     }
   };
+
+  if (loading) return (
+    <div className="bg-white dark:bg-gray-900 min-h-screen flex flex-col">
+      <Header />
+      <div className="flex justify-center items-center h-screen w-full">
+        <SkeletonLoader />
+      </div>
+    </div>
+  )
 
   return (
       <>

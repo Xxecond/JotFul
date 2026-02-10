@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Header from "@/components/Header";
 import { updatePost, getPostById } from "@/lib/postService";
-import { Spinner,ProgressBar, Button } from "@/components/ui";
+import { Spinner, SkeletonLoader, Button } from "@/components/ui";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useNotifications } from "@/contexts/NotificationContext";
 
@@ -120,8 +120,8 @@ export default function EditBlog({ params }) {
     return (
       <div className="bg-white dark:bg-gray-900 min-h-screen flex flex-col">
         <Header />
-        <div className="flex justify-center items-center h-screen">
-            <ProgressBar size="lg" height="h-2" />
+        <div className="flex justify-center items-center h-screen w-full">
+          <SkeletonLoader />
         </div>
       </div>
     );

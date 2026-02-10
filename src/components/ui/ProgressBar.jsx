@@ -8,21 +8,20 @@ export default function ProgressBar({
 }) {
   return (
     <div 
-      className={`w-full ${bgColor} rounded-full overflow-hidden ${height} ${className}`}
+      className={`w-5/6 ${bgColor} rounded-full overflow-hidden ${height} ${className}`}
       role="status"
       aria-label="loading"
     >
       <div
-        className={`${height} ${color} rounded-full animate-[progress_1.5s_ease-in-out_infinite]`}
-        style={{
-          animation: "progress 1.5s ease-in-out infinite",
-        }}
+        className={`${height} ${color} rounded-full`} style={{animation:"progress 2s ease-out ",}}
       />
       <style jsx>{`
         @keyframes progress {
-          0% { width: 0%; margin-left: 0%; }
-          50% { width: 50%; margin-left: 25%; }
-          100% { width: 0%; margin-left: 100%; }
+          0% { width: 0%;}
+          30% { width: 50%; }
+          50% {width: 80%;}
+          90% {width:90%}
+          100% { width: 100%; }
         }
       `}</style>
     </div>
