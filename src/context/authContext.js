@@ -57,7 +57,8 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('user')
     sessionStorage.removeItem('token')
     sessionStorage.removeItem('user')
-    // Optional: call backend logout if you have one
+    sessionStorage.removeItem('jotful-guest')
+    sessionStorage.removeItem('jotful-guest-posts')
   }
 
   return (

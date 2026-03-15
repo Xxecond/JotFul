@@ -8,12 +8,14 @@ import { updatePost, getPostById } from "@/lib/postService";
 import { Spinner, SkeletonLoader, Button } from "@/components/ui";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useNotifications } from "@/contexts/NotificationContext";
+import { useGuest } from "@/contexts/GuestContext";
 
 export default function EditBlog({ params }) {
   const router = useRouter();
   const postId = React.use(params).id;
   const { settings } = useSettings();
   const { addNotification } = useNotifications();
+  const { isGuest, getGuestPost, updateGuestPost } = useGuest();
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -27,19 +29,23 @@ export default function EditBlog({ params }) {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const post = await getPostById(postId);
-        setTitle(post.title);
-        setContent(post.content);
-        setImagePreview(post.image || null);
+        if (isGuest) {
+          const post = getGuestPost(postId);
+          if (post) { setTitle(post.title); setContent(post.content); setImagePreview(post.image || null); }
+        } else {
+          const post = await getPostById(postId);
+          setTitle(post.title);
+          setContent(post.content);
+          setImagePreview(post.image || null);
+        }
       } catch (err) {
         console.error(err);
       } finally {
         setFetchingPost(false);
       }
     };
-
     fetchPost();
-  }, [postId]);
+  }, [postId, isGuest]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -78,6 +84,13 @@ export default function EditBlog({ params }) {
     setLoading(true);
 
     try {
+      if (isGuest) {
+        const imageUrl = selectedFile ? URL.createObjectURL(selectedFile) : imagePreview;
+        updateGuestPost(postId, { title, content, image: imageUrl });
+        router.push('/home');
+        return;
+      }
+
       let imageUrl = imagePreview;
 
       if (selectedFile) {

@@ -3,15 +3,18 @@ import React from "react";
 import { usePathname } from "next/navigation";
 import {Navbar} from "@/components";
 import Profile from "@/components/Profile";
+import { useFolders } from "@/contexts/FolderContext";
 
 export default function Header() {
   const pathname = usePathname();
+  const { activeFolder } = useFolders();
 
   const headings = {
-    "/home": "JOTFUL",
+    "/home": activeFolder ? activeFolder.name : "JOTFUL",
     "/create": "New Jot",
     "/edit": "Edit Jot",
     "/settings": "Settings",
+    "/favorites": "Favorites",
   };
 
   const getPageName = (path) => {

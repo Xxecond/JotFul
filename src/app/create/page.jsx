@@ -8,11 +8,13 @@ import { createPost } from "@/lib/postService";
 import {Spinner, Button, SkeletonLoader} from "@/components/ui";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useNotifications } from "@/contexts/NotificationContext";
+import { useGuest } from "@/contexts/GuestContext";
 
 export default function CreateBlog() {
  const router = useRouter();
  const { settings } = useSettings();
  const { addNotification } = useNotifications();
+ const { isGuest, addGuestPost } = useGuest();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
@@ -78,6 +80,14 @@ export default function CreateBlog() {
     setLoading(true);
 
     try {
+      // Guest mode: save locally without uploading
+      if (isGuest) {
+        const imageUrl = selectedFile ? URL.createObjectURL(selectedFile) : null;
+        addGuestPost({ title, content, image: imageUrl });
+        router.push('/home');
+        return;
+      }
+
       if (!selectedFile) throw new Error("No image selected");
 
       // Upload image via your auth-protected API

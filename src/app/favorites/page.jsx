@@ -1,54 +1,42 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import { Header, BlogCard, SearchBar } from '@/components'
 import { getUserPosts, deletePost } from '@/lib/postService'
 import { ProgressBar } from '@/components/ui'
 import { Button } from '@/components/ui'
 import { Modal } from '@/components'
 import { useFolders } from '@/contexts/FolderContext'
-import { useGuest } from '@/contexts/GuestContext'
 import Link from 'next/link'
 
-export default function Home() {
-  const router = useRouter()
+export default function Favorites() {
   const [blogs, setBlogs] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
   const [loading, setLoading] = useState(true)
   const [modal, setModal] = useState({ open: false, postId: null, message: '', onConfirm: null })
-
-  const { activeFolder } = useFolders()
-  const { isGuest, guestPosts, deleteGuestPost, exitGuestMode } = useGuest()
+  const { favorites } = useFolders()
 
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        if (!isGuest) {
-          // Clear any leftover guest data when a real user lands here
-          exitGuestMode();
-          const data = await getUserPosts()
-          setBlogs(Array.isArray(data) ? data : [])
-        }
+        const data = await getUserPosts()
+        setBlogs(Array.isArray(data) ? data : [])
       } catch {
         setBlogs([])
       } finally {
         setLoading(false)
       }
     }
-    if (isGuest) { setLoading(false); return; }
     fetchBlogs()
-  }, [isGuest])
+  }, [])
 
   if (loading) return (
     <div className="flex justify-center items-center h-screen bg-white dark:bg-black/90">
       <div className="w-64">
-        <ProgressBar height="h-2" size="lg" />
+        <ProgressBar height="h-2" />
       </div>
     </div>
   )
-
-  const allBlogs = isGuest ? guestPosts : blogs
 
   const matchesSearch = (blog) => {
     const term = searchTerm.toLowerCase().replace(/^#/, '')
@@ -57,10 +45,9 @@ export default function Home() {
     return titleMatch || hashtagMatch
   }
 
-  const folderFiltered = activeFolder
-    ? allBlogs.filter(b => activeFolder.postIds.includes(b._id))
-    : allBlogs
-  const filtered = folderFiltered.filter(b => matchesSearch(b))
+  const filtered = blogs
+    .filter(b => favorites.includes(b._id))
+    .filter(b => matchesSearch(b))
 
   const handleDeleteClick = (id) => {
     setModal({
@@ -69,12 +56,8 @@ export default function Home() {
       message: 'Are you sure you want to delete this post?',
       onConfirm: async () => {
         try {
-          if (isGuest) {
-            deleteGuestPost(id)
-          } else {
-            await deletePost(id)
-            setBlogs(prev => prev.filter(b => b._id !== id))
-          }
+          await deletePost(id)
+          setBlogs(prev => prev.filter(b => b._id !== id))
         } catch {
           alert('Failed to delete post')
         }
@@ -86,16 +69,17 @@ export default function Home() {
   const closeModal = () => setModal({ open: false, postId: null, message: '', onConfirm: null })
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black/90">  
+    <div className="min-h-screen bg-white dark:bg-black/90">
       <Header />
       <SearchBar setSearchTerm={setSearchTerm} />
-      <section className="home px-4 py-6">
+      <section className="px-4 py-6">
         {filtered.length > 0 ? (
           filtered.map(blog => blog && <BlogCard key={blog._id} blog={blog} onDelete={handleDeleteClick} />)
         ) : (
-          <div className="flex justify-center">
-            <Button variant="special" className="mt-40">
-              <Link href="/create">CREATE NEW BLOG</Link>
+          <div className="flex flex-col justify-center items-center mt-40 gap-4">
+            <p className="text-gray-500 dark:text-gray-400 text-lg">No favorites yet</p>
+            <Button variant="special">
+              <Link href="/home">Go to Home</Link>
             </Button>
           </div>
         )}

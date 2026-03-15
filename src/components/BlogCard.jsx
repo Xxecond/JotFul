@@ -4,13 +4,20 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useSettings } from "@/contexts/SettingsContext";
+import { useFolders } from "@/contexts/FolderContext";
+import { useNotifications } from "@/contexts/NotificationContext";
+import FolderModal from "@/components/FolderModal";
 
 export default function BlogCard({ blog, onDelete }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
+  const [folderModal, setFolderModal] = useState(false);
   const contentRef = useRef(null);
   const router = useRouter();
   const { settings } = useSettings();
+  const { folders, addFolder, addPostToFolder, toggleFavorite, isFavorite } = useFolders();
+  const { addNotification } = useNotifications();
+  const favorite = isFavorite(blog._id);
 
   useEffect(() => {
     if (contentRef.current) {
@@ -56,6 +63,17 @@ export default function BlogCard({ blog, onDelete }) {
 
   const handleEdit = () => {
     router.push(`/blog/edit/${blog._id}`);
+  };
+
+  const renderContent = (text) => {
+    return text.split(/\s+/).map((word, i) => {
+      if (word.startsWith('#')) {
+        return (
+          <span key={i} className="text-cyan-300 dark:text-cyan-400 font-semibold">{word} </span>
+        );
+      }
+      return word + ' ';
+    });
   };
 
   return (
@@ -112,7 +130,7 @@ export default function BlogCard({ blog, onDelete }) {
       isExpanded ? "" : "line-clamp-2"
     } whitespace-pre-line ${getFontSizeClass()}`}
   >
-    {blog.content}
+    {renderContent(blog.content)}
   </div>
 
   {/* View more / View less - positioned at the bottom right of the clamped text */}
@@ -135,7 +153,7 @@ export default function BlogCard({ blog, onDelete }) {
 </div>
 
       {/* Actions */}
-      <div className="flex flex-row justify-between mx-9 items-center my-2">
+      <div className="flex flex-row justify-between mx-4 items-center my-2 gap-2">
         <button
           onClick={handleEdit}
           className={`bg-green-600 dark:bg-green-800 text-white px-3 rounded hover:font-bold ${
@@ -146,6 +164,28 @@ export default function BlogCard({ blog, onDelete }) {
         >
           Edit
         </button>
+
+        <button
+          onClick={() => setFolderModal(true)}
+          className={`bg-cyan-800 dark:bg-cyan-950 text-white px-3 rounded hover:font-bold ${
+            settings.fontSize === 'small' ? 'text-sm md:text-base' :
+            settings.fontSize === 'large' ? 'text-lg md:text-xl' :
+            'text-base md:text-lg'
+          }`}
+        >
+          📁
+        </button>
+
+        <button
+          onClick={() => {
+            const added = toggleFavorite(blog._id);
+            addNotification(added ? 'Added to Favorites' : 'Removed from Favorites', 'success');
+          }}
+          className="text-2xl transition-transform hover:scale-125"
+        >
+          {favorite ? '❤️' : '🤍'}
+        </button>
+
         <button
           onClick={() => onDelete(blog._id)}
           className={`bg-red-600 dark:bg-red-800 text-white px-3 rounded hover:font-bold ${
@@ -157,6 +197,19 @@ export default function BlogCard({ blog, onDelete }) {
           Delete
         </button>
       </div>
+
+      {folderModal && (
+        <FolderModal
+          open={folderModal}
+          onConfirm={(name) => {
+            const folder = addFolder(name);
+            addPostToFolder(folder.id, blog._id);
+            addNotification(`Added to "${name}"`, 'success');
+            setFolderModal(false);
+          }}
+          onCancel={() => setFolderModal(false)}
+        />
+      )}
     </div>
   );
 }

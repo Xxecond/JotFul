@@ -1,11 +1,20 @@
 "use client";
 
-import { Button, } from "@/components/ui";
+import { Button } from "@/components/ui";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
+import { useGuest } from "@/contexts/GuestContext";
+
 export default function LandingPage() {
-const pathname = usePathname();
+  const pathname = usePathname();
+  const router = useRouter();
+  const { enterGuestMode } = useGuest();
+
+  const handleTryJot = () => {
+    enterGuestMode();
+    router.push('/home');
+  };
 
   return (
     <div>
@@ -23,13 +32,14 @@ const pathname = usePathname();
       <main className="flex w-full h-150 pb-35">
         <div className="w-full md:w-1/2 flex flex-col justify-center">
         <h1 className="text-[40px] sm:text-5xl font-light leading-loose text-nowrap">Capture ideas✨,<br />Stay Organised 📁,<br /> Be JotFul✍️ </h1>
-        <div className="flex pt-15 gap-4 justify-center">
+        <div className="flex pt-15 gap-4 justify-center flex-wrap">
           <Link href="/auth/signup">
             <Button variant="special">Begin Here</Button>
           </Link>
           <Link href="/auth/login">
             <Button variant="outline" className={"hover:bg-cyan-500 dark:hover:bg-cyan-900  hover:text-white border-cyan-600 dark:border-cyan-900"}>Log In</Button>
           </Link>
+          <Button variant="outline" onClick={handleTryJot} className="hover:bg-cyan-500 dark:hover:bg-cyan-900 hover:text-white border-cyan-600 dark:border-cyan-900">Try Jot</Button>
         </div>
         </div>
           <div className="w-1/2 relative md:block hidden mx-10">

@@ -4,6 +4,8 @@ import { AuthProvider } from "@/context/authContext";
 import { UserProvider } from "@/context/UserContext";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
+import { FolderProvider } from "@/contexts/FolderContext";
+import { GuestProvider } from "@/contexts/GuestContext";
 
 export const metadata = {
   title: "JotFul app",
@@ -23,7 +25,11 @@ export default function RootLayout({ children }) {
           <UserProvider>
             <SettingsProvider>
               <NotificationProvider>
-                {children}
+                <FolderProvider>
+                  <GuestProvider>
+                    {children}
+                  </GuestProvider>
+                </FolderProvider>
               </NotificationProvider>
             </SettingsProvider>
           </UserProvider>
