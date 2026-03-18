@@ -13,12 +13,14 @@ export const useGuest = () => {
 export const GuestProvider = ({ children }) => {
   const [isGuest, setIsGuest] = useState(false);
   const [guestPosts, setGuestPosts] = useState([]);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     const guest = sessionStorage.getItem("jotful-guest");
     const posts = sessionStorage.getItem("jotful-guest-posts");
     if (guest === "true") setIsGuest(true);
     if (posts) setGuestPosts(JSON.parse(posts));
+    setHydrated(true);
   }, []);
 
   const enterGuestMode = () => {
@@ -56,7 +58,7 @@ export const GuestProvider = ({ children }) => {
   const getGuestPost = (id) => guestPosts.find(p => p._id === id);
 
   return (
-    <GuestContext.Provider value={{ isGuest, guestPosts, enterGuestMode, exitGuestMode, addGuestPost, updateGuestPost, deleteGuestPost, getGuestPost }}>
+    <GuestContext.Provider value={{ isGuest, guestPosts, hydrated, enterGuestMode, exitGuestMode, addGuestPost, updateGuestPost, deleteGuestPost, getGuestPost }}>
       {children}
     </GuestContext.Provider>
   );

@@ -41,12 +41,17 @@ export default function Navbar({ first, second }) {
   const router = useRouter();
   const dropdownRef = useRef(null);
 
+  const handleHomeClick = () => { setActiveFolder(null); setOpen(false); router.push('/home'); };
+
   const navLinks = [
-    { id: 1, href: "/favorites", text: "Favorites" },
-    { id: 2, href: "/home", text: "Home" },
-    { id: 3, href: "/create", text: "Create Jot" },
+    { id: 1, href: "/home", text: "Home" },
+    { id: 2, href: "/create", text: "Create Jot" },
+    { id: 3, href: "/favorites", text: "Favorites" },
     { id: 4, href: "/settings", text: "Settings" },
   ];
+
+  const navLinksBeforeFolders = navLinks.filter(l => l.href !== '/settings');
+  const navLinksAfterFolders = navLinks.filter(l => l.href === '/settings');
 
   const handleLogout = async () => {
     await logout();
@@ -115,7 +120,7 @@ export default function Navbar({ first, second }) {
         {guestPrompt && (
           <Modal
             open={guestPrompt}
-            message="Sign in to use this feature and save your posts permanently."
+            message="Sign in to use this feature?"
             onConfirm={() => { setGuestPrompt(false); exitGuestMode(); router.push('/auth/login'); }}
             onCancel={() => setGuestPrompt(false)}
           />
@@ -136,13 +141,43 @@ export default function Navbar({ first, second }) {
           <nav className="h-full flex flex-col">
             <ul className="slidein mt-20 flex flex-col px-5 space-y-5 pt-6 flex-grow">
 
+              {navLinksBeforeFolders.map((item) => (
+                <li
+                  key={item.id}
+                  className="bg-black/70 dark:bg-white/70 hover:bg-white/70 dark:hover:bg-black/70 rounded-md p-2 transition-all duration-300   hover:pl-5"
+                >
+                  {isGuest && item.href === '/favorites' ? (
+                    <button
+                      onClick={() => setGuestPrompt(true)}
+                      className={`text-xl w-full text-left hover:text-cyan-500 dark:hover:text-cyan-700 ${textColor} block`}
+                    >
+                      {item.text}
+                    </button>
+                  ) : item.href === '/home' ? (
+                    <button
+                      onClick={handleHomeClick}
+                      className={`text-xl w-full text-left hover:text-cyan-500 dark:hover:text-cyan-700 ${textColor} block`}
+                    >
+                      {item.text}
+                    </button>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      onClick={() => setOpen(false)}
+                      className={`text-xl transform-all duration-1000 hover:text-cyan-500 dark:hover:text-cyan-700 ${textColor} block`}
+                    >
+                      {item.text}
+                    </Link>
+                  )}
+                </li>
+              ))}
               {/* Folder item */}
-              <li className="bg-black/70 dark:bg-white/70 rounded-md p-2 transition-all duration-300">
+              <li className="bg-black/70 dark:bg-white/70 dark:hover:bg-black/70 rounded-md p-2 hover:pl-5  transition-all duration-300">
                 <button
                   onClick={() => { if (handleRestrictedClick()) return; setFolderDropdownOpen(prev => !prev); }}
                   className={`text-xl w-full text-left hover:text-cyan-500 dark:hover:text-cyan-700 ${textColor}`}
                 >
-                  📁 Folders
+                  Folders
                 </button>
                 {folderDropdownOpen && (
                   <ul className="mt-2 space-y-1 pl-2">
@@ -167,13 +202,12 @@ export default function Navbar({ first, second }) {
                   </ul>
                 )}
               </li>
-
-              {navLinks.map((item) => (
+              {navLinksAfterFolders.map((item) => (
                 <li
                   key={item.id}
-                  className="bg-black/70 dark:bg-white/70 rounded-md p-2 transition-all duration-300 hover:bg-black/50 dark:hover:bg-white/50 hover:pl-5"
+                  className="bg-black/70 dark:bg-white/70 hover:bg-white/70 dark:hover:bg-black/70 rounded-md p-2 transition-all duration-300 hover:pl-5"
                 >
-                  {isGuest && (item.href === '/favorites' || item.href === '/settings') ? (
+                  {isGuest && item.href === '/settings' ? (
                     <button
                       onClick={() => setGuestPrompt(true)}
                       className={`text-xl w-full text-left hover:text-cyan-500 dark:hover:text-cyan-700 ${textColor} block`}
@@ -192,6 +226,8 @@ export default function Navbar({ first, second }) {
                 </li>
               ))}
 
+             
+
               {!isGuest && (
                 <button
                   onClick={() => setModal(true)}
@@ -203,7 +239,7 @@ export default function Navbar({ first, second }) {
               {isGuest && (
                 <button
                   onClick={() => { exitGuestMode(); router.push('/auth/login'); }}
-                  className={`text-left text-xl bg-black/70 dark:bg-white/70 rounded-md p-2 transition-all duration-300 hover:bg-cyan-900 hover:pl-5 ${textColor}`}
+                  className={`text-left text-xl bg-black/70 dark:bg-white/70 rounded-md p-2 transition-all duration-300 hover:bg-green-700 dark:hover:bg-green-900 hover:pl-5 ${textColor}`}
                 >
                   Sign In
                 </button>
@@ -233,13 +269,27 @@ export default function Navbar({ first, second }) {
         <nav>
           <ul className="flex space-x-4 py-0 items-center">
 
+            {navLinksBeforeFolders.map((item) => (
+              <li key={item.id} className="tracking-tight text-white hover:font-semibold xl:text-lg">
+                {isGuest && item.href === '/favorites' ? (
+                  <button onClick={() => setGuestPrompt(true)} className="tracking-tight text-white hover:font-semibold xl:text-lg">
+                    {item.text}
+                  </button>
+                ) : item.href === '/home' ? (
+                  <button onClick={() => { setActiveFolder(null); router.push('/home'); }} className="tracking-tight text-white hover:font-semibold xl:text-lg">{item.text}</button>
+                ) : (
+                  <Link href={item.href}>{item.text}</Link>
+                )}
+              </li>
+            ))}
+
             {/* Folder Dropdown */}
             <li className="relative" ref={dropdownRef}>
               <button
                 onClick={() => { if (handleRestrictedClick()) return; setFolderDropdownOpen(prev => !prev); }}
                 className="tracking-tight text-white hover:font-semibold xl:text-lg flex items-center gap-1"
               >
-                📁 Folders
+                Folders
               </button>
               {folderDropdownOpen && (
                 <ul className="absolute top-full left-0 mt-1 w-44 bg-cyan-700 dark:bg-cyan-950 rounded-lg shadow-lg z-50 overflow-hidden">
@@ -265,9 +315,9 @@ export default function Navbar({ first, second }) {
               )}
             </li>
 
-            {navLinks.map((item) => (
+            {navLinksAfterFolders.map((item) => (
               <li key={item.id} className="tracking-tight text-white hover:font-semibold xl:text-lg">
-                {isGuest && (item.href === '/favorites' || item.href === '/settings') ? (
+                {isGuest && item.href === '/settings' ? (
                   <button onClick={() => setGuestPrompt(true)} className="tracking-tight text-white hover:font-semibold xl:text-lg">
                     {item.text}
                   </button>
@@ -279,16 +329,12 @@ export default function Navbar({ first, second }) {
 
             {!isGuest && (
               <li>
-                <button onClick={() => setModal(true)} className="tracking-tight text-white hover:font-semibold xl:text-lg">
-                  Logout
-                </button>
+                <button onClick={() => setModal(true)} className="tracking-tight text-white hover:font-semibold xl:text-lg">Logout</button>
               </li>
             )}
             {isGuest && (
               <li>
-                <button onClick={() => { exitGuestMode(); router.push('/auth/login'); }} className="tracking-tight text-white hover:font-semibold xl:text-lg">
-                  Sign In
-                </button>
+                <button onClick={() => { exitGuestMode(); router.push('/auth/login'); }} className="tracking-tight text-white hover:font-semibold xl:text-lg">Sign In</button>
               </li>
             )}
           </ul>
@@ -297,7 +343,7 @@ export default function Navbar({ first, second }) {
         {guestPrompt && typeof document !== 'undefined' && createPortal(
           <Modal
             open={guestPrompt}
-            message="Sign in to use this feature and save your posts permanently."
+            message="Sign in to use this feature?"
             onConfirm={() => { setGuestPrompt(false); exitGuestMode(); router.push('/auth/login'); }}
             onCancel={() => setGuestPrompt(false)}
           />,

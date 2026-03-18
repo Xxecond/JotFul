@@ -85,6 +85,7 @@ export default function CreateBlog() {
         const imageUrl = selectedFile ? URL.createObjectURL(selectedFile) : null;
         addGuestPost({ title, content, image: imageUrl });
         router.push('/home');
+        setLoading(false);
         return;
       }
 
@@ -164,7 +165,7 @@ export default function CreateBlog() {
             type="file"
             accept="image/*"
             onChange={handleImageChange}
-            required
+            required={!isGuest}
             className="hidden"
           /></label>
 

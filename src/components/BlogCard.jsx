@@ -6,17 +6,22 @@ import { useRouter } from "next/navigation";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useFolders } from "@/contexts/FolderContext";
 import { useNotifications } from "@/contexts/NotificationContext";
+import { useGuest } from "@/contexts/GuestContext";
+import Modal from "@/components/Modal";
 import FolderModal from "@/components/FolderModal";
 
 export default function BlogCard({ blog, onDelete }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const [folderModal, setFolderModal] = useState(false);
+  const [folderPicker, setFolderPicker] = useState(false);
   const contentRef = useRef(null);
   const router = useRouter();
   const { settings } = useSettings();
-  const { folders, addFolder, addPostToFolder, toggleFavorite, isFavorite } = useFolders();
+  const { folders, addFolder, addFolderWithPost, addPostToFolder, toggleFavorite, isFavorite } = useFolders();
   const { addNotification } = useNotifications();
+  const { isGuest, exitGuestMode } = useGuest();
+  const [guestPrompt, setGuestPrompt] = useState(false);
   const favorite = isFavorite(blog._id);
 
   useEffect(() => {
@@ -166,7 +171,7 @@ export default function BlogCard({ blog, onDelete }) {
         </button>
 
         <button
-          onClick={() => setFolderModal(true)}
+          onClick={() => { if (isGuest) { setGuestPrompt(true); return; } setFolderPicker(true); }}
           className={`bg-cyan-800 dark:bg-cyan-950 text-white px-3 rounded hover:font-bold ${
             settings.fontSize === 'small' ? 'text-sm md:text-base' :
             settings.fontSize === 'large' ? 'text-lg md:text-xl' :
@@ -178,12 +183,27 @@ export default function BlogCard({ blog, onDelete }) {
 
         <button
           onClick={() => {
+            if (isGuest) { setGuestPrompt(true); return; }
             const added = toggleFavorite(blog._id);
             addNotification(added ? 'Added to Favorites' : 'Removed from Favorites', 'success');
           }}
-          className="text-2xl transition-transform hover:scale-125"
+          className="flex items-center justify-center w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-200 hover:scale-110"
+          aria-label={favorite ? 'Remove from favorites' : 'Add to favorites'}
         >
-          {favorite ? '❤️' : '🤍'}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            className={`w-5 h-5 transition-all duration-200 ${
+              favorite
+                ? 'fill-rose-400 stroke-rose-400'
+                : 'fill-none stroke-white'
+            }`}
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
         </button>
 
         <button
@@ -198,12 +218,61 @@ export default function BlogCard({ blog, onDelete }) {
         </button>
       </div>
 
+      {guestPrompt && (
+        <Modal
+          open={guestPrompt}
+          message="Sign in to use this feature?"
+          onConfirm={() => { setGuestPrompt(false); exitGuestMode(); router.push('/auth/login'); }}
+          onCancel={() => setGuestPrompt(false)}
+        />
+      )}
+
+      {folderPicker && (
+        <div className="fixed inset-0 z-[100] bg-black/60" onClick={() => setFolderPicker(false)}>
+          <div
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[68%] max-w-sm rounded-xl bg-cyan-700 z-[110] overflow-hidden"
+            onClick={e => e.stopPropagation()}
+          >
+            <p className="text-white text-center pt-4 pb-2 font-medium">Add to Folder</p>
+            <ul className="max-h-48 overflow-y-auto">
+              {folders.map(f => (
+                <li key={f.id}>
+                  <button
+                    onClick={() => {
+                      addPostToFolder(f.id, blog._id);
+                      addNotification(`Added to "${f.name}"`, 'success');
+                      setFolderPicker(false);
+                    }}
+                    className="w-full text-left px-4 py-2 text-white hover:bg-black/20 text-sm"
+                  >
+                    {f.name}
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <div className="flex border-t-2 border-white">
+              <button
+                onClick={() => { setFolderPicker(false); setFolderModal(true); }}
+                className="text-white p-2 w-1/2 hover:bg-black/20 text-sm"
+              >
+                + New Folder
+              </button>
+              <button
+                onClick={() => setFolderPicker(false)}
+                className="text-white p-2 w-1/2 hover:bg-black/20 border-l-2 border-white text-sm"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {folderModal && (
         <FolderModal
           open={folderModal}
           onConfirm={(name) => {
-            const folder = addFolder(name);
-            addPostToFolder(folder.id, blog._id);
+            addFolderWithPost(name, blog._id);
             addNotification(`Added to "${name}"`, 'success');
             setFolderModal(false);
           }}

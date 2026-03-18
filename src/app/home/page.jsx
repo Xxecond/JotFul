@@ -19,17 +19,14 @@ export default function Home() {
   const [modal, setModal] = useState({ open: false, postId: null, message: '', onConfirm: null })
 
   const { activeFolder } = useFolders()
-  const { isGuest, guestPosts, deleteGuestPost, exitGuestMode } = useGuest()
+  const { isGuest, guestPosts, hydrated, deleteGuestPost, exitGuestMode } = useGuest()
 
   useEffect(() => {
+    if (!hydrated) return
     const fetchBlogs = async () => {
       try {
-        if (!isGuest) {
-          // Clear any leftover guest data when a real user lands here
-          exitGuestMode();
-          const data = await getUserPosts()
-          setBlogs(Array.isArray(data) ? data : [])
-        }
+        const data = await getUserPosts()
+        setBlogs(Array.isArray(data) ? data : [])
       } catch {
         setBlogs([])
       } finally {
@@ -38,7 +35,7 @@ export default function Home() {
     }
     if (isGuest) { setLoading(false); return; }
     fetchBlogs()
-  }, [isGuest])
+  }, [isGuest, hydrated])
 
   if (loading) return (
     <div className="flex justify-center items-center h-screen bg-white dark:bg-black/90">

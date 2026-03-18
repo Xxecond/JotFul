@@ -30,6 +30,14 @@ export const FolderProvider = ({ children }) => {
     return folder;
   };
 
+  const addFolderWithPost = (name, postId) => {
+    const folder = { id: Date.now().toString(), name, postIds: [postId] };
+    const updated = [...folders, folder];
+    setFolders(updated);
+    localStorage.setItem("jotful-folders", JSON.stringify(updated));
+    return folder;
+  };
+
   const addPostToFolder = (folderId, postId) => {
     const updated = folders.map(f =>
       f.id === folderId && !f.postIds.includes(postId)
@@ -51,7 +59,7 @@ export const FolderProvider = ({ children }) => {
   const isFavorite = (postId) => favorites.includes(postId);
 
   return (
-    <FolderContext.Provider value={{ folders, favorites, activeFolder, setActiveFolder, addFolder, addPostToFolder, toggleFavorite, isFavorite }}>
+    <FolderContext.Provider value={{ folders, favorites, activeFolder, setActiveFolder, addFolder, addFolderWithPost, addPostToFolder, toggleFavorite, isFavorite }}>
       {children}
     </FolderContext.Provider>
   );
