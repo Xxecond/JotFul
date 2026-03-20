@@ -22,10 +22,9 @@ export const NotificationProvider = ({ children }) => {
 
     const id = Date.now();
     const notification = { id, message, type };
-    
-    setNotifications(prev => [...prev, notification]);
-    
-    // Auto remove after 3 seconds
+
+    setNotifications([notification]);
+
     setTimeout(() => {
       setNotifications(prev => prev.filter(n => n.id !== id));
     }, 3000);
@@ -39,7 +38,7 @@ export const NotificationProvider = ({ children }) => {
     <NotificationContext.Provider value={{ addNotification, removeNotification }}>
       {children}
       {/* Notification Display */}
-      <div className="fixed top-20 right-4 z-50 space-y-2">
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center space-y-2">
         {notifications.map(notification => (
           <div
             key={notification.id}

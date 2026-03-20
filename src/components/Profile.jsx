@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { useUser } from "@/context/UserContext";
+import { useGuest } from "@/contexts/GuestContext";
 
 export default function Profile({ isMobile = false }) {
   const { user, loading } = useUser();
+  const { isGuest } = useGuest();
 
-  if (loading || !user) return null;
+  if (loading || !user || isGuest) return null;
 
   const getInitials = (email) => {
     return email ? email.charAt(0).toUpperCase() : "U";

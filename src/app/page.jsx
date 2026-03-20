@@ -33,13 +33,14 @@ export default function LandingPage() {
         <div className="w-full md:w-1/2 flex flex-col justify-center">
         <h1 className="text-[40px] sm:text-5xl font-light leading-loose text-nowrap">Capture ideas✨,<br />Stay Organised 📁,<br /> Be JotFul✍️ </h1>
         <div className="flex pt-15 gap-4 justify-center flex-wrap">
-          <Link href="/auth/signup">
-            <Button variant="special">Begin Here</Button>
-          </Link>
+         <Button variant="special" onClick={handleTryJot} className="hover:bg-cyan-500 dark:hover:bg-cyan-900 hover:text-white border-cyan-600 dark:border-cyan-900">Try JotFul</Button>
           <Link href="/auth/login">
             <Button variant="outline" className={"hover:bg-cyan-500 dark:hover:bg-cyan-900  hover:text-white border-cyan-600 dark:border-cyan-900"}>Log In</Button>
           </Link>
-          <Button variant="outline" onClick={handleTryJot} className="hover:bg-cyan-500 dark:hover:bg-cyan-900 hover:text-white border-cyan-600 dark:border-cyan-900">Try Jot</Button>
+          <Link href="/auth/signup">
+            <Button variant="outline" className={"hover:bg-cyan-500 dark:hover:bg-cyan-900  hover:text-white border-cyan-600 dark:border-cyan-900"}>Create Account</Button>
+          </Link>
+            
         </div>
         </div>
           <div className="w-1/2 relative md:block hidden mx-10">

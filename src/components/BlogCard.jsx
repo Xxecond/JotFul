@@ -15,10 +15,12 @@ export default function BlogCard({ blog, onDelete }) {
   const [isOverflowing, setIsOverflowing] = useState(false);
   const [folderModal, setFolderModal] = useState(false);
   const [folderPicker, setFolderPicker] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const longPressTimer = useRef(null);
   const contentRef = useRef(null);
   const router = useRouter();
   const { settings } = useSettings();
-  const { folders, addFolder, addFolderWithPost, addPostToFolder, toggleFavorite, isFavorite } = useFolders();
+  const { folders, addFolder, addFolderWithPost, addPostToFolder, deleteFolder, toggleFavorite, isFavorite } = useFolders();
   const { addNotification } = useNotifications();
   const { isGuest, exitGuestMode } = useGuest();
   const [guestPrompt, setGuestPrompt] = useState(false);
@@ -39,7 +41,33 @@ export default function BlogCard({ blog, onDelete }) {
   };
 
   const getThemeClass = () => {
-    return 'bg-cyan-600 dark:bg-cyan-900 text-white';
+    switch (settings.cardStyle) {
+      case 'slate':    return 'bg-slate-600 dark:bg-slate-800 text-white';
+      case 'rose':     return 'bg-rose-500 dark:bg-rose-800 text-white';
+      case 'emerald':  return 'bg-emerald-600 dark:bg-emerald-900 text-white';
+      case 'midnight': return 'bg-indigo-900 dark:bg-gray-950 text-white';
+      default:         return 'bg-cyan-600 dark:bg-cyan-900 text-white';
+    }
+  };
+
+  const getTitleBgClass = () => {
+    switch (settings.cardStyle) {
+      case 'slate':    return 'bg-slate-700 dark:bg-slate-900';
+      case 'rose':     return 'bg-rose-600 dark:bg-rose-900';
+      case 'emerald':  return 'bg-emerald-700 dark:bg-emerald-950';
+      case 'midnight': return 'bg-indigo-950 dark:bg-black';
+      default:         return 'bg-cyan-700 dark:bg-cyan-950';
+    }
+  };
+
+  const getViewMoreBgClass = () => {
+    switch (settings.cardStyle) {
+      case 'slate':    return 'bg-slate-600 dark:bg-slate-800';
+      case 'rose':     return 'bg-rose-500 dark:bg-rose-800';
+      case 'emerald':  return 'bg-emerald-600 dark:bg-emerald-900';
+      case 'midnight': return 'bg-indigo-900 dark:bg-gray-950';
+      default:         return 'bg-cyan-600 dark:bg-cyan-900';
+    }
   };
 
   const getTimeAgo = (date) => {
@@ -62,6 +90,19 @@ export default function BlogCard({ blog, onDelete }) {
     return `${diffYears}y`;
   };
 
+  const handleFolderRightClick = (e, folder) => {
+    e.preventDefault();
+    setDeleteTarget(folder);
+  };
+
+  const handleLongPressStart = (folder) => {
+    longPressTimer.current = setTimeout(() => setDeleteTarget(folder), 600);
+  };
+
+  const handleLongPressEnd = () => {
+    clearTimeout(longPressTimer.current);
+  };
+
   const handleToggle = () => {
     if (isOverflowing) setIsExpanded(prev => !prev);
   };
@@ -82,11 +123,9 @@ export default function BlogCard({ blog, onDelete }) {
   };
 
   return (
-    <div className={`w-[95%] max-w-4xl rounded-lg overflow-hidden mx-auto wrap-break-word whitespace-normal ${
-      settings.compactView ? 'my-6' : 'my-12'
-    } ${getThemeClass()}`}>
+    <div className={`w-[95%] max-w-4xl rounded-lg overflow-hidden mx-auto wrap-break-word whitespace-normal my-12 ${getThemeClass()}`}>
       {/* Title */}
-      <div className="text-center py-1 px-2 relative bg-cyan-700 dark:bg-cyan-950">
+      <div className={`text-center py-1 px-2 relative ${getTitleBgClass()}`}>
         {blog.createdAt && settings.showTimestamps && (
           <p className="absolute -translate-y-1/2 top-1/2 left-2 text-xs xl:text-sm text-cyan-100 dark:text-cyan-400 flex items-center gap-1 opacity-0 pointer-events-none">
             <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -113,10 +152,8 @@ export default function BlogCard({ blog, onDelete }) {
       </div>
 
       {/* Image */}
-      {blog.image && (
-        <div className={`w-full relative z-0 ${
-          settings.compactView ? 'h-[50vh]' : 'h-[80vh]'
-        }`}>
+      {blog.image && settings.showImages && (
+        <div className="w-full relative z-0 h-[80vh]">
           <Image
             src={blog.image}
             alt={blog.title || "Blog image"}
@@ -132,7 +169,12 @@ export default function BlogCard({ blog, onDelete }) {
     ref={contentRef}
     onClick={handleToggle}
     className={`cursor-${isOverflowing ? "pointer" : "default"} ${
-      isExpanded ? "" : "line-clamp-2"
+      isExpanded ? "" : (
+        settings.lineClamp === '1' ? 'line-clamp-1' :
+        settings.lineClamp === '3' ? 'line-clamp-3' :
+        settings.lineClamp === '4' ? 'line-clamp-4' :
+        'line-clamp-2'
+      )
     } whitespace-pre-line ${getFontSizeClass()}`}
   >
     {renderContent(blog.content)}
@@ -142,7 +184,7 @@ export default function BlogCard({ blog, onDelete }) {
   {isOverflowing && !isExpanded && (
     <span
       onClick={handleToggle}
-      className="absolute bottom-2 right-2 text-[#4fc3f7] font-bold text-[1rem] cursor-pointer bg-cyan-600 dark:bg-cyan-900 pl-2"
+      className={`absolute bottom-2 right-2 text-[#4fc3f7] font-bold text-[1rem] cursor-pointer ${getViewMoreBgClass()} pl-2`}
     >
      ...View more
     </span>
@@ -243,6 +285,10 @@ export default function BlogCard({ blog, onDelete }) {
                       addNotification(`Added to "${f.name}"`, 'success');
                       setFolderPicker(false);
                     }}
+                    onContextMenu={(e) => handleFolderRightClick(e, f)}
+                    onTouchStart={() => handleLongPressStart(f)}
+                    onTouchEnd={handleLongPressEnd}
+                    onTouchMove={handleLongPressEnd}
                     className="w-full text-left px-4 py-2 text-white hover:bg-black/20 text-sm"
                   >
                     {f.name}
@@ -252,8 +298,13 @@ export default function BlogCard({ blog, onDelete }) {
             </ul>
             <div className="flex border-t-2 border-white">
               <button
-                onClick={() => { setFolderPicker(false); setFolderModal(true); }}
-                className="text-white p-2 w-1/2 hover:bg-black/20 text-sm"
+                onClick={() => { if (folders.length >= 5) return; setFolderPicker(false); setFolderModal(true); }}
+                className={`text-white p-2 w-1/2 text-sm ${
+                  folders.length >= 5
+                    ? 'opacity-40 cursor-not-allowed text-gray-300'
+                    : 'hover:bg-black/20'
+                }`}
+                disabled={folders.length >= 5}
               >
                 + New Folder
               </button>
@@ -266,6 +317,15 @@ export default function BlogCard({ blog, onDelete }) {
             </div>
           </div>
         </div>
+      )}
+
+      {deleteTarget && (
+        <Modal
+          open={!!deleteTarget}
+          message={`Delete folder "${deleteTarget.name}"?`}
+          onConfirm={() => { deleteFolder(deleteTarget.id); setDeleteTarget(null); setFolderPicker(false); }}
+          onCancel={() => setDeleteTarget(null)}
+        />
       )}
 
       {folderModal && (

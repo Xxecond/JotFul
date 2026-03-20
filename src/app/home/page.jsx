@@ -9,6 +9,7 @@ import { Button } from '@/components/ui'
 import { Modal } from '@/components'
 import { useFolders } from '@/contexts/FolderContext'
 import { useGuest } from '@/contexts/GuestContext'
+import { useSettings } from '@/contexts/SettingsContext'
 import Link from 'next/link'
 
 export default function Home() {
@@ -20,6 +21,7 @@ export default function Home() {
 
   const { activeFolder } = useFolders()
   const { isGuest, guestPosts, hydrated, deleteGuestPost, exitGuestMode } = useGuest()
+  const { settings } = useSettings()
 
   useEffect(() => {
     if (!hydrated) return
@@ -57,9 +59,19 @@ export default function Home() {
   const folderFiltered = activeFolder
     ? allBlogs.filter(b => activeFolder.postIds.includes(b._id))
     : allBlogs
-  const filtered = folderFiltered.filter(b => matchesSearch(b))
+  const sorted = [...folderFiltered].sort((a, b) =>
+    settings.sortOrder === 'oldest'
+      ? new Date(a.createdAt) - new Date(b.createdAt)
+      : new Date(b.createdAt) - new Date(a.createdAt)
+  )
+  const filtered = sorted.filter(b => matchesSearch(b))
 
   const handleDeleteClick = (id) => {
+    if (!settings.confirmDelete) {
+      if (isGuest) { deleteGuestPost(id); return; }
+      deletePost(id).then(() => setBlogs(prev => prev.filter(b => b._id !== id))).catch(() => alert('Failed to delete post'));
+      return;
+    }
     setModal({
       open: true,
       postId: id,

@@ -192,12 +192,12 @@ export default function EditBlog({ params }) {
             
             {imagePreview && (
               <div className="mb-4 text-base xl:text-lg text-center">
-                <div className="relative w-[95%] max-w-4xl mx-auto h-90 md:h-95 xl:h-120 mb-3 text-sm md:text-base xl:text-lg">
+                <div className="relative w-[95%] max-w-4xl mx-auto mb-3 overflow-hidden rounded-lg" style={{ aspectRatio: '16/9' }}>
                   <Image
                     src={imagePreview}
                     alt="Preview"
                     fill
-                    className="object-cover rounded-lg"
+                    className="object-contain"
                   />
                 </div>
                 <Button

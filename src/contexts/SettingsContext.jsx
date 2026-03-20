@@ -18,9 +18,12 @@ export const SettingsProvider = ({ children }) => {
     autoSave: true,
     notifications: true,
     fontSize: "medium",
-    imageQuality: "high",
     showTimestamps: true,
-    compactView: false,
+    cardStyle: "default",
+    sortOrder: "newest",
+    confirmDelete: true,
+    showImages: true,
+    lineClamp: "2",
   });
 
   useEffect(() => {
@@ -52,9 +55,12 @@ export const SettingsProvider = ({ children }) => {
       autoSave: true,
       notifications: true,
       fontSize: "medium",
-      imageQuality: "high",
       showTimestamps: true,
-      compactView: false,
+      cardStyle: "default",
+      sortOrder: "newest",
+      confirmDelete: true,
+      showImages: true,
+      lineClamp: "2",
     };
     setSettings(defaultSettings);
     localStorage.removeItem("jotful-settings");

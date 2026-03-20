@@ -7,6 +7,7 @@ import { ProgressBar } from '@/components/ui'
 import { Button } from '@/components/ui'
 import { Modal } from '@/components'
 import { useFolders } from '@/contexts/FolderContext'
+import { useSettings } from '@/contexts/SettingsContext'
 import Link from 'next/link'
 
 export default function Favorites() {
@@ -15,6 +16,7 @@ export default function Favorites() {
   const [loading, setLoading] = useState(true)
   const [modal, setModal] = useState({ open: false, postId: null, message: '', onConfirm: null })
   const { favorites } = useFolders()
+  const { settings } = useSettings()
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -48,8 +50,17 @@ export default function Favorites() {
   const filtered = blogs
     .filter(b => favorites.includes(b._id))
     .filter(b => matchesSearch(b))
+    .sort((a, b) =>
+      settings.sortOrder === 'oldest'
+        ? new Date(a.createdAt) - new Date(b.createdAt)
+        : new Date(b.createdAt) - new Date(a.createdAt)
+    )
 
   const handleDeleteClick = (id) => {
+    if (!settings.confirmDelete) {
+      deletePost(id).then(() => setBlogs(prev => prev.filter(b => b._id !== id))).catch(() => alert('Failed to delete post'));
+      return;
+    }
     setModal({
       open: true,
       postId: id,

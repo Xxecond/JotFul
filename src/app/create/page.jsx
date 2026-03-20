@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Header from "@/components/Header";
 import { createPost } from "@/lib/postService";
-import {Spinner, Button, SkeletonLoader} from "@/components/ui";
+import {Spinner, Button, SkeletonLoader, ProgressBar} from "@/components/ui";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { useGuest } from "@/contexts/GuestContext";
@@ -20,7 +20,13 @@ export default function CreateBlog() {
   const [imagePreview, setImagePreview] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
   const [dragActive, setDragActive] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setPageLoading(false), 800);
+    return () => clearTimeout(t);
+  }, []);
   // Auto-save functionality
   useEffect(() => {
     if (settings.autoSave && (title || content)) {
@@ -94,7 +100,6 @@ export default function CreateBlog() {
       // Upload image via your auth-protected API
       const formData = new FormData();
       formData.append("file", selectedFile);
-      formData.append("quality", settings.imageQuality);
 
       const uploadRes = await fetch("/api/upload", {
         method: "POST",
@@ -130,18 +135,23 @@ export default function CreateBlog() {
     }
   };
 
-  if (loading) return (
+  if (pageLoading) return (
     <div className="bg-white dark:bg-gray-900 min-h-screen flex flex-col">
       <Header />
       <div className="flex justify-center items-center h-screen w-full">
         <SkeletonLoader />
       </div>
     </div>
-  )
+  );
 
   return (
       <>
       <div className="bg-white dark:bg-gray-900 min-h-screen flex flex-col">
+      {loading && (
+        <div className="fixed top-0 left-0 w-full z-[200]">
+          <ProgressBar height="h-1" className="w-full" />
+        </div>
+      )}
       <Header />
       <section className="flex flex-1 items-center justify-center bg-white dark:bg-black/90">
         <form
@@ -191,12 +201,12 @@ export default function CreateBlog() {
 
           {imagePreview && (
             <div className="mb-4 text-base xl:text-lg text-center">
-              <div className="relative w-[95%] max-w-4xl mx-auto h-80 md:h-95 xl:h-120 mb-3 text-sm md:text-base xl:text-lg">
+              <div className="relative w-[95%] max-w-4xl mx-auto mb-3 overflow-hidden rounded-lg" style={{ aspectRatio: '16/9' }}>
                 <Image
                   src={imagePreview}
                   alt="Preview"
                   fill
-                  className="object-cover rounded-lg"
+                  className="object-contain"
                 />
               </div>
               <Button
@@ -228,7 +238,7 @@ export default function CreateBlog() {
             variant="special"
             className="w-full"
           >
-            {loading ? (<span className="flex  items-center justify-center gap-3">Uploading...<Spinner size="sm"/></span>) : (<>Add Jot</>)}
+            {loading ? (<span className="flex items-center justify-center gap-3">Uploading...<Spinner size="sm"/></span>) : <>Add Jot</>}
           </Button>
         </form>
       </section>
