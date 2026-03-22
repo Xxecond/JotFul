@@ -4,7 +4,7 @@ const postSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     content: { type: String, required: true },
-    image: { type: String, required: true },
+    image: { type: String, default: null },
 
     // 🔗 Link each post to a user
     userId: {

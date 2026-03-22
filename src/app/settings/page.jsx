@@ -70,7 +70,7 @@ export default function Settings() {
     setShowResetModal(false);
   };
 
-  const selectClass = "text-sm w-full px-3 py-2 border border-gray-200 dark:border-white/20 dark:bg-white/10 dark:text-white rounded-lg focus:ring-2 focus:ring-cyan-600 outline-none bg-white text-gray-800";
+  const selectClass = "text-sm w-full px-3 py-2 border border-gray-200 dark:border-white/20 dark:bg-black/50 dark:text-white rounded-lg focus:ring-2 focus:ring-cyan-600 outline-none bg-white/90 text-gray-800";
 
   return (
     <div className="bg-gray-50 dark:bg-black min-h-screen">

@@ -95,7 +95,12 @@ export default function CreateBlog() {
         return;
       }
 
-      if (!selectedFile) throw new Error("No image selected");
+      if (!selectedFile) {
+        await createPost({ title, content, image: null });
+        if (settings.autoSave) localStorage.removeItem('draft');
+        router.push("/home");
+        return;
+      }
 
       // Upload image via your auth-protected API
       const formData = new FormData();
@@ -175,7 +180,7 @@ export default function CreateBlog() {
             type="file"
             accept="image/*"
             onChange={handleImageChange}
-            required={!isGuest}
+            required={false}
             className="hidden"
           /></label>
 

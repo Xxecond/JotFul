@@ -50,8 +50,8 @@ export async function POST(req) {
     const body = await req.json();
     const { title, content, image } = body;
 
-    if (!title || !content || !image) {
-      return NextResponse.json({ error: "Title, content, and image required" }, { status: 400 });
+    if (!title || !content) {
+      return NextResponse.json({ error: "Title and content required" }, { status: 400 });
     }
 
     const post = await Post.create({

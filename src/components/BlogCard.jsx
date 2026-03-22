@@ -153,7 +153,7 @@ export default function BlogCard({ blog, onDelete }) {
 
       {/* Image */}
       {blog.image && settings.showImages && (
-        <div className="w-full relative z-0 h-[80vh]">
+        <div className="w-full relative z-0 h-screen md:h-[200vh] ">
           <Image
             src={blog.image}
             alt={blog.title || "Blog image"}
@@ -214,7 +214,7 @@ export default function BlogCard({ blog, onDelete }) {
 
         <button
           onClick={() => { if (isGuest) { setGuestPrompt(true); return; } setFolderPicker(true); }}
-          className={`bg-cyan-800 dark:bg-cyan-950 text-white px-3 rounded hover:font-bold ${
+          className={`bg-cyan-200 dark:bg-cyan-950 text-white px-3 rounded hover:font-bold ${
             settings.fontSize === 'small' ? 'text-sm md:text-base' :
             settings.fontSize === 'large' ? 'text-lg md:text-xl' :
             'text-base md:text-lg'

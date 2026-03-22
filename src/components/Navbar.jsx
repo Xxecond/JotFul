@@ -47,7 +47,6 @@ export default function Navbar({ first, second }) {
     { id: 1, href: "/home", text: "Home" },
     { id: 2, href: "/create", text: "Create Jot" },
     { id: 3, href: "/favorites", text: "Favorites" },
-    { id: 4, href: "/settings", text: "Settings" },
   ];
 
   const handleLogout = async () => {
@@ -154,11 +153,11 @@ export default function Navbar({ first, second }) {
         )}
 
         <div
-          className={`fixed left-0 top-0 h-full w-64 bg-cyan-700 dark:bg-cyan-950 shadow-xl shadow-white/10 transform transition-transform duration-800 pb-safe ${open ? "-translate-x-0" : "-translate-x-full"}`}
+          className={`fixed left-0 top-0 h-full w-64 bg-cyan-700 dark:bg-cyan-950 shadow-xl shadow-white/10 transform transition-transform duration-800 pb-safe ${open ? "translate-x-0" : "-translate-x-full"}`}
           onClick={(e) => e.stopPropagation()}
         >
           <nav className="h-full flex flex-col">
-            <ul className="slidein mt-20 flex flex-col px-5 space-y-5 pt-6 flex-grow">
+            <ul className="slidein mt-20 flex flex-col px-5 space-y-5 pt-6 grow">
 
               {navLinks.map((item) => (
                 <li
@@ -232,6 +231,25 @@ export default function Navbar({ first, second }) {
                 )}
               </li>
 
+              <li className="bg-black/70 dark:bg-white/70 rounded-md p-2 transition-all duration-300 hover:pl-5">
+                {isGuest ? (
+                  <button
+                    onClick={() => setGuestPrompt(true)}
+                    className={`text-xl w-full text-left hover:text-cyan-500 dark:hover:text-cyan-700 ${textColor}`}
+                  >
+                    Settings
+                  </button>
+                ) : (
+                  <Link
+                    href="/settings"
+                    onClick={() => setOpen(false)}
+                    className={`text-xl w-full hover:text-cyan-500 dark:hover:text-cyan-700 ${textColor}`}
+                  >
+                    Settings
+                  </Link>
+                )}
+              </li>
+
               {!isGuest && (
                 <button
                   onClick={() => setModal(true)}
@@ -289,14 +307,6 @@ export default function Navbar({ first, second }) {
               </li>
             ))}
 
-            {!isGuest && (
-              <li>
-                <button onClick={() => setModal(true)} className="tracking-tight text-white hover:font-semibold xl:text-lg">
-                  Logout
-                </button>
-              </li>
-            )}
-
             {/* Folder Dropdown */}
             <li className="relative" ref={dropdownRef}>
               <button
@@ -337,6 +347,24 @@ export default function Navbar({ first, second }) {
                 </ul>
               )}
             </li>
+
+            <li className="tracking-tight text-white hover:font-semibold xl:text-lg">
+              {isGuest ? (
+                <button onClick={() => setGuestPrompt(true)}>
+                  Settings
+                </button>
+              ) : (
+                <Link href="/settings">Settings</Link>
+              )}
+            </li>
+
+            {!isGuest && (
+              <li>
+                <button onClick={() => setModal(true)} className="tracking-tight text-white hover:font-semibold xl:text-lg">
+                  Logout
+                </button>
+              </li>
+            )}
 
             {isGuest && (
               <li>

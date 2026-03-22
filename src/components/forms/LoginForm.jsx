@@ -103,7 +103,7 @@ export default function LoginForm() {
         <label className="text-sm font-medium">Email</label>
         <input
           type="email"
-          placeholder="MaxwellDogoe@gmail.com"
+          placeholder="MumuniYussif@gmail.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required

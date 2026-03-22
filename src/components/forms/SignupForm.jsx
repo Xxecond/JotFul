@@ -106,7 +106,7 @@ export default function SignupForm() {
         <label className="text-sm md:text-base">Email</label>
         <input
           type="email"
-          placeholder="MaxwellDogoe@gmail.com"
+          placeholder="MumuniYussif@gmail.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
