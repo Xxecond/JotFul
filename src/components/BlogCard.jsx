@@ -153,12 +153,12 @@ export default function BlogCard({ blog, onDelete }) {
 
       {/* Image */}
       {blog.image && settings.showImages && (
-        <div className="w-full relative z-0 h-screen md:h-[200vh] ">
+        <div className="relative w-full h-screen">
           <Image
             src={blog.image}
             alt={blog.title || "Blog image"}
-            fill
-            className="object-cover absolute"
+           fill
+            className="object-contain"
           />
         </div>
       )}
