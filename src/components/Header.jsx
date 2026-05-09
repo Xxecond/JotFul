@@ -7,19 +7,25 @@ import { useFolders } from "@/contexts/FolderContext";
 
 export default function Header() {
   const pathname = usePathname();
-  const { activeFolder } = useFolders();
+  const { folders } = useFolders();
 
   const headings = {
-    "/home": activeFolder ? activeFolder.name : "JotFul",
+    "/home": "JotFul",
     "/create": "New Jot",
     "/edit": "Edit Jot",
     "/settings": "Settings",
     "/favorites": "Favorites",
+    "/folder": "Folders",
   };
 
   const getPageName = (path) => {
     if (headings[path]) return headings[path];
     if (path.startsWith('/edit') || path.includes('/edit/')) return 'Edit Jot';
+    if (path.startsWith('/folder/')) {
+      const id = path.split('/folder/')[1];
+      const folder = folders.find(f => f.id === id);
+      return folder ? folder.name : 'Folder';
+    }
     return 'Page';
   };
 

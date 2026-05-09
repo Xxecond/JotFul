@@ -10,17 +10,18 @@ import { useGuest } from "@/contexts/GuestContext";
 import Modal from "@/components/Modal";
 import FolderModal from "@/components/FolderModal";
 
-export default function BlogCard({ blog, onDelete }) {
+export default function BlogCard({ blog, onDelete, hideAction, change, notification }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const [folderModal, setFolderModal] = useState(false);
   const [folderPicker, setFolderPicker] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
+
   const longPressTimer = useRef(null);
   const contentRef = useRef(null);
   const router = useRouter();
   const { settings } = useSettings();
-  const { folders, addFolder, addFolderWithPost, addPostToFolder, deleteFolder, toggleFavorite, isFavorite } = useFolders();
+  const { folders, addFolder, addFolderWithPost, addPostToFolder, deleteFolder, toggleFavorite, isFavorite, removePostFromFolder } = useFolders();
   const { addNotification } = useNotifications();
   const { isGuest, exitGuestMode } = useGuest();
   const [guestPrompt, setGuestPrompt] = useState(false);
@@ -153,12 +154,14 @@ export default function BlogCard({ blog, onDelete }) {
 
       {/* Image */}
       {blog.image && settings.showImages && (
-        <div className="relative w-full h-screen">
+        <div className="relative w-full h-dvh">
           <Image
             src={blog.image}
             alt={blog.title || "Blog image"}
-           fill
-            className="object-contain"
+            fill
+            className=" object-center "
+            priority= {false}
+
           />
         </div>
       )}
@@ -173,7 +176,7 @@ export default function BlogCard({ blog, onDelete }) {
         settings.lineClamp === '1' ? 'line-clamp-1' :
         settings.lineClamp === '3' ? 'line-clamp-3' :
         settings.lineClamp === '4' ? 'line-clamp-4' :
-        'line-clamp-2'
+       'line-clamp-2'
       )
     } whitespace-pre-line ${getFontSizeClass()}`}
   >
@@ -212,7 +215,7 @@ export default function BlogCard({ blog, onDelete }) {
           Edit
         </button>
 
-        <button
+       {!hideAction &&( <button
           onClick={() => { if (isGuest) { setGuestPrompt(true); return; } setFolderPicker(true); }}
           className={`bg-cyan-200 dark:bg-cyan-950 text-white px-3 rounded hover:font-bold ${
             settings.fontSize === 'small' ? 'text-sm md:text-base' :
@@ -221,9 +224,10 @@ export default function BlogCard({ blog, onDelete }) {
           }`}
         >
           📁
-        </button>
+        </button>)
+        }
 
-        <button
+        {!hideAction && (<button
           onClick={() => {
             if (isGuest) { setGuestPrompt(true); return; }
             const added = toggleFavorite(blog._id);
@@ -246,18 +250,50 @@ export default function BlogCard({ blog, onDelete }) {
           >
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
           </svg>
-        </button>
+        </button>)
+}
 
-        <button
-          onClick={() => onDelete(blog._id)}
-          className={`bg-red-600 dark:bg-red-800 text-white px-3 rounded hover:font-bold ${
+        {!change ? (
+  <button onClick={() => onDelete(blog._id)}  className={`bg-red-600 dark:bg-red-800 text-white px-3 rounded hover:font-bold ${
             settings.fontSize === 'small' ? 'text-sm md:text-base' :
             settings.fontSize === 'large' ? 'text-lg md:text-xl' :
             'text-base md:text-lg'
           }`}
-        >
-          Delete
-        </button>
+>
+    Delete
+  </button>
+) : (
+  <button
+    onClick={() => {
+      if (isGuest) {
+        setGuestPrompt(true);
+        return;
+      }
+
+      if (!notification) {
+        // Remove from Favorites
+        toggleFavorite(blog._id);
+        addNotification('Removed from Favorites', 'success');
+      } else {
+        // Remove from Folder
+        if (blog.folderId) {
+          removePostFromFolder(blog.folderId, blog._id);
+          addNotification('Removed from folder', 'success');
+        } else {
+          addNotification('Cannot remove: Folder ID not found', 'error');
+        }
+      }
+    }}
+    className={`bg-orange-600 dark:bg-orange-800 text-white px-3 rounded hover:font-bold ${
+      settings.fontSize === 'small' ? 'text-sm md:text-base' :
+      settings.fontSize === 'large' ? 'text-lg md:text-xl' :
+      'text-base md:text-lg'
+    }`}
+  >
+    Remove
+  </button>
+)}
+
       </div>
 
       {guestPrompt && (

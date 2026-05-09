@@ -1,30 +1,31 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import { Header, BlogCard, SearchBar } from '@/components'
 import { getUserPosts, deletePost } from '@/lib/postService'
 import { ProgressBar } from '@/components/ui'
 import { Button } from '@/components/ui'
 import { Modal } from '@/components'
 import { useFolders } from '@/contexts/FolderContext'
-import { useGuest } from '@/contexts/GuestContext'
 import { useSettings } from '@/contexts/SettingsContext'
+import { useGuest } from '@/contexts/GuestContext'
 import Link from 'next/link'
 
-export default function Home() {
-  const router = useRouter()
+export default function FolderPage() {
+  const { id } = useParams()
   const [blogs, setBlogs] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
   const [loading, setLoading] = useState(true)
   const [modal, setModal] = useState({ open: false, postId: null, message: '', onConfirm: null })
-
-  const { activeFolder } = useFolders()
-  const { isGuest, guestPosts, hydrated, deleteGuestPost, exitGuestMode } = useGuest()
+  const { folders } = useFolders()
   const { settings } = useSettings()
+  const { isGuest, guestPosts } = useGuest()
+
+  const folder = folders.find(f => f.id === id)
 
   useEffect(() => {
-    if (!hydrated) return
+    if (isGuest) { setLoading(false); return; }
     const fetchBlogs = async () => {
       try {
         const data = await getUserPosts()
@@ -35,15 +36,12 @@ export default function Home() {
         setLoading(false)
       }
     }
-    if (isGuest) { setLoading(false); return; }
     fetchBlogs()
-  }, [isGuest, hydrated])
+  }, [isGuest])
 
   if (loading) return (
     <div className="flex justify-center items-center h-screen bg-white dark:bg-black/90">
-      <div className="w-64">
-        <ProgressBar height="h-2" size="lg" />
-      </div>
+      <div className="w-64"><ProgressBar height="h-2" /></div>
     </div>
   )
 
@@ -56,18 +54,20 @@ export default function Home() {
     return titleMatch || hashtagMatch
   }
 
-  const sorted = [...allBlogs].sort((a, b) =>
-    settings.sortOrder === 'oldest'
-      ? new Date(a.createdAt) - new Date(b.createdAt)
-      : new Date(b.createdAt) - new Date(a.createdAt)
-  )
-  const filtered = sorted.filter(b => matchesSearch(b))
+  const filtered = allBlogs
+    .filter(b => folder?.postIds.includes(b._id))
+    .filter(b => matchesSearch(b))
+    .sort((a, b) =>
+      settings.sortOrder === 'oldest'
+        ? new Date(a.createdAt) - new Date(b.createdAt)
+        : new Date(b.createdAt) - new Date(a.createdAt)
+    )
 
   const handleDeleteClick = (id) => {
     if (!settings.confirmDelete) {
-      if (isGuest) { deleteGuestPost(id); return; }
-      deletePost(id).then(() => setBlogs(prev => prev.filter(b => b._id !== id))).catch(() => alert('Failed to delete post'));
-      return;
+      if (isGuest) return
+      deletePost(id).then(() => setBlogs(prev => prev.filter(b => b._id !== id))).catch(() => alert('Failed to delete post'))
+      return
     }
     setModal({
       open: true,
@@ -75,12 +75,8 @@ export default function Home() {
       message: 'Are you sure you want to delete this post?',
       onConfirm: async () => {
         try {
-          if (isGuest) {
-            deleteGuestPost(id)
-          } else {
-            await deletePost(id)
-            setBlogs(prev => prev.filter(b => b._id !== id))
-          }
+          await deletePost(id)
+          setBlogs(prev => prev.filter(b => b._id !== id))
         } catch {
           alert('Failed to delete post')
         }
@@ -92,23 +88,19 @@ export default function Home() {
   const closeModal = () => setModal({ open: false, postId: null, message: '', onConfirm: null })
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black/90">  
+    <div className="min-h-screen bg-white dark:bg-black/90">
       <Header />
       <SearchBar setSearchTerm={setSearchTerm} />
-      <section className="home px-4 py-6">
+      <section className="px-4 py-6">
         {filtered.length > 0 ? (
-          <>
-            {filtered.map(blog => blog && <BlogCard key={blog._id} blog={blog} onDelete={handleDeleteClick} />)}
-            <div className="flex justify-center my-8">
-              <Button variant="special">
-                <Link href="/create">+ Add Jot</Link>
-              </Button>
-            </div>
-          </>
+          filtered.map(blog => blog && (
+            <BlogCard key={blog._id} blog={{ ...blog, folderId: id }} onDelete={handleDeleteClick} change={true} hideAction={true} notification={true} />
+          ))
         ) : (
-          <div className="flex justify-center">
-            <Button variant="special" className="mt-40">
-              <Link href="/create">CREATE NEW BLOG</Link>
+          <div className="flex flex-col items-center justify-center mt-40 gap-4">
+            <p className="text-gray-500 dark:text-gray-400 text-lg">No jots in this folder</p>
+            <Button variant="special">
+              <Link href="/home">Go to Home</Link>
             </Button>
           </div>
         )}

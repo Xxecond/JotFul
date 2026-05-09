@@ -85,7 +85,7 @@ export default function Favorites() {
       <SearchBar setSearchTerm={setSearchTerm} />
       <section className="px-4 py-6">
         {filtered.length > 0 ? (
-          filtered.map(blog => blog && <BlogCard key={blog._id} blog={blog} onDelete={handleDeleteClick} />)
+        filtered.map(blog => blog && <BlogCard key={blog._id} blog={blog} onDelete={handleDeleteClick} change={true} hideAction={true} notification={false} />)
         ) : (
           <div className="flex flex-col justify-center items-center mt-40 gap-4">
             <p className="text-gray-500 dark:text-gray-400 text-lg">No favorites yet</p>

@@ -68,10 +68,9 @@ export default function Navbar({ first, second }) {
 
   const handleFolderSelect = (folder) => {
     if (handleRestrictedClick()) return;
-    setActiveFolder(folder);
     setFolderDropdownOpen(false);
     setOpen(false);
-    router.push('/home');
+    router.push(`/folder/${folder.id}`);
   };
 
   const handleFolderRightClick = (e, folder) => {
