@@ -1,7 +1,13 @@
- /** @type {import('next').NextConfig} */
+/** @type {import('next').NextConfig} */
 const nextConfig = {
+  allowedDevOrigins: ['172.20.10.7'],
   images: {
-    domains: ["res.cloudinary.com"], // ✅ allow Cloudinary URLs
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+      },
+    ],
   },
 };
 

@@ -154,7 +154,7 @@ export default function BlogCard({ blog, onDelete, hideAction, change, notificat
 
       {/* Image */}
       {blog.image && settings.showImages && (
-        <div className="relative w-full h-dvh">
+        <div className="relative w-full aspect-[2/3] md:aspect-[3/4] overflow-hidden ">
           <Image
             src={blog.image}
             alt={blog.title || "Blog image"}
